@@ -59,7 +59,7 @@
     section.panel{margin-top:.5rem !important;}
     section.panel:first-child{margin-top:0 !important;}
     .counter-label{font-size:.62rem;}
-    .counter{font-size:clamp(2rem,10vw,3rem) !important;line-height:1;}
+    .counter{font-size:clamp(3.5rem,16vw,5.5rem) !important;line-height:1;text-align:center;}
     #setInfo{font-size:.85rem;}
     #phase{font-size:.7rem;}
     .camera-shell{margin-top:.4rem !important;}
@@ -102,7 +102,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:50;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p>v22 · Logo custom + chronomètre séance</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
@@ -113,9 +113,15 @@
 
   <div id="tab-training" class="tab-content">
   <section class="panel">
-    <div class="counter-wrap">
-      <div><div class="counter-label">Pompes du set</div><div class="counter" id="count">0</div></div>
-      <div style="text-align:right;color:var(--muted)">Set<br><strong id="setInfo" style="color:var(--text)">1</strong><br><span id="phase">Prêt</span></div>
+    <div class="counter-wrap" style="flex-direction:column;gap:.3rem;">
+      <div style="width:100%;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.75rem;">
+        <span>Set <strong id="setInfo" style="color:var(--text)">1</strong></span>
+        <span id="phase">Prêt</span>
+      </div>
+      <div style="text-align:center;width:100%;">
+        <div class="counter-label">Pompes du set</div>
+        <div class="counter" id="count">0</div>
+      </div>
     </div>
     <div class="camera-shell" style="aspect-ratio:auto;height:auto;background:transparent;">
       <video id="video" autoplay muted playsinline webkit-playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
@@ -164,7 +170,7 @@
     </div>
   </div>
 
-    <section class="panel" style="margin-top:1rem;"><h2>Dernières séances</h2><div id="historyList" class="history-list"></div></section>
+    
   </div>
 
   <div id="tab-calendar" class="tab-content hidden">
@@ -177,6 +183,7 @@
       <div class="cal-weekdays"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
       <div id="calGrid" class="cal-grid"></div>
     </section>
+    <button id="resetCalendarBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le calendrier (test)</button>
     <div id="calendarDetailModal" class="modal-overlay hidden">
       <div class="modal-box" style="max-width:420px;text-align:left;">
         <div class="counter-label" id="calendarDetailDate">Séance</div>
@@ -282,18 +289,73 @@ function openCalendarDetail(iso){
   let html='';
   dayWorkouts.forEach((w,wi)=>{
     const maxReps=Math.max(...w.sets.map(s=>s.reps),1);
-    const bars=w.sets.map(s=>`<div class="bar-item"><div class="bar-value">${s.reps}</div><div class="bar-fill" style="height:${Math.max((s.reps/maxReps)*100,6)}%;"></div><div class="bar-label">S${s.set}</div></div>`).join('');
+    const bars=w.sets.map((s,si)=>`<div class="bar-item">
+        <div class="bar-value"><input type="number" min="0" data-workout-idx="${w.idx}" data-set-idx="${si}" class="edit-rep-input" value="${s.reps}" style="width:2.4rem;text-align:center;background:transparent;border:none;color:inherit;font-size:.75rem;font-weight:700;"></div>
+        <div class="bar-fill" style="height:${Math.max((s.reps/maxReps)*100,6)}%;"></div>
+        <div class="bar-label">S${s.set}</div>
+      </div>`).join('');
     html+=`<div style="margin-bottom:1rem;${wi>0?'padding-top:.8rem;border-top:1px solid var(--border);':''}">
-      <div style="display:flex;justify-content:space-between;color:var(--muted);font-size:.8rem;"><span>${w.date}${w.duration?' · '+w.duration:''}</span><strong style="color:var(--primary);">${w.total} pompes</strong></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.8rem;">
+        <span>${w.date}${w.duration?' · '+w.duration:''}</span>
+        <strong style="color:var(--primary);" id="workoutTotal-${w.idx}">${w.total} pompes</strong>
+      </div>
       <div class="bar-chart">${bars}</div>
+      <div style="display:flex;gap:.5rem;margin-top:.6rem;">
+        <button class="btn saveWorkoutEditBtn" data-workout-idx="${w.idx}" style="flex:1;font-size:.75rem;padding:.5rem;">Enregistrer</button>
+        <button class="btn btn-danger deleteWorkoutBtn" data-workout-idx="${w.idx}" style="flex:1;font-size:.75rem;padding:.5rem;">Supprimer</button>
+      </div>
     </div>`;
   });
   document.getElementById('calendarDetailContent').innerHTML=html;
   document.getElementById('calendarDetailModal').classList.remove('hidden');
+
+  document.querySelectorAll('.saveWorkoutEditBtn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const wIdx=Number(btn.dataset.workoutIdx);
+      const inputs=document.querySelectorAll(`.edit-rep-input[data-workout-idx="${wIdx}"]`);
+      let newTotal=0;
+      inputs.forEach(inp=>{
+        const sIdx=Number(inp.dataset.setIdx);
+        const val=Math.max(0,parseInt(inp.value)||0);
+        workouts[wIdx].sets[sIdx].reps=val;
+        newTotal+=val;
+      });
+      workouts[wIdx].total=newTotal;
+      saveHistory();
+      renderCalendar();
+      showToast('Séance mise à jour.');
+      openCalendarDetail(iso);
+    });
+  });
+  document.querySelectorAll('.deleteWorkoutBtn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const wIdx=Number(btn.dataset.workoutIdx);
+      if(!confirm('Supprimer définitivement cette séance ?')) return;
+      workouts.splice(wIdx,1);
+      saveHistory();
+      renderCalendar();
+      showToast('Séance supprimée.');
+      const remaining=workoutsForDate(iso);
+      if(remaining.length){
+        openCalendarDetail(iso);
+      } else {
+        document.getElementById('calendarDetailModal').classList.add('hidden');
+      }
+    });
+  });
 }
 document.getElementById('closeCalendarDetail').addEventListener('click',()=>{
   document.getElementById('calendarDetailModal').classList.add('hidden');
 });
+document.getElementById('resetCalendarBtn').addEventListener('click',()=>{
+  if(!confirm('Réinitialiser tout le calendrier ? Cette action supprime toutes les séances enregistrées (test uniquement).')) return;
+  workouts.length=0;
+  saveHistory();
+  renderCalendar();
+  document.getElementById('calendarDetailModal').classList.add('hidden');
+  showToast('Calendrier réinitialisé.');
+});
+
 
 function renderHistory(){historyList.innerHTML='';if(!workouts.length){historyList.innerHTML='<div class="history-item"><span>Aucune séance enregistrée</span><span>—</span></div>';return;}workouts.slice().reverse().forEach(w=>{const item=document.createElement('div');item.className='history-item';item.innerHTML=`<span>${w.date}</span><strong>${w.total} pompes · ${w.sets.length} sets</strong>`;historyList.appendChild(item);});}
 function refreshHeader(){setInfoEl.textContent=currentSet;countEl.textContent=setCount;totalCountEl.textContent=totalCount}
