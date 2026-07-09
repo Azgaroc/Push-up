@@ -4,12 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#01696f" />
-  <title>Push-Up</title>
-  <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <link rel="apple-touch-icon" href="logo.jpg">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Push-Up">
-  <meta name="theme-color" content="#1c6e6e">
+  <title>Pompes</title>
   <link rel="preconnect" href="https://api.fontshare.com">
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
   <style>
@@ -59,7 +54,7 @@
     section.panel{margin-top:.5rem !important;}
     section.panel:first-child{margin-top:0 !important;}
     .counter-label{font-size:.62rem;}
-    .counter{font-size:clamp(3.5rem,16vw,5.5rem) !important;line-height:1;text-align:center;}
+    .counter{font-size:clamp(2rem,10vw,3rem) !important;line-height:1;}
     #setInfo{font-size:.85rem;}
     #phase{font-size:.7rem;}
     .camera-shell{margin-top:.4rem !important;}
@@ -79,56 +74,26 @@
     .history-item{font-size:.72rem;padding:.4rem .6rem;}
     #calendarList{max-height:none;}
     .calendar-item{font-size:.78rem;padding:.6rem .7rem;}
-
-    .cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;}
-    .cal-nav h2{font-size:.85rem;margin:0;}
-    .cal-nav .icon-btn{width:28px;height:28px;font-size:1rem;}
-    .cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:.62rem;color:var(--muted);margin-bottom:.2rem;}
-    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.25rem;}
-    .cal-day{aspect-ratio:1/1;border-radius:.5rem;background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.68rem;position:relative;cursor:default;}
-    .cal-day.empty{background:transparent;}
-    .cal-day.has-workout{cursor:pointer;background:color-mix(in srgb, var(--primary) 18%, var(--surface2));border:1px solid var(--primary);}
-    .cal-day.today{outline:2px solid var(--primary);}
-    .cal-day .cal-dot{width:6px;height:6px;border-radius:50%;background:var(--primary);position:absolute;bottom:4px;}
-    .cal-day .cal-count-badge{position:absolute;top:2px;right:2px;font-size:.5rem;background:var(--primary);color:var(--inv);border-radius:50%;width:13px;height:13px;display:flex;align-items:center;justify-content:center;}
-    .bar-chart{display:flex;align-items:flex-end;gap:.4rem;height:110px;margin-top:.6rem;padding:0 .2rem;}
-    .bar-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:.25rem;}
-    .bar-fill{width:100%;background:var(--primary);border-radius:.3rem .3rem 0 0;min-height:4px;}
-    .bar-value{font-size:.65rem;font-weight:700;}
-    .bar-label{font-size:.6rem;color:var(--muted);}
 </style>
 </head>
 <body>
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:50;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1></div></div>
+    <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15c1.8-4.6 4.1-6.9 7-6.9 2.9 0 5.2 2.3 7 6.9"/><path d="M3 18h5M16 18h5"/><path d="M8 18c.5-1.4 1.3-2.1 2.4-2.1h3.2c1.1 0 1.9.7 2.4 2.1"/></svg></div><div><h1>Pompes</h1><p>v19 · Compact iPhone 14</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
   <div class="tabs-bar">
     <button class="tab-btn active" data-tab="training">Entraînement</button>
     <button class="tab-btn" data-tab="calendar">Calendrier</button>
-    <button class="tab-btn" data-tab="stats">Stats</button>
   </div>
 
   <div id="tab-training" class="tab-content">
   <section class="panel">
-    <div class="counter-wrap" style="flex-direction:column;gap:.3rem;">
-      <div style="width:100%;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.75rem;">
-        <span>Set <strong id="setInfo" style="color:var(--text)">1</strong></span>
-        <span id="phase">Prêt</span>
-      </div>
-      <div style="text-align:center;width:100%;position:relative;">
-        <div class="counter-label">Pompes du set</div>
-        <div style="position:relative;width:min(60vw,220px);aspect-ratio:1/1;margin:.4rem auto 0;">
-          <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
-            <circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface2)" stroke-width="6"></circle>
-            <circle id="setProgressRing" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="6" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5" style="transition:stroke-dashoffset .3s ease;"></circle>
-          </svg>
-          <div class="counter" id="count" style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">0</div>
-        </div>
-      </div>
+    <div class="counter-wrap">
+      <div><div class="counter-label">Pompes du set</div><div class="counter" id="count">0</div></div>
+      <div style="text-align:right;color:var(--muted)">Set<br><strong id="setInfo" style="color:var(--text)">1</strong><br><span id="phase">Prêt</span></div>
     </div>
     <div class="camera-shell" style="aspect-ratio:auto;height:auto;background:transparent;">
       <video id="video" autoplay muted playsinline webkit-playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
@@ -138,8 +103,6 @@
         <div class="pill"><span id="movementLabel">Mode léger</span></div>
       </div>
     </div>
-    <button id="enableCameraBtn" class="btn btn-primary" style="width:100%;margin-top:.6rem;">Activer la caméra</button>
-    
     <div class="controls" style="margin-top:1rem;">
       <button id="toggleSession" class="btn btn-primary" disabled style="grid-column:1/-1;">Démarrer</button>
       <button id="nextSet" class="btn" disabled>Set suivant</button>
@@ -155,7 +118,7 @@
   </section>
 
   <section class="panel" style="margin-top:1rem;">
-    <div style="display:flex;justify-content:space-around;gap:.5rem;"><div class="metric" style="text-align:center;"><span>Total séance</span><strong id="totalCount" style="font-size:1.8rem;">0</strong></div><div class="metric" style="text-align:center;"><span>Durée</span><strong id="sessionDuration" style="font-size:1.8rem;">00:00</strong></div></div>
+    <div class="metric" style="text-align:center;"><span>Total séance</span><strong id="totalCount" style="font-size:1.8rem;">0</strong></div>
   </section>
 
   <section class="panel" style="margin-top:1rem;">
@@ -178,70 +141,14 @@
     </div>
   </div>
 
-    
+    <section class="panel" style="margin-top:1rem;"><h2>Dernières séances</h2><div id="historyList" class="history-list"></div></section>
   </div>
 
   <div id="tab-calendar" class="tab-content hidden">
     <section class="panel">
-      <div class="cal-nav">
-        <button id="calPrevMonth" class="icon-btn">‹</button>
-        <h2 id="calMonthLabel">Juillet 2026</h2>
-        <button id="calNextMonth" class="icon-btn">›</button>
-      </div>
-      <div class="cal-weekdays"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-      <div id="calGrid" class="cal-grid"></div>
+      <h2>Calendrier des séances</h2>
+      <div id="calendarList" class="history-list"></div>
     </section>
-    <button id="resetCalendarBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le calendrier (test)</button>
-    <div style="display:flex;gap:.5rem;margin-top:.5rem;">
-      <button id="exportDataBtn" class="btn" style="flex:1;">Exporter mes données</button>
-      <button id="importDataBtn" class="btn" style="flex:1;">Importer</button>
-    </div>
-    <input type="file" id="importFileInput" accept=".json" style="display:none;">
-  <div id="tab-stats" class="tab-content hidden">
-    <section class="panel" id="streakPanel" style="text-align:center;">
-      <div class="counter-label">Série en cours</div>
-      <div style="font-size:2.2rem;font-weight:700;margin-top:.2rem;" id="streakValue">0 jour</div>
-      <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem;" id="streakBest">Meilleure série : 0 jour</div>
-    </section>
-
-    <section class="panel" style="margin-top:.6rem;">
-      <h2>Records personnels</h2>
-      <div style="display:flex;justify-content:space-around;gap:.5rem;margin-top:.5rem;">
-        <div style="text-align:center;">
-          <div class="counter-label">Meilleur set</div>
-          <strong style="font-size:1.5rem;" id="recordSet">0</strong>
-        </div>
-        <div style="text-align:center;">
-          <div class="counter-label">Meilleure séance</div>
-          <strong style="font-size:1.5rem;" id="recordSession">0</strong>
-        </div>
-        <div style="text-align:center;">
-          <div class="counter-label">Total cumulé</div>
-          <strong style="font-size:1.5rem;" id="totalCumulative">0</strong>
-        </div>
-      </div>
-    </section>
-
-    <section class="panel" style="margin-top:.6rem;">
-      <h2>Badges</h2>
-      <div id="badgesGrid" style="display:flex;gap:.6rem;margin-top:.6rem;overflow-x:auto;padding-bottom:.2rem;"></div>
-    </section>
-
-    <section class="panel" style="margin-top:.6rem;">
-      <h2>Évolution (30 derniers jours)</h2>
-      <canvas id="progressChart" width="400" height="180" style="width:100%;height:180px;margin-top:.5rem;"></canvas>
-    </section>
-
-    <section class="panel" style="margin-top:.6rem;">
-      <h2>Statistiques générales</h2>
-      <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;font-size:.85rem;">
-        <div style="display:flex;justify-content:space-between;"><span>Nombre de séances</span><strong id="statSessionCount">0</strong></div>
-        <div style="display:flex;justify-content:space-between;"><span>Moyenne par séance</span><strong id="statAverage">0</strong></div>
-        <div style="display:flex;justify-content:space-between;"><span>Meilleur jour</span><strong id="statBestDay">—</strong></div>
-      </div>
-    </section>
-  </div>
-
     <div id="calendarDetailModal" class="modal-overlay hidden">
       <div class="modal-box" style="max-width:420px;text-align:left;">
         <div class="counter-label" id="calendarDetailDate">Séance</div>
@@ -274,7 +181,6 @@ const targetRepsInput=$('targetReps'),restSecondsInput=$('restSeconds'),restPane
 let detector=null,lastKeypoints=null,cameraReady=false,sessionActive=false,restActive=false,calibrated=false,processing=false,rafId=null,stream=null,lastDetectAt=0;
 const DETECT_INTERVAL=300; // ms — bon compromis fluidité/fiabilité
 let setCount=0,totalCount=0,currentSet=1,completedSets=[],restTimer=null,restRemaining=0;
-let sessionStartTime=null,sessionTimerInterval=null;
 let baseline=null,state='up',downFrames=0,upFrames=0,lastRepAt=0,poseWasDetected=false,poseVisible=true,poseLostAt=0,pendingReps=0;
 const storageOk=typeof localStorage!=='undefined';const workouts=storageOk?JSON.parse(localStorage.getItem('pompes-workouts')||'[]'):[];
 function saveHistory(){if(storageOk)localStorage.setItem('pompes-workouts',JSON.stringify(workouts.slice(0,20)))}
@@ -287,291 +193,41 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     btn.classList.add('active');
     document.getElementById('tab-'+btn.dataset.tab).classList.remove('hidden');
     if(btn.dataset.tab==='calendar') renderCalendar();
-    if(btn.dataset.tab==='stats') renderStats();
   });
 });
-
-let calViewYear=new Date().getFullYear();
-let calViewMonth=new Date().getMonth();
-const calMonthNames=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-
-function workoutsForDate(iso){
-  return workouts.map((w,i)=>({...w,idx:i})).filter(w=>w.isoDate===iso);
-}
 
 function renderCalendar(){
-  const grid=document.getElementById('calGrid');
-  const label=document.getElementById('calMonthLabel');
-  if(!grid||!label) return;
-  label.textContent=calMonthNames[calViewMonth]+' '+calViewYear;
-  grid.innerHTML='';
-  const firstDay=new Date(calViewYear,calViewMonth,1);
-  let startOffset=firstDay.getDay()-1; if(startOffset<0) startOffset=6;
-  const daysInMonth=new Date(calViewYear,calViewMonth+1,0).getDate();
-  const todayIso=new Date().toISOString().slice(0,10);
-  for(let i=0;i<startOffset;i++){
-    const empty=document.createElement('div');
-    empty.className='cal-day empty';
-    grid.appendChild(empty);
+  const calendarList=document.getElementById('calendarList');
+  if(!calendarList) return;
+  calendarList.innerHTML='';
+  if(!workouts.length){
+    calendarList.innerHTML='<div class="calendar-item"><span>Aucune séance enregistrée</span><span>—</span></div>';
+    return;
   }
-  for(let d=1;d<=daysInMonth;d++){
-    const iso=`${calViewYear}-${String(calViewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dayWorkouts=workoutsForDate(iso);
-    const cell=document.createElement('div');
-    cell.className='cal-day'+(dayWorkouts.length?' has-workout':'')+(iso===todayIso?' today':'');
-    cell.innerHTML=`<span>${d}</span>`;
-    if(dayWorkouts.length){
-      if(dayWorkouts.length>1){
-        cell.innerHTML+=`<span class="cal-count-badge">${dayWorkouts.length}</span>`;
-      }
-      cell.innerHTML+='<span class="cal-dot"></span>';
-      cell.addEventListener('click',()=>openCalendarDetail(iso));
-    }
-    grid.appendChild(cell);
-  }
+  workouts.slice().reverse().forEach((w,revIdx)=>{
+    const realIdx = workouts.length-1-revIdx;
+    const item=document.createElement('div');
+    item.className='calendar-item';
+    item.innerHTML=`<span class="cal-date">${w.date}</span><span class="cal-total">${w.total} pompes</span>`;
+    item.addEventListener('click',()=>openCalendarDetail(realIdx));
+    calendarList.appendChild(item);
+  });
 }
 
-document.getElementById('calPrevMonth').addEventListener('click',()=>{
-  calViewMonth--; if(calViewMonth<0){calViewMonth=11;calViewYear--;}
-  renderCalendar();
-});
-document.getElementById('calNextMonth').addEventListener('click',()=>{
-  calViewMonth++; if(calViewMonth>11){calViewMonth=0;calViewYear++;}
-  renderCalendar();
-});
-
-function openCalendarDetail(iso){
-  const dayWorkouts=workoutsForDate(iso);
-  if(!dayWorkouts.length) return;
-  const dateLabel=new Date(iso+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  document.getElementById('calendarDetailDate').textContent=dateLabel.charAt(0).toUpperCase()+dateLabel.slice(1);
-  let html='';
-  dayWorkouts.forEach((w,wi)=>{
-    const maxReps=Math.max(...w.sets.map(s=>s.reps),1);
-    const bars=w.sets.map((s,si)=>`<div class="bar-item">
-        <div class="bar-value"><input type="number" min="0" data-workout-idx="${w.idx}" data-set-idx="${si}" class="edit-rep-input" value="${s.reps}" style="width:2.4rem;text-align:center;background:transparent;border:none;color:inherit;font-size:.75rem;font-weight:700;"></div>
-        <div class="bar-fill" style="height:${Math.max((s.reps/maxReps)*100,6)}%;"></div>
-        <div class="bar-label">S${s.set}</div>
-      </div>`).join('');
-    html+=`<div style="margin-bottom:1rem;${wi>0?'padding-top:.8rem;border-top:1px solid var(--border);':''}">
-      <div style="display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.8rem;">
-        <span>${w.date}${w.duration?' · '+w.duration:''}</span>
-        <strong style="color:var(--primary);" id="workoutTotal-${w.idx}">${w.total} pompes</strong>
-      </div>
-      <div class="bar-chart">${bars}</div>
-      <div style="display:flex;gap:.5rem;margin-top:.6rem;">
-        <button class="btn saveWorkoutEditBtn" data-workout-idx="${w.idx}" style="flex:1;font-size:.75rem;padding:.5rem;">Enregistrer</button>
-        <button class="btn btn-danger deleteWorkoutBtn" data-workout-idx="${w.idx}" style="flex:1;font-size:.75rem;padding:.5rem;">Supprimer</button>
-      </div>
-    </div>`;
-  });
-  document.getElementById('calendarDetailContent').innerHTML=html;
+function openCalendarDetail(idx){
+  const w=workouts[idx];
+  if(!w) return;
+  document.getElementById('calendarDetailDate').textContent=w.date;
+  const setsHtml=w.sets.map(s=>`<div style="display:flex;justify-content:space-between;padding:.4rem 0;border-bottom:1px solid var(--border);"><span>Set ${s.set}</span><strong>${s.reps} pompes</strong></div>`).join('');
+  document.getElementById('calendarDetailContent').innerHTML=`<div style="margin-bottom:.6rem;color:var(--muted);">Total: ${w.total} pompes · ${w.sets.length} set(s)</div>${setsHtml}`;
   document.getElementById('calendarDetailModal').classList.remove('hidden');
-
-  document.querySelectorAll('.saveWorkoutEditBtn').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const wIdx=Number(btn.dataset.workoutIdx);
-      const inputs=document.querySelectorAll(`.edit-rep-input[data-workout-idx="${wIdx}"]`);
-      let newTotal=0;
-      inputs.forEach(inp=>{
-        const sIdx=Number(inp.dataset.setIdx);
-        const val=Math.max(0,parseInt(inp.value)||0);
-        workouts[wIdx].sets[sIdx].reps=val;
-        newTotal+=val;
-      });
-      workouts[wIdx].total=newTotal;
-      saveHistory();
-      renderCalendar();
-      showToast('Séance mise à jour.');
-      openCalendarDetail(iso);
-    });
-  });
-  document.querySelectorAll('.deleteWorkoutBtn').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const wIdx=Number(btn.dataset.workoutIdx);
-      if(!confirm('Supprimer définitivement cette séance ?')) return;
-      workouts.splice(wIdx,1);
-      saveHistory();
-      renderCalendar();
-      renderStats();
-      showToast('Séance supprimée.');
-      const remaining=workoutsForDate(iso);
-      if(remaining.length){
-        openCalendarDetail(iso);
-      } else {
-        document.getElementById('calendarDetailModal').classList.add('hidden');
-      }
-    });
-  });
 }
 document.getElementById('closeCalendarDetail').addEventListener('click',()=>{
   document.getElementById('calendarDetailModal').classList.add('hidden');
 });
 
-function computeStreak(){
-  const isoDates=[...new Set(workouts.map(w=>w.isoDate))].sort();
-  if(!isoDates.length) return {current:0,best:0};
-  const dateSet=new Set(isoDates);
-  let best=0,current=0,run=0;
-  let prevDate=null;
-  isoDates.forEach(d=>{
-    if(prevDate){
-      const diff=(new Date(d)-new Date(prevDate))/86400000;
-      run = diff===1 ? run+1 : 1;
-    } else run=1;
-    if(run>best) best=run;
-    prevDate=d;
-  });
-  const todayIso=new Date().toISOString().slice(0,10);
-  const yestIso=new Date(Date.now()-86400000).toISOString().slice(0,10);
-  let checkDate = dateSet.has(todayIso)?todayIso:(dateSet.has(yestIso)?yestIso:null);
-  if(checkDate){
-    current=1;
-    let d=new Date(checkDate);
-    while(true){
-      d.setDate(d.getDate()-1);
-      const iso=d.toISOString().slice(0,10);
-      if(dateSet.has(iso)) current++; else break;
-    }
-  }
-  return {current,best};
-}
-
-const BADGE_LEVELS=[100,500,1000,2500,5000,10000];
-function computeStats(){
-  const totalCumulative=workouts.reduce((a,w)=>a+w.total,0);
-  const recordSession=workouts.length?Math.max(...workouts.map(w=>w.total)):0;
-  let recordSet=0;
-  workouts.forEach(w=>w.sets.forEach(s=>{if(s.reps>recordSet) recordSet=s.reps;}));
-  const sessionCount=workouts.length;
-  const average=sessionCount?Math.round(totalCumulative/sessionCount):0;
-  let bestDay={iso:null,total:0};
-  const byDay={};
-  workouts.forEach(w=>{byDay[w.isoDate]=(byDay[w.isoDate]||0)+w.total;});
-  Object.entries(byDay).forEach(([iso,total])=>{if(total>bestDay.total) bestDay={iso,total};});
-  return {totalCumulative,recordSession,recordSet,sessionCount,average,bestDay,byDay};
-}
-
-function renderStats(){
-  const streak=computeStreak();
-  document.getElementById('streakValue').textContent=`${streak.current} jour${streak.current>1?'s':''}`;
-  document.getElementById('streakBest').textContent=`Meilleure série : ${streak.best} jour${streak.best>1?'s':''}`;
-
-  const stats=computeStats();
-  document.getElementById('recordSet').textContent=stats.recordSet;
-  document.getElementById('recordSession').textContent=stats.recordSession;
-  document.getElementById('totalCumulative').textContent=stats.totalCumulative;
-  document.getElementById('statSessionCount').textContent=stats.sessionCount;
-  document.getElementById('statAverage').textContent=stats.average;
-  document.getElementById('statBestDay').textContent=stats.bestDay.iso?`${new Date(stats.bestDay.iso+'T00:00:00').toLocaleDateString('fr-FR')} (${stats.bestDay.total})`:'—';
-
-  const badgesGrid=document.getElementById('badgesGrid');
-  badgesGrid.innerHTML='';
-  BADGE_LEVELS.forEach(level=>{
-    const unlocked=stats.totalCumulative>=level;
-    const badge=document.createElement('div');
-    badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.35};`;
-    badge.innerHTML=`<div style="width:48px;height:48px;border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">${unlocked?'🏆':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">${level}</div>`;
-    badgesGrid.appendChild(badge);
-  });
-
-  renderProgressChart(stats.byDay);
-}
-
-function renderProgressChart(byDay){
-  const canvas=document.getElementById('progressChart');
-  if(!canvas) return;
-  const ctx=canvas.getContext('2d');
-  const dpr=window.devicePixelRatio||1;
-  const w=canvas.clientWidth,h=canvas.clientHeight;
-  canvas.width=w*dpr;canvas.height=h*dpr;ctx.scale(dpr,dpr);
-  ctx.clearRect(0,0,w,h);
-
-  const days=[];
-  for(let i=29;i>=0;i--){
-    const d=new Date(Date.now()-i*86400000);
-    days.push({iso:d.toISOString().slice(0,10),total:byDay[d.toISOString().slice(0,10)]||0});
-  }
-  const maxVal=Math.max(...days.map(d=>d.total),1);
-  const padding=8;
-  const stepX=(w-padding*2)/(days.length-1);
-
-  let primaryColor='#1c6e6e';try{primaryColor=window.getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()||primaryColor;}catch(e){}
-  ctx.strokeStyle=primaryColor;
-  ctx.lineWidth=2;
-  ctx.beginPath();
-  days.forEach((d,i)=>{
-    const x=padding+i*stepX;
-    const y=h-padding-((d.total/maxVal)*(h-padding*2));
-    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-  });
-  ctx.stroke();
-
-  ctx.fillStyle=ctx.strokeStyle;
-  days.forEach((d,i)=>{
-    if(d.total>0){
-      const x=padding+i*stepX;
-      const y=h-padding-((d.total/maxVal)*(h-padding*2));
-      ctx.beginPath();ctx.arc(x,y,2.2,0,Math.PI*2);ctx.fill();
-    }
-  });
-}
-document.getElementById('resetCalendarBtn').addEventListener('click',()=>{
-  if(!confirm('Réinitialiser tout le calendrier ? Cette action supprime toutes les séances enregistrées (test uniquement).')) return;
-  workouts.length=0;
-  saveHistory();
-  renderCalendar();renderStats();
-  document.getElementById('calendarDetailModal').classList.add('hidden');
-  showToast('Calendrier réinitialisé.');
-});
-document.getElementById('exportDataBtn').addEventListener('click',()=>{
-  const dataStr=JSON.stringify({workouts,restSeconds:document.getElementById('restSeconds').value,exportedAt:new Date().toISOString()},null,2);
-  const blob=new Blob([dataStr],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`pushup-backup-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();
-  setTimeout(()=>URL.revokeObjectURL(a.href),1200);
-  showToast('Données exportées.');
-});
-document.getElementById('importDataBtn').addEventListener('click',()=>{
-  document.getElementById('importFileInput').click();
-});
-document.getElementById('importFileInput').addEventListener('change',(e)=>{
-  const file=e.target.files[0];
-  if(!file) return;
-  const reader=new FileReader();
-  reader.onload=(ev)=>{
-    try{
-      const data=JSON.parse(ev.target.result);
-      if(!Array.isArray(data.workouts)) throw new Error('format invalide');
-      if(!confirm(`Importer ${data.workouts.length} séance(s) ? Cela remplacera vos données actuelles.`)) return;
-      workouts.length=0;
-      data.workouts.forEach(w=>workouts.push(w));
-      saveHistory();
-      renderCalendar();
-      renderHistory();renderStats();
-      showToast('Données importées avec succès.');
-    }catch(err){
-      showToast('Fichier invalide, import annulé.');
-    }
-  };
-  reader.readAsText(file);
-  e.target.value='';
-});
-
-
-
 function renderHistory(){historyList.innerHTML='';if(!workouts.length){historyList.innerHTML='<div class="history-item"><span>Aucune séance enregistrée</span><span>—</span></div>';return;}workouts.slice().reverse().forEach(w=>{const item=document.createElement('div');item.className='history-item';item.innerHTML=`<span>${w.date}</span><strong>${w.total} pompes · ${w.sets.length} sets</strong>`;historyList.appendChild(item);});}
-function refreshHeader(){setInfoEl.textContent=currentSet;countEl.textContent=setCount;totalCountEl.textContent=totalCount;updateProgressRing();}
-function updateProgressRing(){
-  const ring=document.getElementById('setProgressRing');
-  if(!ring) return;
-  const target=Number(document.getElementById('targetReps').value)||10;
-  const circumference=276.5;
-  const pct=Math.min(setCount/target,1);
-  ring.style.strokeDashoffset=String(circumference*(1-pct));
-}
+function refreshHeader(){setInfoEl.textContent=currentSet;countEl.textContent=setCount;totalCountEl.textContent=totalCount}
 function setChipsActive(v){document.querySelectorAll('.chip').forEach(ch=>ch.classList.toggle('active',Number(ch.dataset.rest)===Number(v)))} renderHistory(); refreshHeader(); setChipsActive(restSecondsInput.value);
 document.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{restSecondsInput.value=ch.dataset.rest;setChipsActive(ch.dataset.rest)})); restSecondsInput.addEventListener('input',()=>setChipsActive(restSecondsInput.value));
 function angle(a,b,c){const ab=[a.x-b.x,a.y-b.y],cb=[c.x-b.x,c.y-b.y];const dot=ab[0]*cb[0]+ab[1]*cb[1];const mag1=Math.hypot(...ab),mag2=Math.hypot(...cb);if(!mag1||!mag2)return null;return Math.acos(Math.max(-1,Math.min(1,dot/(mag1*mag2))))*180/Math.PI;}
@@ -695,14 +351,13 @@ window.addEventListener('pagehide',stopCameraResources);
 async function startCamera(){
   if(stream) return;
   try{
-    cameraStatus.textContent='Demande d\'accès caméra…';
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
     cameraStatus.textContent='Chargement du modèle…';
     await tf.setBackend('webgl');
     await tf.ready();
     if(!detector) detector=await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet,{modelType:poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING});
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
     video.setAttribute('playsinline',true); video.setAttribute('webkit-playsinline',true); video.srcObject=stream; await video.play();
-    cameraReady=true; localStorage.setItem('cameraGranted','1'); cameraStatus.textContent='Caméra active'; cameraDot.className='dot live'; movementLabel.textContent='Appuyez sur Démarrer'; const _eb=document.getElementById('enableCameraBtn'); if(_eb) _eb.classList.add('hidden');
+    cameraReady=true; cameraStatus.textContent='Caméra active'; cameraDot.className='dot live'; movementLabel.textContent='Appuyez sur Démarrer';
     toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent='Prêt';
     if(!rafId) rafId=requestAnimationFrame(detectLoop);
   }catch(e){
@@ -794,53 +449,14 @@ function confirmNextSet(){
 
 function pad(n){return String(n).padStart(2,'0')} function toICSDate(d){return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;}
 function downloadCalendarEvent(workout){const start=new Date(),end=new Date(start.getTime()+30*60000);const desc=`Total: ${workout.total} pompes\\nSets: ${workout.sets.map(s=>`Set ${s.set}: ${s.reps}`).join(' | ')}`;const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pompes//FR//EN','BEGIN:VEVENT',`UID:pompes-${Date.now()}@webapp`,`DTSTAMP:${toICSDate(new Date())}`,`DTSTART:${toICSDate(start)}`,`DTEND:${toICSDate(end)}`,`SUMMARY:Séance Pompes - ${workout.total} pompes`,`DESCRIPTION:${desc}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pompes-seance.ics';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200);}
-window.addEventListener('load',()=>{
-  const enableBtn=document.getElementById('enableCameraBtn');
-  if(localStorage.getItem('cameraGranted')==='1'){
-    if(enableBtn) enableBtn.classList.add('hidden');
-    startCamera();
-  } else {
-    if(enableBtn) enableBtn.classList.remove('hidden');
-  }
-});
-document.getElementById('enableCameraBtn').addEventListener('click',async()=>{
-  const enableBtn=document.getElementById('enableCameraBtn');
-  enableBtn.disabled=true; enableBtn.textContent='Activation…';
-  await startCamera();
-  enableBtn.disabled=false; enableBtn.textContent='Activer la caméra';
-});
-
-
-function formatDuration(ms){
-  const totalSec=Math.floor(ms/1000);
-  const m=Math.floor(totalSec/60);
-  const s=totalSec%60;
-  return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
-}
-function startSessionTimer(){
-  if(sessionStartTime) return;
-  sessionStartTime=Date.now();
-  sessionTimerInterval=setInterval(()=>{
-    const el=document.getElementById('sessionDuration');
-    if(el) el.textContent=formatDuration(Date.now()-sessionStartTime);
-  },1000);
-}
-function stopSessionTimer(){
-  if(sessionTimerInterval){clearInterval(sessionTimerInterval);sessionTimerInterval=null;}
-}
-function resetSessionTimer(){
-  stopSessionTimer();
-  sessionStartTime=null;
-  const el=document.getElementById('sessionDuration');
-  if(el) el.textContent='00:00';
-}
-toggleSessionBtn.addEventListener('click',()=>{if(!cameraReady||restActive)return;if(!sessionActive){if(!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
+window.addEventListener('load',()=>{startCamera();});
+toggleSessionBtn.addEventListener('click',()=>{if(!cameraReady||restActive)return;if(!sessionActive){if(!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent='Prêt';}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{phaseEl.textContent='Prêt';movementLabel.textContent='Repositionnez-vous';}});
 resetBtn.addEventListener('click',()=>{setCount=0;refreshHeader();resetTracking();});
-finishWorkoutBtn.addEventListener('click',()=>{if(setCount>0)completedSets.push({set:currentSet,reps:setCount});if(totalCount===0){showToast('Aucune pompe enregistrée pour cette séance.');return;}stopRest();sessionActive=false;const now=new Date();const isoDate=now.toISOString().slice(0,10);const durationMs=sessionStartTime?(Date.now()-sessionStartTime):0;const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,total:totalCount,duration:formatDuration(durationMs),sets:[...completedSets]};workouts.push(workout);saveHistory();renderHistory();renderCalendar();renderStats();downloadCalendarEvent(workout);showToast(`Séance enregistrée : ${totalCount} pompes sur ${completedSets.length} set(s).`,3500);setCount=0;totalCount=0;currentSet=1;completedSets=[];refreshHeader();resetTracking();resetSessionTimer();calibrated=false;toggleSessionBtn.textContent='Démarrer';movementLabel.textContent='Appuyez sur Démarrer';phaseEl.textContent='Terminé';});
+finishWorkoutBtn.addEventListener('click',()=>{if(setCount>0)completedSets.push({set:currentSet,reps:setCount});if(totalCount===0){showToast('Aucune pompe enregistrée pour cette séance.');return;}stopRest();sessionActive=false;const now=new Date();const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),total:totalCount,sets:[...completedSets]};workouts.push(workout);saveHistory();renderHistory();renderCalendar();downloadCalendarEvent(workout);showToast(`Séance enregistrée : ${totalCount} pompes sur ${completedSets.length} set(s).`,3500);setCount=0;totalCount=0;currentSet=1;completedSets=[];refreshHeader();resetTracking();calibrated=false;toggleSessionBtn.textContent='Démarrer';movementLabel.textContent='Appuyez sur Démarrer';phaseEl.textContent='Terminé';});
 </script>
 </body>
 </html>
