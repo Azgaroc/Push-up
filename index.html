@@ -695,11 +695,12 @@ window.addEventListener('pagehide',stopCameraResources);
 async function startCamera(){
   if(stream) return;
   try{
+    cameraStatus.textContent='Demande d\'accès caméra…';
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
     cameraStatus.textContent='Chargement du modèle…';
     await tf.setBackend('webgl');
     await tf.ready();
     if(!detector) detector=await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet,{modelType:poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING});
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
     video.setAttribute('playsinline',true); video.setAttribute('webkit-playsinline',true); video.srcObject=stream; await video.play();
     cameraReady=true; localStorage.setItem('cameraGranted','1'); cameraStatus.textContent='Caméra active'; cameraDot.className='dot live'; movementLabel.textContent='Appuyez sur Démarrer'; const _eb=document.getElementById('enableCameraBtn'); if(_eb) _eb.classList.add('hidden');
     toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent='Prêt';
