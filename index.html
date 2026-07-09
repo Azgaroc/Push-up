@@ -138,6 +138,7 @@
         <div class="pill"><span id="movementLabel">Mode léger</span></div>
       </div>
     </div>
+    <button id="enableCameraBtn" class="btn btn-primary" style="width:100%;margin-top:.6rem;">Activer la caméra</button>
     
     <div class="controls" style="margin-top:1rem;">
       <button id="toggleSession" class="btn btn-primary" disabled style="grid-column:1/-1;">Démarrer</button>
@@ -792,7 +793,21 @@ function confirmNextSet(){
 
 function pad(n){return String(n).padStart(2,'0')} function toICSDate(d){return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;}
 function downloadCalendarEvent(workout){const start=new Date(),end=new Date(start.getTime()+30*60000);const desc=`Total: ${workout.total} pompes\\nSets: ${workout.sets.map(s=>`Set ${s.set}: ${s.reps}`).join(' | ')}`;const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pompes//FR//EN','BEGIN:VEVENT',`UID:pompes-${Date.now()}@webapp`,`DTSTAMP:${toICSDate(new Date())}`,`DTSTART:${toICSDate(start)}`,`DTEND:${toICSDate(end)}`,`SUMMARY:Séance Pompes - ${workout.total} pompes`,`DESCRIPTION:${desc}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pompes-seance.ics';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200);}
-window.addEventListener('load',()=>{startCamera();});
+window.addEventListener('load',()=>{
+  const enableBtn=document.getElementById('enableCameraBtn');
+  if(localStorage.getItem('cameraGranted')==='1'){
+    if(enableBtn) enableBtn.classList.add('hidden');
+    startCamera();
+  } else {
+    if(enableBtn) enableBtn.classList.remove('hidden');
+  }
+});
+document.getElementById('enableCameraBtn').addEventListener('click',async()=>{
+  const enableBtn=document.getElementById('enableCameraBtn');
+  enableBtn.disabled=true; enableBtn.textContent='Activation…';
+  await startCamera();
+  enableBtn.disabled=false; enableBtn.textContent='Activer la caméra';
+});
 
 
 function formatDuration(ms){
