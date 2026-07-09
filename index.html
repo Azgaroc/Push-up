@@ -1,4 +1,4 @@
-<!-- v40 -->
+<!-- v43 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -103,7 +103,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:50;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v40</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v43</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
@@ -273,6 +273,7 @@
       <button id="importDataBtn" class="btn" style="flex:1;">Importer</button>
     </div>
     <input type="file" id="importFileInput" accept=".json" style="display:none;">
+  </div>
   <div id="tab-stats" class="tab-content hidden">
     <section class="panel" id="streakPanel" style="text-align:center;">
       <div class="counter-label">Série en cours</div>
@@ -326,8 +327,6 @@
       </div>
     </div>
   </div>
-  
-</div>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.20.0/dist/tf-core.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@4.20.0/dist/tf-converter.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.20.0/dist/tf-backend-webgl.min.js" crossorigin="anonymous"></script>
@@ -624,7 +623,7 @@ document.getElementById('closeCalendarDetail').addEventListener('click',()=>{
 });
 
 function computeStreak(){
-  const isoDates=[...new Set(workouts.map(w=>w.isoDate))].sort();
+  const isoDates=[...new Set(workouts.filter(w=>w.isoDate).map(w=>w.isoDate))].sort();
   if(!isoDates.length) return {current:0,best:0};
   const dateSet=new Set(isoDates);
   let best=0,current=0,run=0;
@@ -654,20 +653,21 @@ function computeStreak(){
 
 const BADGE_LEVELS=[100,500,1000,2500,5000,10000];
 function computeStats(){
-  const totalCumulative=workouts.reduce((a,w)=>a+w.total,0);
-  const recordSession=workouts.length?Math.max(...workouts.map(w=>w.total)):0;
+  const totalCumulative=workouts.reduce((a,w)=>a+(w.total||0),0);
+  const recordSession=workouts.length?Math.max(...workouts.map(w=>w.total||0)):0;
   let recordSet=0;
-  workouts.forEach(w=>w.sets.forEach(s=>{if(s.reps>recordSet) recordSet=s.reps;}));
+  workouts.forEach(w=>(w.sets||[]).forEach(s=>{if(s.reps>recordSet) recordSet=s.reps;}));
   const sessionCount=workouts.length;
   const average=sessionCount?Math.round(totalCumulative/sessionCount):0;
   let bestDay={iso:null,total:0};
   const byDay={};
-  workouts.forEach(w=>{byDay[w.isoDate]=(byDay[w.isoDate]||0)+w.total;});
+  workouts.forEach(w=>{ if(!w.isoDate) return; byDay[w.isoDate]=(byDay[w.isoDate]||0)+(w.total||0); });
   Object.entries(byDay).forEach(([iso,total])=>{if(total>bestDay.total) bestDay={iso,total};});
   return {totalCumulative,recordSession,recordSet,sessionCount,average,bestDay,byDay};
 }
 
 function renderStats(){
+  try{
   const streak=computeStreak();
   document.getElementById('streakValue').textContent=`${streak.current} jour${streak.current>1?'s':''}`;
   document.getElementById('streakBest').textContent=`Meilleure série : ${streak.best} jour${streak.best>1?'s':''}`;
@@ -691,6 +691,10 @@ function renderStats(){
   });
 
   renderProgressChart(stats.byDay);
+  }catch(e){
+    console.error('renderStats error:', e);
+    showToast('Erreur affichage stats : '+e.message,4000);
+  }
 }
 
 function renderProgressChart(byDay){
@@ -834,7 +838,7 @@ function processRep(detected){
         lastRepAt=now;
         phaseEl.textContent='Haut';
         movementLabel.textContent='Pose détectée';
-        setCount++;totalCount++;refreshHeader();
+        setCount++;totalCount++;refreshHeader();beep(700,90);
         if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint';
       } else {
         phaseEl.textContent='Haut';
@@ -948,30 +952,49 @@ function beep(freq=880,duration=150){
 }
 function playCountdownBeep(secondsLeft){
   if(secondsLeft>0) beep(880,150);
-  else { beep(1200,120); setTimeout(()=>beep(1200,120),160); setTimeout(()=>beep(1200,120),320); setTimeout(()=>beep(1200,120),480); }
+  else { for(let i=0;i<10;i++){ setTimeout(()=>beep(1200,120), i*180); } }
 }
 
+let restTargetTime=null;let restBeepedSeconds=new Set();
 function startRest(){
   restActive=true;sessionActive=false;toggleSessionBtn.textContent='Démarrer';
   restRemaining=Number(restSecondsInput.value||60);
+  restTargetTime=Date.now()+restRemaining*1000;
+  restBeepedSeconds=new Set();
   restDisplay.textContent=formatRest(restRemaining);
   restText.textContent=`Repos avant le set ${currentSet+1}`;
   restPanel.classList.remove('hidden');
   clearInterval(restTimer);
-  restTimer=setInterval(()=>{
-    restRemaining--;
-    restDisplay.textContent=formatRest(Math.max(0,restRemaining));
-    if(restRemaining<=3 && restRemaining>=0){
+  restTimer=setInterval(restTick,250);
+}
+function restTick(){
+  if(!restTargetTime) return;
+  const remainingMs=restTargetTime-Date.now();
+  const remainingSec=Math.max(0,Math.ceil(remainingMs/1000));
+  if(remainingSec!==restRemaining){
+    restRemaining=remainingSec;
+    restDisplay.textContent=formatRest(restRemaining);
+    if(restRemaining<=3 && restRemaining>=0 && !restBeepedSeconds.has(restRemaining)){
+      restBeepedSeconds.add(restRemaining);
       playCountdownBeep(restRemaining);
       if(navigator.vibrate) navigator.vibrate(restRemaining===0?[120,80,120,80,120,80,200]:100);
     }
-    if(restRemaining<=0){
-      clearInterval(restTimer);
-      restText.textContent='Pause terminée';
-      autoResumeAfterRest();
-    }
-  },1000);
+  }
+  if(remainingMs<=0){
+    clearInterval(restTimer);
+    restTargetTime=null;
+    restText.textContent='Pause terminée';
+    autoResumeAfterRest();
+  }
 }
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden && restActive && restTargetTime){
+    restTick();
+  }
+  if(!document.hidden && sessionActive && sessionStartTime){
+    updateSessionDurationDisplay();
+  }
+});
 function autoResumeAfterRest(){
   setTimeout(()=>{
     stopRest();
@@ -987,18 +1010,26 @@ function autoResumeAfterRest(){
 }
 
 function stopRest(){restActive=false;clearInterval(restTimer);restPanel.classList.add('hidden');}
-function openValidateModal(){
+let validateModalMode='nextSet';
+function openValidateModal(mode='nextSet'){
+  validateModalMode=mode;
   pendingReps = setCount;
   document.getElementById('validateCount').textContent = pendingReps;
+  document.getElementById('confirmSet').textContent = mode==='finish' ? "Valider et terminer l'entraînement" : 'Valider et passer au repos';
   document.getElementById('validateModal').classList.remove('hidden');
 }
 function closeValidateModal(){
   document.getElementById('validateModal').classList.add('hidden');
 }
 function nextSet(){
-  openValidateModal();
+  openValidateModal('nextSet');
 }
 function confirmNextSet(){
+  if(validateModalMode==='finish'){
+    closeValidateModal();
+    finalizeWorkout(pendingReps);
+    return;
+  }
   completedSets.push({set:currentSet,reps:pendingReps});
   totalCount = totalCount - setCount + pendingReps;
   currentSet++;
@@ -1020,13 +1051,14 @@ function formatDuration(ms){
   const s=totalSec%60;
   return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
 }
+function updateSessionDurationDisplay(){
+  const el=document.getElementById('sessionDuration');
+  if(el && sessionStartTime) el.textContent=formatDuration(Date.now()-sessionStartTime);
+}
 function startSessionTimer(){
   if(sessionStartTime) return;
   sessionStartTime=Date.now();
-  sessionTimerInterval=setInterval(()=>{
-    const el=document.getElementById('sessionDuration');
-    if(el) el.textContent=formatDuration(Date.now()-sessionStartTime);
-  },1000);
+  sessionTimerInterval=setInterval(updateSessionDurationDisplay,1000);
 }
 function stopSessionTimer(){
   if(sessionTimerInterval){clearInterval(sessionTimerInterval);sessionTimerInterval=null;}
@@ -1044,12 +1076,21 @@ document.getElementById('decrementRep').addEventListener('click',()=>{pendingRep
 document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent='Prêt';}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{phaseEl.textContent='Prêt';movementLabel.textContent='Repositionnez-vous';}});
 resetBtn.addEventListener('click',()=>{setCount=0;refreshHeader();resetTracking();});
 finishWorkoutBtn.addEventListener('click',()=>{
-  if(setCount>0)completedSets.push({set:currentSet,reps:setCount});
-  if(totalCount===0){
-    completedSets=[];
+  if(totalCount===0 && setCount===0){
     sessionActive=false;
     toggleSessionBtn.textContent='Démarrer';
     phaseEl.textContent='Prêt';
+    showToast('Aucune pompe enregistrée. Appuyez sur Démarrer pour reprendre.',3000);
+    return;
+  }
+  openValidateModal('finish');
+});
+function finalizeWorkout(finalSetReps){
+  if(finalSetReps>0)completedSets.push({set:currentSet,reps:finalSetReps});
+  totalCount = totalCount - setCount + finalSetReps;
+  if(totalCount<=0){
+    completedSets=[];sessionActive=false;
+    toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Prêt';
     showToast('Aucune pompe enregistrée. Appuyez sur Démarrer pour reprendre.',3000);
     return;
   }
@@ -1082,7 +1123,7 @@ finishWorkoutBtn.addEventListener('click',()=>{
   try{renderCalendar();}catch(e){console.error('renderCalendar error',e);}
   try{renderStats();}catch(e){console.error('renderStats error',e);}
   try{setTimeout(()=>{downloadCalendarEvent(workout);},300);}catch(e){console.error('downloadCalendarEvent error',e);}
-});
+}
 document.getElementById('closeDoneModal').addEventListener('click',()=>{document.getElementById('workoutDoneModal').classList.add('hidden');});
 </script>
 </body>
