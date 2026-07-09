@@ -1,4 +1,4 @@
-<!-- v35 -->
+<!-- v40 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -103,7 +103,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:50;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v35</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v40</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
@@ -181,6 +181,25 @@
   </div>
 
     
+  </div>
+
+  <div id="workoutDoneModal" class="modal-overlay hidden">
+    <div class="modal-box" style="text-align:center;">
+      <div style="font-size:2.2rem;">🎉</div>
+      <div class="counter-label" style="margin-top:.4rem;">Séance terminée !</div>
+      <div style="display:flex;justify-content:space-around;gap:1rem;margin-top:1rem;">
+        <div>
+          <div style="color:var(--muted);font-size:.8rem;">Pompes totales</div>
+          <div id="doneModalTotal" style="font-size:2rem;font-weight:700;color:var(--primary);">0</div>
+        </div>
+        <div>
+          <div style="color:var(--muted);font-size:.8rem;">Durée</div>
+          <div id="doneModalDuration" style="font-size:2rem;font-weight:700;">00:00</div>
+        </div>
+      </div>
+      <div id="doneModalSets" style="margin-top:.8rem;color:var(--muted);font-size:.85rem;"></div>
+      <button id="closeDoneModal" class="btn btn-primary" style="width:100%;margin-top:1.3rem;">Fermer</button>
+    </div>
   </div>
 
   
@@ -328,7 +347,7 @@ function showToast(msg,duration=2600){
 const countEl=$('count'),totalCountEl=$('totalCount'),setInfoEl=$('setInfo'),phaseEl=$('phase'),cameraStatus=$('cameraStatus'),cameraDot=$('cameraDot'),movementLabel=$('movementLabel');
 const toggleSessionBtn=$('toggleSession'),nextSetBtn=$('nextSet'),finishWorkoutBtn=$('finishWorkout'),resetBtn=$('resetCount');
 const targetRepsInput=$('targetReps'),restSecondsInput=$('restSeconds'),restPanel=$('restPanel'),restDisplay=$('restDisplay'),restText=$('restText'),skipRestBtn=$('skipRest'),resumeAfterRestBtn=$('resumeAfterRest'),historyList=$('historyList');
-let detector=null,lastKeypoints=null,cameraReady=false,sessionActive=false,restActive=false,calibrated=false,processing=false,rafId=null,stream=null,lastDetectAt=0;
+let detector=null,lastKeypoints=null,cameraReady=false,manualMode=false,sessionActive=false,restActive=false,calibrated=false,processing=false,rafId=null,stream=null,lastDetectAt=0;
 const DETECT_INTERVAL=300; // ms — bon compromis fluidité/fiabilité
 let setCount=0,totalCount=0,currentSet=1,completedSets=[],restTimer=null,restRemaining=0;
 let sessionStartTime=null,sessionTimerInterval=null;
@@ -768,8 +787,8 @@ function updateProgressRing(){
   const pct=Math.min(setCount/target,1);
   ring.style.strokeDashoffset=String(circumference*(1-pct));
 }
-function setChipsActive(v){document.querySelectorAll('.chip').forEach(ch=>ch.classList.toggle('active',Number(ch.dataset.rest)===Number(v)))} refreshHeader(); setChipsActive(restSecondsInput.value);
-document.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{restSecondsInput.value=ch.dataset.rest;setChipsActive(ch.dataset.rest)})); restSecondsInput.addEventListener('input',()=>setChipsActive(restSecondsInput.value));
+function setChipsActive(v){document.querySelectorAll('.chip[data-rest]').forEach(ch=>ch.classList.toggle('active',Number(ch.dataset.rest)===Number(v)))} refreshHeader(); setChipsActive(restSecondsInput.value);
+document.querySelectorAll('.chip[data-rest]').forEach(ch=>ch.addEventListener('click',()=>{restSecondsInput.value=ch.dataset.rest;setChipsActive(ch.dataset.rest)})); restSecondsInput.addEventListener('input',()=>setChipsActive(restSecondsInput.value));
 function angle(a,b,c){const ab=[a.x-b.x,a.y-b.y],cb=[c.x-b.x,c.y-b.y];const dot=ab[0]*cb[0]+ab[1]*cb[1];const mag1=Math.hypot(...ab),mag2=Math.hypot(...cb);if(!mag1||!mag2)return null;return Math.acos(Math.max(-1,Math.min(1,dot/(mag1*mag2))))*180/Math.PI;}
 function kp(list,name){const p=list.find(k=>k.name===name);return (p&&p.score>=0.35)?{x:p.x/video.videoWidth,y:p.y/video.videoHeight,visibility:p.score}:null;}
 function getPoseMetrics(keypoints){
@@ -903,7 +922,10 @@ async function startCamera(){
   }catch(e){
     cameraStatus.textContent='Accès refusé';cameraDot.className='dot warn';
     stopCameraResources();
-    alert('Impossible d’accéder à la caméra ou de charger le modèle. Vérifiez Safari, l’autorisation caméra, le HTTPS et votre connexion.');
+    manualMode=true;
+    toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent='Prêt';
+    movementLabel.textContent='Mode manuel (sans caméra)';
+    showToast('Caméra indisponible : passage en mode manuel. Utilisez les boutons +/- pour compter vos pompes.',4500);
   }
 }
 function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;phaseEl.textContent='Prêt';}
@@ -1015,13 +1037,53 @@ function resetSessionTimer(){
   const el=document.getElementById('sessionDuration');
   if(el) el.textContent='00:00';
 }
-toggleSessionBtn.addEventListener('click',()=>{if(!cameraReady||restActive)return;if(!sessionActive){if(!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
+toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(cameraReady&&!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent='Prêt';}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{phaseEl.textContent='Prêt';movementLabel.textContent='Repositionnez-vous';}});
 resetBtn.addEventListener('click',()=>{setCount=0;refreshHeader();resetTracking();});
-finishWorkoutBtn.addEventListener('click',()=>{if(setCount>0)completedSets.push({set:currentSet,reps:setCount});if(totalCount===0){showToast('Aucune pompe enregistrée pour cette séance.');return;}stopRest();sessionActive=false;const now=new Date();const isoDate=now.toISOString().slice(0,10);const durationMs=sessionStartTime?(Date.now()-sessionStartTime):0;const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,total:totalCount,duration:formatDuration(durationMs),sets:[...completedSets]};workouts.push(workout);saveHistory();renderHistory();renderCalendar();renderStats();downloadCalendarEvent(workout);showToast(`Séance enregistrée : ${totalCount} pompes sur ${completedSets.length} set(s).`,3500);setCount=0;totalCount=0;currentSet=1;completedSets=[];refreshHeader();resetTracking();resetSessionTimer();calibrated=false;toggleSessionBtn.textContent='Démarrer';movementLabel.textContent='Appuyez sur Démarrer';phaseEl.textContent='Terminé';});
+finishWorkoutBtn.addEventListener('click',()=>{
+  if(setCount>0)completedSets.push({set:currentSet,reps:setCount});
+  if(totalCount===0){
+    completedSets=[];
+    sessionActive=false;
+    toggleSessionBtn.textContent='Démarrer';
+    phaseEl.textContent='Prêt';
+    showToast('Aucune pompe enregistrée. Appuyez sur Démarrer pour reprendre.',3000);
+    return;
+  }
+  stopRest();sessionActive=false;
+  const now=new Date();
+  const isoDate=now.toISOString().slice(0,10);
+  const durationMs=sessionStartTime?(Date.now()-sessionStartTime):0;
+  const finalTotal=totalCount;
+  const finalSetsCount=completedSets.length;
+  const finalDurationText=formatDuration(durationMs);
+  const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,total:finalTotal,duration:finalDurationText,sets:[...completedSets]};
+
+  setCount=0;totalCount=0;currentSet=1;completedSets=[];
+  refreshHeader();
+  resetTracking();
+  resetSessionTimer();
+  calibrated=false;
+  toggleSessionBtn.textContent='Démarrer';
+  movementLabel.textContent='Appuyez sur Démarrer';
+  phaseEl.textContent='Terminé';
+
+  document.getElementById('doneModalTotal').textContent=finalTotal;
+  document.getElementById('doneModalDuration').textContent=finalDurationText;
+  document.getElementById('doneModalSets').textContent=`${finalSetsCount} set(s) réalisé(s)`;
+  document.getElementById('workoutDoneModal').classList.remove('hidden');
+
+  workouts.push(workout);
+  try{saveHistory();}catch(e){console.error('saveHistory error',e);}
+  try{renderHistory();}catch(e){console.error('renderHistory error',e);}
+  try{renderCalendar();}catch(e){console.error('renderCalendar error',e);}
+  try{renderStats();}catch(e){console.error('renderStats error',e);}
+  try{setTimeout(()=>{downloadCalendarEvent(workout);},300);}catch(e){console.error('downloadCalendarEvent error',e);}
+});
+document.getElementById('closeDoneModal').addEventListener('click',()=>{document.getElementById('workoutDoneModal').classList.add('hidden');});
 </script>
 </body>
 </html>
