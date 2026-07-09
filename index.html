@@ -495,7 +495,8 @@ function renderProgressChart(byDay){
   const padding=8;
   const stepX=(w-padding*2)/(days.length-1);
 
-  ctx.strokeStyle=getComputedStyle(document.documentElement).getPropertyValue('--primary')||'#1c6e6e';
+  let primaryColor='#1c6e6e';try{primaryColor=window.getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()||primaryColor;}catch(e){}
+  ctx.strokeStyle=primaryColor;
   ctx.lineWidth=2;
   ctx.beginPath();
   days.forEach((d,i)=>{
@@ -570,7 +571,7 @@ function updateProgressRing(){
   const pct=Math.min(setCount/target,1);
   ring.style.strokeDashoffset=String(circumference*(1-pct));
 }
-function setChipsActive(v){document.querySelectorAll('.chip').forEach(ch=>ch.classList.toggle('active',Number(ch.dataset.rest)===Number(v)))} renderHistory(); refreshHeader(); setChipsActive(restSecondsInput.value); renderStats();
+function setChipsActive(v){document.querySelectorAll('.chip').forEach(ch=>ch.classList.toggle('active',Number(ch.dataset.rest)===Number(v)))} renderHistory(); refreshHeader(); setChipsActive(restSecondsInput.value);
 document.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{restSecondsInput.value=ch.dataset.rest;setChipsActive(ch.dataset.rest)})); restSecondsInput.addEventListener('input',()=>setChipsActive(restSecondsInput.value));
 function angle(a,b,c){const ab=[a.x-b.x,a.y-b.y],cb=[c.x-b.x,c.y-b.y];const dot=ab[0]*cb[0]+ab[1]*cb[1];const mag1=Math.hypot(...ab),mag2=Math.hypot(...cb);if(!mag1||!mag2)return null;return Math.acos(Math.max(-1,Math.min(1,dot/(mag1*mag2))))*180/Math.PI;}
 function kp(list,name){const p=list.find(k=>k.name===name);return (p&&p.score>=0.35)?{x:p.x/video.videoWidth,y:p.y/video.videoHeight,visibility:p.score}:null;}
