@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#01696f" />
+  <title>Push-Up</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <link rel="apple-touch-icon" href="logo.jpg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Push-Up">
+  <meta name="theme-color" content="#1c6e6e">
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <style>
+    :root,[data-theme="light"]{--bg:#f7f6f2;--surface:#f9f8f5;--surface2:#fbfbf9;--text:#28251d;--muted:#66645f;--inv:#f9f8f4;--primary:#01696f;--border:rgba(40,37,29,.1);--radius:1.2rem;--pill:999px}
+    [data-theme="dark"]{--bg:#171614;--surface:#1c1b19;--surface2:#201f1d;--text:#ece9e3;--muted:#b4b1aa;--inv:#171614;--primary:#4f98a3;--border:rgba(236,233,227,.12)}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent} html,body{touch-action:manipulation;overscroll-behavior:none} body{margin:0;font-family:'Satoshi',system-ui,sans-serif;background:var(--bg);color:var(--text)} input,button{font:inherit} input,select,textarea{font-size:16px}
+    .app{max-width:580px;margin:0 auto;padding:max(env(safe-area-inset-top),1rem) 1rem max(env(safe-area-inset-bottom),1rem)}
+    .topbar,.counter-wrap,.camera-overlay,.two{display:flex;justify-content:space-between;align-items:center;gap:.8rem}.brand{display:flex;gap:.8rem;align-items:center}.logo{width:42px;height:42px;border-radius:14px;background:var(--primary);display:grid;place-items:center;color:var(--inv)}
+    .logo svg{width:24px;height:24px}.topbar{margin-bottom:1rem}.brand h1{margin:0;font-size:1.35rem}.brand p{margin:.15rem 0 0;font-size:.82rem;color:var(--muted)}
+    .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem}.counter-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)} .counter{font-size:clamp(4rem,18vw,7rem);font-weight:700;line-height:.92}
+    .camera-shell{position:relative;overflow:hidden;border-radius:1rem;background:#0f1113;aspect-ratio:3/4;margin-top:1rem}.camera-shell video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.camera-shell canvas{display:none}
+    .camera-overlay{position:absolute;left:.8rem;right:.8rem;bottom:.8rem;z-index:2}.pill{display:inline-flex;align-items:center;gap:.45rem;border-radius:var(--pill);padding:.45rem .75rem;background:rgba(17,20,24,.62);backdrop-filter:blur(10px);color:#fff;font-size:.78rem}.dot{width:.55rem;height:.55rem;border-radius:50%;background:#9ca3af}.dot.live{background:#22c55e}.dot.warn{background:#f59e0b}
+    .grid,.controls{display:grid;gap:.75rem}.controls,.grid,.two-col{grid-template-columns:1fr 1fr}.btn,.chip,.icon-btn,input{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--pill)} .btn{min-height:52px;padding:.9rem 1rem;font-weight:700}.btn-primary{background:var(--primary);color:var(--inv);border:none}.btn-danger{background:var(--text);color:var(--inv);border:none}.icon-btn{width:48px;height:48px}
+    .metric span,label,h2{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.35rem}.metric strong{font-size:1.45rem} .metric{padding:1rem} input{width:100%;min-height:48px;padding:0 .9rem;background:var(--surface2)}
+    .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}.chip{padding:.65rem .9rem;font-weight:700}.chip.active{background:var(--primary);color:var(--inv);border-color:transparent}
+    .history-list{display:grid;gap:.6rem}.history-item{padding:.85rem 1rem;border-radius:1rem;background:var(--surface2);display:flex;justify-content:space-between;gap:1rem;font-size:.92rem}.hidden{display:none!important}.rest-time{font-size:clamp(2.8rem,12vw,4rem);font-weight:700}.help p,.help li{color:var(--muted);font-size:.92rem}
+    .modal-overlay{position:fixed;inset:0;background:rgba(10,10,10,.6);display:flex;align-items:center;justify-content:center;z-index:100;padding:1.5rem;}
+    .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.6rem;max-width:360px;width:100%;text-align:center;}
+    .modal-count{font-size:clamp(3.5rem,16vw,5rem);font-weight:700;line-height:1;margin:.6rem 0;}
+    .modal-stepper{display:flex;align-items:center;justify-content:center;gap:1.2rem;margin-top:.6rem;}
+    .stepper-btn{font-size:1.6rem;font-weight:700;width:56px;height:56px;}
+    .modal-count-label{font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+    .tabs-bar{display:flex;gap:.5rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--pill);padding:.3rem;margin-bottom:1rem;}
+    .tab-btn{flex:1;border:none;background:transparent;color:var(--muted);padding:.7rem 1rem;border-radius:var(--pill);font-weight:700;font-size:.88rem;}
+    .tab-btn.active{background:var(--primary);color:var(--inv);}
+    .tab-content.hidden{display:none;}
+    .calendar-item{padding:.85rem 1rem;border-radius:1rem;background:var(--surface2);display:flex;justify-content:space-between;align-items:center;gap:1rem;font-size:.92rem;cursor:pointer;}
+    .calendar-item:active{opacity:.7;}
+    .calendar-item .cal-date{font-weight:700;}
+    .calendar-item .cal-total{color:var(--primary);font-weight:700;}
+
+
+  
+    /* Mode compact iPhone 14 (tient sur un seul écran) */
+    html,body{height:100%;}
+    .app{max-width:430px;height:100dvh;display:flex;flex-direction:column;padding:.5rem .7rem calc(.5rem + env(safe-area-inset-bottom));box-sizing:border-box;overflow:hidden;}
+    .topbar{margin-bottom:.4rem;}
+    .logo{width:32px;height:32px;border-radius:10px;}
+    .topbar h1{font-size:1rem;margin:0;line-height:1.1;}
+    .topbar p{font-size:.68rem;margin:0;}
+    .tabs-bar{padding:.2rem;margin-bottom:.5rem;}
+    .tab-btn{padding:.45rem .6rem;font-size:.78rem;}
+    .tab-content{flex:1;display:flex;flex-direction:column;overflow-y:auto;min-height:0;}
+    .tab-content.hidden{display:none;}
+    .panel{padding:.6rem .7rem;border-radius:.9rem;}
+    .panel h2{font-size:.85rem;margin:0 0 .3rem;}
+    section.panel{margin-top:.5rem !important;}
+    section.panel:first-child{margin-top:0 !important;}
+    .counter-label{font-size:.62rem;}
+    .counter{font-size:clamp(2rem,10vw,3rem) !important;line-height:1;}
+    #setInfo{font-size:.85rem;}
+    #phase{font-size:.7rem;}
+    .camera-shell{margin-top:.4rem !important;}
+    .camera-overlay{gap:.4rem;}
+    .pill{font-size:.65rem;padding:.3rem .55rem;}
+    .controls{margin-top:.5rem !important;gap:.4rem;}
+    .btn{padding:.55rem .6rem;font-size:.78rem;border-radius:.8rem;}
+    .rest-time{font-size:1.8rem;}
+    #restText{font-size:.75rem;}
+    .metric strong{font-size:1.2rem !important;}
+    .metric span{font-size:.75rem;}
+    label[for="restSeconds"]{font-size:.75rem;}
+    #restSeconds{font-size:.85rem;padding:.4rem;}
+    .chips{gap:.3rem;margin-top:.4rem;}
+    .chip{font-size:.68rem;padding:.35rem .55rem;}
+    #historyList{max-height:70px;overflow-y:auto;}
+    .history-item{font-size:.72rem;padding:.4rem .6rem;}
+    #calendarList{max-height:none;}
+    .calendar-item{font-size:.78rem;padding:.6rem .7rem;}
+
+    .cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;}
+    .cal-nav h2{font-size:.85rem;margin:0;}
+    .cal-nav .icon-btn{width:28px;height:28px;font-size:1rem;}
+    .cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:.62rem;color:var(--muted);margin-bottom:.2rem;}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.25rem;}
+    .cal-day{aspect-ratio:1/1;border-radius:.5rem;background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.68rem;position:relative;cursor:default;}
+    .cal-day.empty{background:transparent;}
+    .cal-day.has-workout{cursor:pointer;background:color-mix(in srgb, var(--primary) 18%, var(--surface2));border:1px solid var(--primary);}
+    .cal-day.today{outline:2px solid var(--primary);}
+    .cal-day .cal-dot{width:6px;height:6px;border-radius:50%;background:var(--primary);position:absolute;bottom:4px;}
+    .cal-day .cal-count-badge{position:absolute;top:2px;right:2px;font-size:.5rem;background:var(--primary);color:var(--inv);border-radius:50%;width:13px;height:13px;display:flex;align-items:center;justify-content:center;}
+    .bar-chart{display:flex;align-items:flex-end;gap:.4rem;height:110px;margin-top:.6rem;padding:0 .2rem;}
+    .bar-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:.25rem;}
+    .bar-fill{width:100%;background:var(--primary);border-radius:.3rem .3rem 0 0;min-height:4px;}
+    .bar-value{font-size:.65rem;font-weight:700;}
+    .bar-label{font-size:.6rem;color:var(--muted);}
+</style>
+</head>
+<body>
+<div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:50;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p>v22 · Logo custom + chronomètre séance</p></div></div>
+    <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
+  </header>
+
+  <div class="tabs-bar">
+    <button class="tab-btn active" data-tab="training">Entraînement</button>
+    <button class="tab-btn" data-tab="calendar">Calendrier</button>
+  </div>
+
+  <div id="tab-training" class="tab-content">
+  <section class="panel">
+    <div class="counter-wrap">
+      <div><div class="counter-label">Pompes du set</div><div class="counter" id="count">0</div></div>
+      <div style="text-align:right;color:var(--muted)">Set<br><strong id="setInfo" style="color:var(--text)">1</strong><br><span id="phase">Prêt</span></div>
+    </div>
+    <div class="camera-shell" style="aspect-ratio:auto;height:auto;background:transparent;">
+      <video id="video" autoplay muted playsinline webkit-playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
+      <canvas id="work" style="display:none;"></canvas>
+      <div class="camera-overlay" style="position:static;">
+        <div class="pill"><span class="dot" id="cameraDot"></span><span id="cameraStatus">Caméra inactive</span></div>
+        <div class="pill"><span id="movementLabel">Mode léger</span></div>
+      </div>
+    </div>
+    
+    <div class="controls" style="margin-top:1rem;">
+      <button id="toggleSession" class="btn btn-primary" disabled style="grid-column:1/-1;">Démarrer</button>
+      <button id="nextSet" class="btn" disabled>Set suivant</button>
+      <button id="finishWorkout" class="btn btn-danger" disabled>Fin entraînement</button>
+      <button id="resetCount" class="btn" style="grid-column:1/-1">Réinitialiser le set</button>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="restPanel" style="margin-top:1rem;text-align:center;">
+    <h2 style="margin-bottom:.6rem;">Minuteur de repos</h2>
+    <div class="counter-label">Pause en cours</div><div class="rest-time" id="restDisplay">01:00</div><div id="restText">Reprenez votre souffle.</div>
+    <div class="controls" style="margin-top:1rem;"><button id="skipRest" class="btn">Passer la pause</button><button id="resumeAfterRest" class="btn btn-primary">Reprendre</button></div>
+  </section>
+
+  <section class="panel" style="margin-top:1rem;">
+    <div style="display:flex;justify-content:space-around;gap:.5rem;"><div class="metric" style="text-align:center;"><span>Total séance</span><strong id="totalCount" style="font-size:1.8rem;">0</strong></div><div class="metric" style="text-align:center;"><span>Durée</span><strong id="sessionDuration" style="font-size:1.8rem;">00:00</strong></div></div>
+  </section>
+
+  <section class="panel" style="margin-top:1rem;">
+    <label for="restSeconds">Repos (sec)</label><input id="restSeconds" type="number" min="10" max="900" value="60">
+    <input id="targetReps" type="hidden" value="10">
+    <div class="chips"><button class="chip" data-rest="30">30 sec</button><button class="chip active" data-rest="60">1 min</button><button class="chip" data-rest="90">1 min 30</button><button class="chip" data-rest="120">2 min</button></div>
+  </section>
+
+
+  <div id="validateModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="counter-label">Set terminé</div>
+      <div class="modal-count" id="validateCount">0</div>
+      <div class="modal-stepper">
+        <button id="decrementRep" class="icon-btn stepper-btn">−</button>
+        <span class="modal-count-label">pompes</span>
+        <button id="incrementRep" class="icon-btn stepper-btn">+</button>
+      </div>
+      <button id="confirmSet" class="btn btn-primary" style="width:100%;margin-top:1.2rem;">Valider et passer au repos</button>
+    </div>
+  </div>
+
+    <section class="panel" style="margin-top:1rem;"><h2>Dernières séances</h2><div id="historyList" class="history-list"></div></section>
+  </div>
+
+  <div id="tab-calendar" class="tab-content hidden">
+    <section class="panel">
+      <div class="cal-nav">
+        <button id="calPrevMonth" class="icon-btn">‹</button>
+        <h2 id="calMonthLabel">Juillet 2026</h2>
+        <button id="calNextMonth" class="icon-btn">›</button>
+      </div>
+      <div class="cal-weekdays"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+      <div id="calGrid" class="cal-grid"></div>
+    </section>
+    <div id="calendarDetailModal" class="modal-overlay hidden">
+      <div class="modal-box" style="max-width:420px;text-align:left;">
+        <div class="counter-label" id="calendarDetailDate">Séance</div>
+        <div id="calendarDetailContent" style="margin-top:.8rem;font-size:.92rem;line-height:1.6;"></div>
+        <button id="closeCalendarDetail" class="btn" style="width:100%;margin-top:1.2rem;">Fermer</button>
+      </div>
+    </div>
+  </div>
+  
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.20.0/dist/tf-core.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@4.20.0/dist/tf-converter.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.20.0/dist/tf-backend-webgl.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js" crossorigin="anonymous"></script>
+<script>
+const html=document.documentElement,themeBtn=document.querySelector('[data-theme-toggle]');let theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';html.setAttribute('data-theme',theme);themeBtn.addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';html.setAttribute('data-theme',theme)});
+const $=id=>document.getElementById(id); const video=$('video'), work=$('work'), wctx=work.getContext('2d'), toastEl=$('toast');
+let toastTimer=null;
+function showToast(msg,duration=2600){
+  toastEl.textContent=msg; toastEl.style.opacity='1';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{toastEl.style.opacity='0';},duration);
+  // Filet de sécurité : sur Safari iOS, un alert() aurait mis la vidéo en pause sans la relancer.
+  // On garde ce réflexe même sans alert(), au cas où le flux se coupe pour une autre raison.
+  if(video.paused&&stream) video.play().catch(()=>{});
+}
+const countEl=$('count'),totalCountEl=$('totalCount'),setInfoEl=$('setInfo'),phaseEl=$('phase'),cameraStatus=$('cameraStatus'),cameraDot=$('cameraDot'),movementLabel=$('movementLabel');
+const toggleSessionBtn=$('toggleSession'),nextSetBtn=$('nextSet'),finishWorkoutBtn=$('finishWorkout'),resetBtn=$('resetCount');
+const targetRepsInput=$('targetReps'),restSecondsInput=$('restSeconds'),restPanel=$('restPanel'),restDisplay=$('restDisplay'),restText=$('restText'),skipRestBtn=$('skipRest'),resumeAfterRestBtn=$('resumeAfterRest'),historyList=$('historyList');
+let detector=null,lastKeypoints=null,cameraReady=false,sessionActive=false,restActive=false,calibrated=false,processing=false,rafId=null,stream=null,lastDetectAt=0;
+const DETECT_INTERVAL=300; // ms — bon compromis fluidité/fiabilité
+let setCount=0,totalCount=0,currentSet=1,completedSets=[],restTimer=null,restRemaining=0;
+let sessionStartTime=null,sessionTimerInterval=null;
+let baseline=null,state='up',downFrames=0,upFrames=0,lastRepAt=0,poseWasDetected=false,poseVisible=true,poseLostAt=0,pendingReps=0;
+const storageOk=typeof localStorage!=='undefined';const workouts=storageOk?JSON.parse(localStorage.getItem('pompes-workouts')||'[]'):[];
+function saveHistory(){if(storageOk)localStorage.setItem('pompes-workouts',JSON.stringify(workouts.slice(0,20)))}
+
+// Gestion des onglets
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t=>t.classList.add('hidden'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.remove('hidden');
+    if(btn.dataset.tab==='calendar') renderCalendar();
+  });
+});
+
+let calViewYear=new Date().getFullYear();
+let calViewMonth=new Date().getMonth();
+const calMonthNames=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+function workoutsForDate(iso){
+  return workouts.map((w,i)=>({...w,idx:i})).filter(w=>w.isoDate===iso);
+}
+
+function renderCalendar(){
+  const grid=document.getElementById('calGrid');
+  const label=document.getElementById('calMonthLabel');
+  if(!grid||!label) return;
+  label.textContent=calMonthNames[calViewMonth]+' '+calViewYear;
+  grid.innerHTML='';
+  const firstDay=new Date(calViewYear,calViewMonth,1);
+  let startOffset=firstDay.getDay()-1; if(startOffset<0) startOffset=6;
+  const daysInMonth=new Date(calViewYear,calViewMonth+1,0).getDate();
+  const todayIso=new Date().toISOString().slice(0,10);
+  for(let i=0;i<startOffset;i++){
+    const empty=document.createElement('div');
+    empty.className='cal-day empty';
+    grid.appendChild(empty);
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const iso=`${calViewYear}-${String(calViewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayWorkouts=workoutsForDate(iso);
+    const cell=document.createElement('div');
+    cell.className='cal-day'+(dayWorkouts.length?' has-workout':'')+(iso===todayIso?' today':'');
+    cell.innerHTML=`<span>${d}</span>`;
+    if(dayWorkouts.length){
+      if(dayWorkouts.length>1){
+        cell.innerHTML+=`<span class="cal-count-badge">${dayWorkouts.length}</span>`;
+      }
+      cell.innerHTML+='<span class="cal-dot"></span>';
+      cell.addEventListener('click',()=>openCalendarDetail(iso));
+    }
+    grid.appendChild(cell);
+  }
+}
+
+document.getElementById('calPrevMonth').addEventListener('click',()=>{
+  calViewMonth--; if(calViewMonth<0){calViewMonth=11;calViewYear--;}
+  renderCalendar();
+});
+document.getElementById('calNextMonth').addEventListener('click',()=>{
+  calViewMonth++; if(calViewMonth>11){calViewMonth=0;calViewYear++;}
+  renderCalendar();
+});
+
+function openCalendarDetail(iso){
+  const dayWorkouts=workoutsForDate(iso);
+  if(!dayWorkouts.length) return;
+  const dateLabel=new Date(iso+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('calendarDetailDate').textContent=dateLabel.charAt(0).toUpperCase()+dateLabel.slice(1);
+  let html='';
+  dayWorkouts.forEach((w,wi)=>{
+    const maxReps=Math.max(...w.sets.map(s=>s.reps),1);
+    const bars=w.sets.map(s=>`<div class="bar-item"><div class="bar-value">${s.reps}</div><div class="bar-fill" style="height:${Math.max((s.reps/maxReps)*100,6)}%;"></div><div class="bar-label">S${s.set}</div></div>`).join('');
+    html+=`<div style="margin-bottom:1rem;${wi>0?'padding-top:.8rem;border-top:1px solid var(--border);':''}">
+      <div style="display:flex;justify-content:space-between;color:var(--muted);font-size:.8rem;"><span>${w.date}${w.duration?' · '+w.duration:''}</span><strong style="color:var(--primary);">${w.total} pompes</strong></div>
+      <div class="bar-chart">${bars}</div>
+    </div>`;
+  });
+  document.getElementById('calendarDetailContent').innerHTML=html;
+  document.getElementById('calendarDetailModal').classList.remove('hidden');
+}
+document.getElementById('closeCalendarDetail').addEventListener('click',()=>{
+  document.getElementById('calendarDetailModal').classList.add('hidden');
+});
+
+function renderHistory(){historyList.innerHTML='';if(!workouts.length){historyList.innerHTML='<div class="history-item"><span>Aucune séance enregistrée</span><span>—</span></div>';return;}workouts.slice().reverse().forEach(w=>{const item=document.createElement('div');item.className='history-item';item.innerHTML=`<span>${w.date}</span><strong>${w.total} pompes · ${w.sets.length} sets</strong>`;historyList.appendChild(item);});}
+function refreshHeader(){setInfoEl.textContent=currentSet;countEl.textContent=setCount;totalCountEl.textContent=totalCount}
+function setChipsActive(v){document.querySelectorAll('.chip').forEach(ch=>ch.classList.toggle('active',Number(ch.dataset.rest)===Number(v)))} renderHistory(); refreshHeader(); setChipsActive(restSecondsInput.value);
+document.querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{restSecondsInput.value=ch.dataset.rest;setChipsActive(ch.dataset.rest)})); restSecondsInput.addEventListener('input',()=>setChipsActive(restSecondsInput.value));
+function angle(a,b,c){const ab=[a.x-b.x,a.y-b.y],cb=[c.x-b.x,c.y-b.y];const dot=ab[0]*cb[0]+ab[1]*cb[1];const mag1=Math.hypot(...ab),mag2=Math.hypot(...cb);if(!mag1||!mag2)return null;return Math.acos(Math.max(-1,Math.min(1,dot/(mag1*mag2))))*180/Math.PI;}
+function kp(list,name){const p=list.find(k=>k.name===name);return (p&&p.score>=0.35)?{x:p.x/video.videoWidth,y:p.y/video.videoHeight,visibility:p.score}:null;}
+function getPoseMetrics(keypoints){
+  const ls=kp(keypoints,'left_shoulder'),rs=kp(keypoints,'right_shoulder'),le=kp(keypoints,'left_elbow'),re=kp(keypoints,'right_elbow'),lw=kp(keypoints,'left_wrist'),rw=kp(keypoints,'right_wrist'),lh=kp(keypoints,'left_hip'),rh=kp(keypoints,'right_hip');
+  const nose=kp(keypoints,'nose');
+  // Mode complet : tous les points visibles (précision maximale)
+  if(![ls,rs,le,re,lw,rw,lh,rh].some(p=>!p)){
+    const shoulderY=(ls.y+rs.y)/2,hipY=(lh.y+rh.y)/2,torso=hipY-shoulderY;
+    if(torso>0){
+      const leftAngle=angle(ls,le,lw),rightAngle=angle(rs,re,rw);
+      const elbowAngle=(leftAngle&&rightAngle)?(leftAngle+rightAngle)/2:(leftAngle||rightAngle||null);
+      if(elbowAngle){
+        return {mode:'full',shoulderY,torso,elbowAngle,quality:Math.round(((ls.visibility+rs.visibility+le.visibility+re.visibility+lw.visibility+rw.visibility)/6)*100)};
+      }
+    }
+  }
+  // Mode simplifié : trop proche pour voir tout le corps, on suit juste visage + épaules
+  if(nose && ls && rs){
+    const shoulderY=(ls.y+rs.y)/2;
+    const faceHeight=Math.abs(nose.y-shoulderY)||0.15;
+    return {mode:'simple',shoulderY,torso:faceHeight,elbowAngle:null,quality:Math.round(((nose.visibility+ls.visibility+rs.visibility)/3)*100)};
+  }
+  // Mode minimal : seulement le visage visible (très proche de la caméra)
+  if(nose){
+    return {mode:'face',shoulderY:nose.y,torso:0.18,elbowAngle:null,quality:Math.round(nose.visibility*100)};
+  }
+  return null;
+}
+
+function autoCalibrate(){
+  calibrated=true;
+  poseWasDetected=false;
+  movementLabel.textContent='Calibré';
+  return true;
+}
+
+function processRep(detected){
+  const now=performance.now();
+  if(detected){
+    if(!poseVisible && poseWasDetected){
+      const awayDuration = now - poseLostAt;
+      if(awayDuration>=350 && awayDuration<=2500 && now-lastRepAt>350){
+        lastRepAt=now;
+        phaseEl.textContent='Haut';
+        movementLabel.textContent='Pose détectée';
+        setCount++;totalCount++;refreshHeader();
+        if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint';
+      } else {
+        phaseEl.textContent='Haut';
+        movementLabel.textContent='Pose détectée';
+      }
+    } else if(!poseVisible){
+      phaseEl.textContent='Haut';
+      movementLabel.textContent='Pose détectée';
+    }
+    poseVisible=true;
+    poseWasDetected=true;
+  } else {
+    if(poseVisible){
+      phaseEl.textContent='Bas';
+      movementLabel.textContent='Aucune pose détectée';
+      poseLostAt=now;
+    }
+    poseVisible=false;
+  }
+}
+
+function renderDebug(keypoints, detected){
+  if(!keypoints || !detected){
+    if(!sessionActive && !calibrated) movementLabel.textContent='Placez-vous dans le cadre';
+    else if(!sessionActive && calibrated) movementLabel.textContent='Calibré';
+    else if(sessionActive) movementLabel.textContent='Aucune pose détectée';
+    return;
+  }
+  if(!sessionActive && calibrated){
+    movementLabel.textContent='Calibré';
+  } else if(!sessionActive && detected){
+    movementLabel.textContent='Appuyez sur Démarrer';
+  } else if(sessionActive){
+    movementLabel.textContent='Pose détectée';
+  }
+}
+
+async function detectLoop(ts){
+  if(!cameraReady){rafId=null;return;}
+  rafId=requestAnimationFrame(detectLoop);
+  if(document.hidden||processing) return; // on saute une frame plutôt que de saturer le device
+  if(ts-lastDetectAt<DETECT_INTERVAL) return;
+  lastDetectAt=ts;
+  if(!detector||!video.videoWidth) return;
+  processing=true;
+  try{
+    const poses=await detector.estimatePoses(video,{flipHorizontal:false});
+    if(poses&&poses[0]){
+      lastKeypoints=poses[0].keypoints;
+      const m=getPoseMetrics(lastKeypoints);
+      if(sessionActive&&!restActive&&calibrated){
+        processRep(!!m);
+      }
+      renderDebug(lastKeypoints, !!m);
+    } else {
+      lastKeypoints=null;
+      if(sessionActive&&!restActive&&calibrated){
+        processRep(false);
+      }
+      renderDebug(null, false);
+    }
+  }catch(e){ /* frame ratée : on l'ignore au lieu de laisser planter l'app */ }
+  finally{ processing=false; }
+}
+
+function stopCameraResources(){
+  cameraReady=false;
+  if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+}
+document.addEventListener('visibilitychange',()=>{ if(document.hidden){ if(stream) stream.getTracks().forEach(t=>t.enabled=false); } else if(stream){ stream.getTracks().forEach(t=>t.enabled=true); } });
+window.addEventListener('pagehide',stopCameraResources);
+async function startCamera(){
+  if(stream) return;
+  try{
+    cameraStatus.textContent='Chargement du modèle…';
+    await tf.setBackend('webgl');
+    await tf.ready();
+    if(!detector) detector=await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet,{modelType:poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING});
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
+    video.setAttribute('playsinline',true); video.setAttribute('webkit-playsinline',true); video.srcObject=stream; await video.play();
+    cameraReady=true; localStorage.setItem('cameraGranted','1'); cameraStatus.textContent='Caméra active'; cameraDot.className='dot live'; movementLabel.textContent='Appuyez sur Démarrer'; const _eb=document.getElementById('enableCameraBtn'); if(_eb) _eb.classList.add('hidden');
+    toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent='Prêt';
+    if(!rafId) rafId=requestAnimationFrame(detectLoop);
+  }catch(e){
+    cameraStatus.textContent='Accès refusé';cameraDot.className='dot warn';
+    stopCameraResources();
+    alert('Impossible d’accéder à la caméra ou de charger le modèle. Vérifiez Safari, l’autorisation caméra, le HTTPS et votre connexion.');
+  }
+}
+function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;phaseEl.textContent='Prêt';}
+function formatRest(s){const m=String(Math.floor(s/60)).padStart(2,'0');const sec=String(s%60).padStart(2,'0');return `${m}:${sec}`;}
+
+let audioCtx=null;
+function beep(freq=880,duration=150){
+  try{
+    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    const osc=audioCtx.createOscillator();
+    const gain=audioCtx.createGain();
+    osc.connect(gain);gain.connect(audioCtx.destination);
+    osc.frequency.value=freq;
+    osc.type='sine';
+    gain.gain.setValueAtTime(0.25,audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+duration/1000);
+    osc.start();
+    osc.stop(audioCtx.currentTime+duration/1000);
+  }catch(e){}
+}
+function playCountdownBeep(secondsLeft){
+  if(secondsLeft>0) beep(880,150);
+  else { beep(1200,120); setTimeout(()=>beep(1200,120),160); setTimeout(()=>beep(1200,120),320); setTimeout(()=>beep(1200,120),480); }
+}
+
+function startRest(){
+  restActive=true;sessionActive=false;toggleSessionBtn.textContent='Démarrer';
+  restRemaining=Number(restSecondsInput.value||60);
+  restDisplay.textContent=formatRest(restRemaining);
+  restText.textContent=`Repos avant le set ${currentSet+1}`;
+  restPanel.classList.remove('hidden');
+  clearInterval(restTimer);
+  restTimer=setInterval(()=>{
+    restRemaining--;
+    restDisplay.textContent=formatRest(Math.max(0,restRemaining));
+    if(restRemaining<=3 && restRemaining>=0){
+      playCountdownBeep(restRemaining);
+      if(navigator.vibrate) navigator.vibrate(restRemaining===0?[120,80,120,80,120,80,200]:100);
+    }
+    if(restRemaining<=0){
+      clearInterval(restTimer);
+      restText.textContent='Pause terminée';
+      autoResumeAfterRest();
+    }
+  },1000);
+}
+function autoResumeAfterRest(){
+  setTimeout(()=>{
+    stopRest();
+    resetTracking();
+    if(autoCalibrate()){
+      sessionActive=true;
+      toggleSessionBtn.textContent='Pause';
+      phaseEl.textContent='En cours';
+    } else {
+      phaseEl.textContent='Prêt';
+    }
+  },600);
+}
+
+function stopRest(){restActive=false;clearInterval(restTimer);restPanel.classList.add('hidden');}
+function openValidateModal(){
+  pendingReps = setCount;
+  document.getElementById('validateCount').textContent = pendingReps;
+  document.getElementById('validateModal').classList.remove('hidden');
+}
+function closeValidateModal(){
+  document.getElementById('validateModal').classList.add('hidden');
+}
+function nextSet(){
+  openValidateModal();
+}
+function confirmNextSet(){
+  completedSets.push({set:currentSet,reps:pendingReps});
+  totalCount = totalCount - setCount + pendingReps;
+  currentSet++;
+  setCount=0;
+  refreshHeader();
+  resetTracking();
+  closeValidateModal();
+  startRest();
+}
+
+function pad(n){return String(n).padStart(2,'0')} function toICSDate(d){return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;}
+function downloadCalendarEvent(workout){const start=new Date(),end=new Date(start.getTime()+30*60000);const desc=`Total: ${workout.total} pompes\\nSets: ${workout.sets.map(s=>`Set ${s.set}: ${s.reps}`).join(' | ')}`;const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pompes//FR//EN','BEGIN:VEVENT',`UID:pompes-${Date.now()}@webapp`,`DTSTAMP:${toICSDate(new Date())}`,`DTSTART:${toICSDate(start)}`,`DTEND:${toICSDate(end)}`,`SUMMARY:Séance Pompes - ${workout.total} pompes`,`DESCRIPTION:${desc}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pompes-seance.ics';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200);}
+window.addEventListener('load',()=>{startCamera();});
+
+
+function formatDuration(ms){
+  const totalSec=Math.floor(ms/1000);
+  const m=Math.floor(totalSec/60);
+  const s=totalSec%60;
+  return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function startSessionTimer(){
+  if(sessionStartTime) return;
+  sessionStartTime=Date.now();
+  sessionTimerInterval=setInterval(()=>{
+    const el=document.getElementById('sessionDuration');
+    if(el) el.textContent=formatDuration(Date.now()-sessionStartTime);
+  },1000);
+}
+function stopSessionTimer(){
+  if(sessionTimerInterval){clearInterval(sessionTimerInterval);sessionTimerInterval=null;}
+}
+function resetSessionTimer(){
+  stopSessionTimer();
+  sessionStartTime=null;
+  const el=document.getElementById('sessionDuration');
+  if(el) el.textContent='00:00';
+}
+toggleSessionBtn.addEventListener('click',()=>{if(!cameraReady||restActive)return;if(!sessionActive){if(!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
+nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
+document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
+document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
+document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent='Prêt';}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{phaseEl.textContent='Prêt';movementLabel.textContent='Repositionnez-vous';}});
+resetBtn.addEventListener('click',()=>{setCount=0;refreshHeader();resetTracking();});
+finishWorkoutBtn.addEventListener('click',()=>{if(setCount>0)completedSets.push({set:currentSet,reps:setCount});if(totalCount===0){showToast('Aucune pompe enregistrée pour cette séance.');return;}stopRest();sessionActive=false;const now=new Date();const isoDate=now.toISOString().slice(0,10);const durationMs=sessionStartTime?(Date.now()-sessionStartTime):0;const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,total:totalCount,duration:formatDuration(durationMs),sets:[...completedSets]};workouts.push(workout);saveHistory();renderHistory();renderCalendar();downloadCalendarEvent(workout);showToast(`Séance enregistrée : ${totalCount} pompes sur ${completedSets.length} set(s).`,3500);setCount=0;totalCount=0;currentSet=1;completedSets=[];refreshHeader();resetTracking();resetSessionTimer();calibrated=false;toggleSessionBtn.textContent='Démarrer';movementLabel.textContent='Appuyez sur Démarrer';phaseEl.textContent='Terminé';});
+</script>
+</body>
+</html>
