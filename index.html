@@ -4,7 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#01696f" />
-  <title>Pompes</title>
+  <title>Push-Up</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMWM2ZTZlIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjAsMzIpIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNCA5djE4Ii8+PHBhdGggZD0iTS0yIDEydjEyIi8+PHBhdGggZD0iTTEzIDV2MjgiLz48cGF0aCBkPSJNNDcgNXYyOCIvPjxwYXRoIGQ9Ik01MyAxMnYxMiIvPjxwYXRoIGQ9Ik01OSA5djE4Ii8+PHBhdGggZD0iTTEzIDE5aDM0Ii8+PC9nPjwvc3ZnPg==">
+  <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgcng9IjIyIiBmaWxsPSIjMWM2ZTZlIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMjAsMzIpIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iNiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBmaWxsPSJub25lIj48cGF0aCBkPSJNNCA5djE4Ii8+PHBhdGggZD0iTS0yIDEydjEyIi8+PHBhdGggZD0iTTEzIDV2MjgiLz48cGF0aCBkPSJNNDcgNXYyOCIvPjxwYXRoIGQ9Ik01MyAxMnYxMiIvPjxwYXRoIGQ9Ik01OSA5djE4Ii8+PHBhdGggZD0iTTEzIDE5aDM0Ii8+PC9nPjwvc3ZnPg==">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Push-Up">
+  <meta name="theme-color" content="#1c6e6e">
   <link rel="preconnect" href="https://api.fontshare.com">
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
   <style>
@@ -97,7 +102,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:50;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15c1.8-4.6 4.1-6.9 7-6.9 2.9 0 5.2 2.3 7 6.9"/><path d="M3 18h5M16 18h5"/><path d="M8 18c.5-1.4 1.3-2.1 2.4-2.1h3.2c1.1 0 1.9.7 2.4 2.1"/></svg></div><div><h1>Pompes</h1><p>v20 · Calendrier graphique</p></div></div>
+    <div class="brand"><div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6"/><path d="M2 10v4"/><path d="M7 7v10"/><path d="M17 7v10"/><path d="M20 10v4"/><path d="M22 9v6"/><path d="M7 12h10"/></svg></div><div><h1>Push-Up</h1><p>v21 · Push-Up + icône + caméra optimisée</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
@@ -120,6 +125,7 @@
         <div class="pill"><span id="movementLabel">Mode léger</span></div>
       </div>
     </div>
+    <button id="enableCameraBtn" class="btn btn-primary" style="width:100%;margin-top:1rem;">Activer la caméra</button>
     <div class="controls" style="margin-top:1rem;">
       <button id="toggleSession" class="btn btn-primary" disabled style="grid-column:1/-1;">Démarrer</button>
       <button id="nextSet" class="btn" disabled>Set suivant</button>
@@ -419,7 +425,7 @@ async function startCamera(){
     if(!detector) detector=await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet,{modelType:poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING});
     stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
     video.setAttribute('playsinline',true); video.setAttribute('webkit-playsinline',true); video.srcObject=stream; await video.play();
-    cameraReady=true; cameraStatus.textContent='Caméra active'; cameraDot.className='dot live'; movementLabel.textContent='Appuyez sur Démarrer';
+    cameraReady=true; localStorage.setItem('cameraGranted','1'); cameraStatus.textContent='Caméra active'; cameraDot.className='dot live'; movementLabel.textContent='Appuyez sur Démarrer'; const _eb=document.getElementById('enableCameraBtn'); if(_eb) _eb.classList.add('hidden');
     toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent='Prêt';
     if(!rafId) rafId=requestAnimationFrame(detectLoop);
   }catch(e){
@@ -511,7 +517,22 @@ function confirmNextSet(){
 
 function pad(n){return String(n).padStart(2,'0')} function toICSDate(d){return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;}
 function downloadCalendarEvent(workout){const start=new Date(),end=new Date(start.getTime()+30*60000);const desc=`Total: ${workout.total} pompes\\nSets: ${workout.sets.map(s=>`Set ${s.set}: ${s.reps}`).join(' | ')}`;const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pompes//FR//EN','BEGIN:VEVENT',`UID:pompes-${Date.now()}@webapp`,`DTSTAMP:${toICSDate(new Date())}`,`DTSTART:${toICSDate(start)}`,`DTEND:${toICSDate(end)}`,`SUMMARY:Séance Pompes - ${workout.total} pompes`,`DESCRIPTION:${desc}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pompes-seance.ics';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200);}
-window.addEventListener('load',()=>{startCamera();});
+window.addEventListener('load',()=>{
+  const enableBtn=document.getElementById('enableCameraBtn');
+  if(localStorage.getItem('cameraGranted')==='1'){
+    if(enableBtn) enableBtn.classList.add('hidden');
+    startCamera();
+  } else {
+    if(enableBtn) enableBtn.classList.remove('hidden');
+  }
+});
+document.getElementById('enableCameraBtn').addEventListener('click',async()=>{
+  const enableBtn=document.getElementById('enableCameraBtn');
+  enableBtn.disabled=true; enableBtn.textContent='Activation…';
+  await startCamera();
+  enableBtn.disabled=false; enableBtn.textContent='Activer la caméra';
+});
+
 toggleSessionBtn.addEventListener('click',()=>{if(!cameraReady||restActive)return;if(!sessionActive){if(!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
