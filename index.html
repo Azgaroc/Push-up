@@ -229,7 +229,12 @@
       <section class="panel" style="text-align:center;">
         <div class="counter-label">Séance du jour</div>
         <div id="planTodayTitle" style="font-size:1.3rem;font-weight:700;margin-top:.3rem;">—</div>
-        <div id="planTodaySets" style="margin-top:.8rem;display:flex;flex-direction:column;gap:.5rem;"></div>
+        <div id="planCurrentRep" style="width:150px;height:150px;border-radius:50%;margin:1rem auto;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-direction:column;border:1px solid var(--border);">
+          <div style="font-size:.75rem;color:var(--muted);">Pompes à faire</div>
+          <div id="planCurrentRepValue" style="font-size:4rem;font-weight:700;line-height:1;">0</div>
+        </div>
+        <div id="planCurrentSetInfo" style="color:var(--muted);font-size:.85rem;margin-top:-.2rem;">Set 1 / 1</div>
+        <div id="planTodaySets" style="margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;text-align:left;"></div>
       </section>
       <section class="panel" style="margin-top:.6rem;">
         <h2>Progression du plan</h2>
@@ -237,6 +242,10 @@
           <span>Semaine <strong id="planWeekNumber">1</strong></span>
           <span id="planAdaptStatus" style="color:var(--muted);">Ajusté selon vos séances</span>
         </div>
+      </section>
+      <section class="panel" style="margin-top:.6rem;">
+        <h2>5 séances à venir</h2>
+        <div id="planFutureSessions" style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;"></div>
       </section>
       <section class="panel" style="margin-top:.6rem;">
         <h2>Mes réglages</h2>
@@ -360,6 +369,7 @@ const PLAN_KEY='pompes-plan-v1';
 function loadPlan(){ try{return storageOk?JSON.parse(localStorage.getItem(PLAN_KEY)||'null'):null;}catch(e){return null;} }
 function savePlan(plan){ if(storageOk) localStorage.setItem(PLAN_KEY,JSON.stringify(plan)); }
 let planProfile=loadPlan();
+let activeMode='free';
 
 function generateDailyTarget(maxReps, weekNumber, recentPerformanceRatio){
   const baseProgress=1 + (weekNumber-1)*0.08;
@@ -445,16 +455,114 @@ function renderPlanTab(){
     row.innerHTML=`<span>Set ${i+1}</span><strong style="color:var(--primary);">${reps} pompes</strong>`;
     setsEl.appendChild(row);
   });
+  const future=document.getElementById('planFutureSessions');
+  if(future){
+    future.innerHTML='';
+    buildPlanFiveSessions(planProfile.maxReps, weekNumber, ratio).forEach((s,idx)=>{
+      const row=document.createElement('div');
+      row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:var(--surface2);border-radius:.8rem;';
+      row.innerHTML=`<span>Semaine ${s.week}${idx===0?` · Aujourd'hui`:''}</span><strong style="color:var(--primary);">${s.total} pompes</strong>`;
+      future.appendChild(row);
+    });
+  }
   const startBtn=document.createElement('button');
   startBtn.className='btn btn-primary';
   startBtn.style.cssText='width:100%;margin-top:.8rem;';
   startBtn.textContent='Commencer cette séance';
   startBtn.addEventListener('click',()=>{
     document.getElementById('targetReps').value=sets[0];
-    document.querySelector('.tab-btn[data-tab="training"]').click();
-    showToast(`Objectif du set 1 : ${sets[0]} pompes. Appuyez sur Démarrer.`,3000);
+    startPlanSession();
   });
   setsEl.appendChild(startBtn);
+}
+
+
+let planSessionActive=false;
+let planSessionSets=[];
+let planSessionIndex=0;
+let planSessionRepTarget=0;
+let planSessionRemaining=0;
+let planSessionCompleted=[];
+
+function buildPlanFiveSessions(maxReps, weekNumber, ratio){
+  const sessions=[];
+  for(let i=0;i<5;i++){
+    const w=weekNumber+i;
+    const sets=generateDailyTarget(maxReps,w,ratio);
+    sessions.push({week:w, sets, total:sets.reduce((a,b)=>a+b,0)});
+  }
+  return sessions;
+}
+
+function updatePlanSessionUI(){
+  const title=document.getElementById('planTodayTitle');
+  const repEl=document.getElementById('planCurrentRepValue');
+  const setInfo=document.getElementById('planCurrentSetInfo');
+  const setsEl=document.getElementById('planTodaySets');
+  if(!planSessionActive || !planSessionSets.length){
+    if(repEl) repEl.textContent='0';
+    if(setInfo) setInfo.textContent='Set 1 / 1';
+    return;
+  }
+  if(title) title.textContent=`Séance plan · ${planSessionSets.reduce((a,b)=>a+b.total,0)} pompes`;
+  if(repEl) repEl.textContent=planSessionRemaining;
+  if(setInfo) setInfo.textContent=`Set ${planSessionIndex+1} / ${planSessionSets[0].sets.length}`;
+  if(setsEl && planSessionSets[0]){
+    setsEl.innerHTML='';
+    planSessionSets[0].sets.forEach((reps,i)=>{
+      const row=document.createElement('div');
+      row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:var(--surface2);border-radius:.8rem;';
+      const done = i < planSessionIndex;
+      const active = i === planSessionIndex;
+      row.innerHTML=`<span>Set ${i+1}</span><strong style="color:${done?'#22c55e':active?'var(--primary)':'var(--text)'};">${reps} pompes</strong>`;
+      setsEl.appendChild(row);
+    });
+  }
+}
+
+function startPlanSession(){
+  if(!planProfile) return;
+  const weekNumber=getPlanWeekNumber();
+  const ratio=computeRecentPerformanceRatio();
+  planSessionSets=[{week:weekNumber, sets:generateDailyTarget(planProfile.maxReps, weekNumber, ratio)}];
+  planSessionIndex=0;
+  planSessionRepTarget=planSessionSets[0].sets[0];
+  planSessionRemaining=planSessionRepTarget;
+  planSessionCompleted=[];
+  planSessionActive=true;
+  activeMode='plan';
+  document.getElementById('planCurrentRepValue').textContent=planSessionRemaining;
+  document.getElementById('planCurrentSetInfo').textContent=`Set 1 / ${planSessionSets[0].sets.length}`;
+  document.getElementById('planTodayTitle').textContent=`Séance du jour · ${planSessionSets[0].total} pompes`;
+  document.getElementById('planTodaySets').innerHTML='';
+  updatePlanSessionUI();
+  showToast(`Séance plan lancée : ${planSessionRepTarget} pompes pour le set 1.`,3000);
+}
+
+function finishPlanRep(){
+  if(!planSessionActive) return;
+  planSessionRemaining = Math.max(0, planSessionRemaining - 1);
+  document.getElementById('planCurrentRepValue').textContent = planSessionRemaining;
+  if(planSessionRemaining===0){
+    planSessionCompleted.push(planSessionRepTarget);
+    startRest();
+  }
+}
+
+function advancePlanSetAfterRest(){
+  if(!planSessionActive) return;
+  planSessionIndex++;
+  const sets = planSessionSets[0].sets;
+  if(planSessionIndex >= sets.length){
+    planSessionActive=false;
+    showToast('Séance plan terminée.',3000);
+    return;
+  }
+  planSessionRepTarget = sets[planSessionIndex];
+  planSessionRemaining = planSessionRepTarget;
+  document.getElementById('planCurrentRepValue').textContent = planSessionRemaining;
+  document.getElementById('planCurrentSetInfo').textContent = `Set ${planSessionIndex+1} / ${sets.length}`;
+  updatePlanSessionUI();
 }
 
 document.querySelectorAll('#planDaysChips .chip').forEach(ch=>{
@@ -838,7 +946,7 @@ function processRep(detected){
         lastRepAt=now;
         phaseEl.textContent='Haut';
         movementLabel.textContent='Pose détectée';
-        setCount++;totalCount++;refreshHeader();beep(700,90);
+        setCount++;totalCount++;refreshHeader();beep(700,90); if(activeMode==='plan') finishPlanRep();
         if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint';
       } else {
         phaseEl.textContent='Haut';
