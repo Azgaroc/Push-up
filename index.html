@@ -97,13 +97,13 @@
     .bar-fill{width:100%;background:var(--primary);border-radius:.3rem .3rem 0 0;min-height:4px;}
     .bar-value{font-size:.65rem;font-weight:700;}
     .bar-label{font-size:.6rem;color:var(--muted);}
-</style>
+.plan-only-hidden{display:none!important;} .plan-only-show{display:block!important;} .plan-session-only{display:none!important;} </style>
 </head>
 <body>
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:50;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v43</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v74</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
@@ -112,6 +112,7 @@
     <button class="tab-btn" data-tab="plan">Plan</button>
     <button class="tab-btn" data-tab="calendar">Calendrier</button>
     <button class="tab-btn" data-tab="stats">Stats</button>
+    <button class="tab-btn" data-tab="profile">Profil</button>
   </div>
 
   <div id="tab-training" class="tab-content">
@@ -143,7 +144,7 @@
     
     
     <div class="controls" style="margin-top:1rem;">
-      <button id="toggleSession" class="btn btn-primary" disabled style="grid-column:1/-1;">Démarrer</button>
+      <button id="toggleSession" class="btn btn-primary" disabled style="grid-column:1/-1;">Démarrer la séance</button>
       <button id="nextSet" class="btn" disabled>Set suivant</button>
       <button id="finishWorkout" class="btn btn-danger" disabled>Fin entraînement</button>
       <button id="resetCount" class="btn" style="grid-column:1/-1">Réinitialiser le set</button>
@@ -229,42 +230,58 @@
       <section class="panel" style="text-align:center;">
         <div class="counter-label">Séance du jour</div>
         <div id="planTodayTitle" style="font-size:1.3rem;font-weight:700;margin-top:.3rem;">—</div>
-        <div id="planCurrentRep" style="width:150px;height:150px;border-radius:50%;margin:1rem auto;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-direction:column;border:1px solid var(--border);">
-          <div style="font-size:.75rem;color:var(--muted);">Pompes à faire</div>
-          <div id="planCurrentRepValue" style="font-size:4rem;font-weight:700;line-height:1;">0</div>
+        <div style="position:relative;width:min(60vw,220px);aspect-ratio:1/1;margin:1rem auto 0;">
+          <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
+            <circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface2)" stroke-width="6"></circle>
+            <circle id="planProgressRing" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="6" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5" style="transition:stroke-dashoffset .3s ease;"></circle>
+          </svg>
+          <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+            <div id="planCurrentRepValue" style="font-size:4rem;font-weight:700;line-height:1;cursor:pointer;user-select:none;">0</div>
+          </div>
         </div>
         <div id="planCurrentSetInfo" style="color:var(--muted);font-size:.85rem;margin-top:-.2rem;">Set 1 / 1</div>
+        <div id="planSetProgressInfo" style="color:var(--muted);font-size:.8rem;margin-top:.2rem;">0 / 0 pompes faites dans ce set</div>
+        <button id="stopPlanTrainingBtn" class="btn btn-danger hidden" style="width:100%;margin-top:.8rem;">Terminer l'entraînement</button>
+        <div id="planRestPanel" class="hidden" style="margin-top:1rem;text-align:center;padding:1rem;background:var(--surface2);border-radius:1rem;">
+          <div class="counter-label">Pause en cours</div>
+          <div class="rest-time" id="planRestDisplay" style="font-size:2.4rem;font-weight:700;margin:.3rem 0;">01:00</div>
+          <div id="planRestText" style="color:var(--muted);font-size:.85rem;">Repos avant le prochain set.</div>
+          <button id="planSkipRest" class="btn btn-primary" style="width:100%;margin-top:.8rem;">Reprendre maintenant</button>
+        </div>
+        <div style="display:flex;justify-content:space-around;gap:.5rem;margin-top:1rem;">
+          <div class="metric" style="text-align:center;"><span>Pompes séance</span><strong id="planTotalCount" style="font-size:1.8rem;">0</strong></div>
+          <div class="metric" style="text-align:center;"><span>Durée</span><strong id="planSessionDuration" style="font-size:1.8rem;">00:00</strong></div>
+        </div>
         <div id="planTodaySets" style="margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;text-align:left;"></div>
       </section>
       <section class="panel" style="margin-top:.6rem;">
         <h2>Progression du plan</h2>
-        <div style="display:flex;justify-content:space-between;font-size:.85rem;">
-          <span>Semaine <strong id="planWeekNumber">1</strong></span>
-          <span id="planAdaptStatus" style="color:var(--muted);">Ajusté selon vos séances</span>
-        </div>
+        <div id="planProgressSummary" style="font-size:.9rem;color:var(--text);">Semaine <strong id="planWeekNumber">1</strong> de votre programme · <span id="planAdaptStatus" style="color:var(--muted);">Ajusté selon vos séances</span></div>
       </section>
       <section class="panel" style="margin-top:.6rem;">
         <h2>5 séances à venir</h2>
         <div id="planFutureSessions" style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;"></div>
       </section>
-      <section class="panel" style="margin-top:.6rem;">
-        <h2>Mes réglages</h2>
-        <label for="planMaxRepsEdit">Pompes maximum en une fois</label>
-        <input type="number" id="planMaxRepsEdit" min="1" max="200">
-        <label style="margin-top:.6rem;">Jours d'entraînement</label>
-        <div class="chips" id="planDaysChipsEdit">
-          <button class="chip" data-day="1">Lun</button>
-          <button class="chip" data-day="2">Mar</button>
-          <button class="chip" data-day="3">Mer</button>
-          <button class="chip" data-day="4">Jeu</button>
-          <button class="chip" data-day="5">Ven</button>
-          <button class="chip" data-day="6">Sam</button>
-          <button class="chip" data-day="0">Dim</button>
-        </div>
-        <button id="savePlanSettingsBtn" class="btn btn-primary" style="width:100%;margin-top:.7rem;">Enregistrer les modifications</button>
-      </section>
-      <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
     </div>
+  </div>
+<div id="tab-profile" class="tab-content hidden">
+    <section class="panel">
+      <h2>Mon profil</h2>
+      <label for="planMaxRepsEdit">Pompes maximum en une fois</label>
+      <input type="number" id="planMaxRepsEdit" min="1" max="200">
+      <label style="margin-top:.6rem;">Jours d'entraînement</label>
+      <div class="chips" id="planDaysChipsEdit">
+        <button class="chip" data-day="1">Lun</button>
+        <button class="chip" data-day="2">Mar</button>
+        <button class="chip" data-day="3">Mer</button>
+        <button class="chip" data-day="4">Jeu</button>
+        <button class="chip" data-day="5">Ven</button>
+        <button class="chip" data-day="6">Sam</button>
+        <button class="chip" data-day="0">Dim</button>
+      </div>
+      <button id="savePlanSettingsBtn" class="btn btn-primary" style="width:100%;margin-top:.7rem;">Enregistrer les modifications</button>
+    </section>
+    <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
   </div>
 <div id="tab-calendar" class="tab-content hidden">
     <section class="panel">
@@ -458,10 +475,16 @@ function renderPlanTab(){
   const future=document.getElementById('planFutureSessions');
   if(future){
     future.innerHTML='';
-    buildPlanFiveSessions(planProfile.maxReps, weekNumber, ratio).forEach((s,idx)=>{
+    const nextDates=getNextTrainingDates(planProfile.days, 5);
+    const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    nextDates.forEach((d,idx)=>{
+      const w = weekNumber + Math.floor(idx/Math.max(1,planProfile.days.length));
+      const daySets=generateDailyTarget(planProfile.maxReps, w, ratio);
+      const total=daySets.reduce((a,b)=>a+b,0);
       const row=document.createElement('div');
       row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:var(--surface2);border-radius:.8rem;';
-      row.innerHTML=`<span>Semaine ${s.week}${idx===0?` · Aujourd'hui`:''}</span><strong style="color:var(--primary);">${s.total} pompes</strong>`;
+      const label = idx===0 ? `Aujourd'hui · ${dayNames[d.getDay()]} ${d.getDate()}` : `${dayNames[d.getDay()]} ${d.getDate()} ${monthNamesShort[d.getMonth()]}`;
+      row.innerHTML=`<span>${label}</span><strong style="color:var(--primary);">${total} pompes</strong>`;
       future.appendChild(row);
     });
   }
@@ -483,6 +506,54 @@ let planSessionIndex=0;
 let planSessionRepTarget=0;
 let planSessionRemaining=0;
 let planSessionCompleted=[];
+let planTotalCount=0;
+let planRestActive=false;
+let planRestTimer=null;
+let planRestTargetTime=null;
+let planRestRemaining=0;
+let planSessionStartTime=null;
+let planSessionTimerInterval=null;
+
+const monthNamesShort=['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+function getNextTrainingDates(days, count){
+  const result=[];
+  if(!days || !days.length) return result;
+  let cursor=new Date();
+  cursor.setHours(0,0,0,0);
+  let guard=0;
+  while(result.length<count && guard<60){
+    if(days.includes(cursor.getDay())){
+      result.push(new Date(cursor));
+    }
+    cursor.setDate(cursor.getDate()+1);
+    guard++;
+  }
+  return result;
+}
+
+function buildPlanFiveSessions(maxReps, weekNumber, ratio){
+  const sessions=[];
+  for(let i=0;i<5;i++){
+    const w=weekNumber+i;
+    const sets=generateDailyTarget(maxReps,w,ratio);
+    sessions.push({week:w, sets, total:sets.reduce((a,b)=>a+b,0)});
+  }
+  return sessions;
+}
+
+function preparePlanSession(){
+  if(!planProfile || !planProfile.maxReps) return false;
+  const weekNumber=Number.isFinite(getPlanWeekNumber()) ? getPlanWeekNumber() : 1;
+  const ratio=Number.isFinite(computeRecentPerformanceRatio()) ? computeRecentPerformanceRatio() : 1;
+  const safeSets=generateDailyTarget(Number(planProfile.maxReps)||10, weekNumber, ratio).filter(n=>Number.isFinite(n)&&n>0);
+  if(!safeSets.length) return false;
+  planSessionSets=[{week:weekNumber, sets:safeSets, total:safeSets.reduce((a,b)=>a+b,0)}];
+  planSessionIndex=0;
+  planSessionRepTarget=planSessionSets[0].sets[0];
+  planSessionRemaining=planSessionRepTarget;
+  planSessionCompleted=[];
+  return true;
+}
 
 function buildPlanFiveSessions(maxReps, weekNumber, ratio){
   const sessions=[];
@@ -502,11 +573,20 @@ function updatePlanSessionUI(){
   if(!planSessionActive || !planSessionSets.length){
     if(repEl) repEl.textContent='0';
     if(setInfo) setInfo.textContent='Set 1 / 1';
+    const ring=document.getElementById('planProgressRing');
+    if(ring) ring.style.strokeDashoffset='276.5';
     return;
   }
-  if(title) title.textContent=`Séance plan · ${planSessionSets.reduce((a,b)=>a+b.total,0)} pompes`;
-  if(repEl) repEl.textContent=planSessionRemaining;
-  if(setInfo) setInfo.textContent=`Set ${planSessionIndex+1} / ${planSessionSets[0].sets.length}`;
+  if(title) title.textContent=`Séance plan · ${Number.isFinite(planSessionSets.reduce((a,b)=>a+(Number.isFinite(b.total)?b.total:0),0)) ? planSessionSets.reduce((a,b)=>a+(Number.isFinite(b.total)?b.total:0),0) : 0} pompes`;
+  if(repEl) repEl.textContent=Number.isFinite(planSessionRemaining) ? planSessionRemaining : 0;
+  if(setInfo) setInfo.textContent=`Set ${planSessionIndex+1} / ${((planSessionSets[0]&&planSessionSets[0].sets)||[]).length || 1}`;
+  const setProgressEl=document.getElementById('planSetProgressInfo');
+  if(setProgressEl){
+    const target=planSessionRepTarget||0;
+    const done=Math.max(0, target-(Number.isFinite(planSessionRemaining)?planSessionRemaining:target));
+    setProgressEl.textContent=`${done} / ${target} pompes faites dans ce set`;
+  }
+  updatePlanProgressRing();
   if(setsEl && planSessionSets[0]){
     setsEl.innerHTML='';
     planSessionSets[0].sets.forEach((reps,i)=>{
@@ -520,33 +600,70 @@ function updatePlanSessionUI(){
   }
 }
 
-function startPlanSession(){
-  if(!planProfile) return;
-  const weekNumber=getPlanWeekNumber();
-  const ratio=computeRecentPerformanceRatio();
-  planSessionSets=[{week:weekNumber, sets:generateDailyTarget(planProfile.maxReps, weekNumber, ratio)}];
+async function startPlanSession(){
+  if(!planProfile || !planProfile.maxReps) return;
+  const weekNumber=Number.isFinite(getPlanWeekNumber()) ? getPlanWeekNumber() : 1;
+  const ratio=Number.isFinite(computeRecentPerformanceRatio()) ? computeRecentPerformanceRatio() : 1;
+  const safeSets=generateDailyTarget(Number(planProfile.maxReps)||10, weekNumber, ratio).filter(n=>Number.isFinite(n)&&n>0);
+  if(!safeSets.length) return;
+  if(!cameraReady){
+    showToast('Activation de la caméra...',2000);
+    await startCamera();
+  }
+  if(!cameraReady){
+    showToast('Impossible d\'activer la caméra. Autorisez l\'accès puis réessayez.',4000);
+    return;
+  }
+  if(!autoCalibrate()){
+    showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.',3000);
+    return;
+  }
+  planSessionSets=[{week:weekNumber, sets:safeSets, total:safeSets.reduce((a,b)=>a+b,0)}];
   planSessionIndex=0;
   planSessionRepTarget=planSessionSets[0].sets[0];
   planSessionRemaining=planSessionRepTarget;
   planSessionCompleted=[];
   planSessionActive=true;
+  planTotalCount=0;
   activeMode='plan';
-  document.getElementById('planCurrentRepValue').textContent=planSessionRemaining;
-  document.getElementById('planCurrentSetInfo').textContent=`Set 1 / ${planSessionSets[0].sets.length}`;
-  document.getElementById('planTodayTitle').textContent=`Séance du jour · ${planSessionSets[0].total} pompes`;
-  document.getElementById('planTodaySets').innerHTML='';
+  resetTracking();
+  resetPlanSessionTimer();
+  startPlanSessionTimer();
+  const totalEl=document.getElementById('planTotalCount');
+  if(totalEl) totalEl.textContent='0';
   updatePlanSessionUI();
+  syncPlanUI();
   showToast(`Séance plan lancée : ${planSessionRepTarget} pompes pour le set 1.`,3000);
+  updatePlanScreenState();
 }
 
 function finishPlanRep(){
-  if(!planSessionActive) return;
+  if(!planSessionActive) return false;
+  if(!Number.isFinite(planSessionRemaining)) planSessionRemaining = planSessionRepTarget || 0;
+  if(planSessionRemaining<=0) return false;
   planSessionRemaining = Math.max(0, planSessionRemaining - 1);
-  document.getElementById('planCurrentRepValue').textContent = planSessionRemaining;
+  planTotalCount++;
+  const totalEl=document.getElementById('planTotalCount');
+  if(totalEl) totalEl.textContent = planTotalCount;
+  const repEl=document.getElementById('planCurrentRepValue');
+  if(repEl) repEl.textContent = planSessionRemaining;
   if(planSessionRemaining===0){
     planSessionCompleted.push(planSessionRepTarget);
-    startRest();
+    const sets = planSessionSets[0].sets;
+    const isLastSet = (planSessionIndex+1) >= sets.length;
+    if(!isLastSet){
+      const restSeconds = Number(restSecondsInput.value||60);
+      const nextReps = sets[planSessionIndex+1];
+      planSessionIndex++;
+      planSessionRepTarget = nextReps;
+      planSessionRemaining = nextReps;
+      startPlanRest(restSeconds, `Repos avant le set ${planSessionIndex+1} · ${nextReps} pompes`);
+    } else {
+      finishPlanTraining(true);
+    }
   }
+  updatePlanSessionUI();
+  return true;
 }
 
 function advancePlanSetAfterRest(){
@@ -607,7 +724,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     document.querySelectorAll('.tab-content').forEach(t=>t.classList.add('hidden'));
     btn.classList.add('active');
     document.getElementById('tab-'+btn.dataset.tab).classList.remove('hidden');
-    if(btn.dataset.tab==='calendar') renderCalendar();
+    if(btn.dataset.tab==='calendar') renderCalendar(); if(btn.dataset.tab==='training'){activeMode='free';} if(btn.dataset.tab==='plan'){activeMode='plan';}
     if(btn.dataset.tab==='stats') renderStats();
     if(btn.dataset.tab==='plan') renderPlanTab();
   });
@@ -899,6 +1016,15 @@ function updateProgressRing(){
   const pct=Math.min(setCount/target,1);
   ring.style.strokeDashoffset=String(circumference*(1-pct));
 }
+function updatePlanProgressRing(){
+  const ring=document.getElementById('planProgressRing');
+  if(!ring) return;
+  const circumference=276.5;
+  const target=planSessionRepTarget||1;
+  const done=Math.max(0, target-planSessionRemaining);
+  const pct=Math.min(done/target,1);
+  ring.style.strokeDashoffset=String(circumference*(1-pct));
+}
 function setChipsActive(v){document.querySelectorAll('.chip[data-rest]').forEach(ch=>ch.classList.toggle('active',Number(ch.dataset.rest)===Number(v)))} refreshHeader(); setChipsActive(restSecondsInput.value);
 document.querySelectorAll('.chip[data-rest]').forEach(ch=>ch.addEventListener('click',()=>{restSecondsInput.value=ch.dataset.rest;setChipsActive(ch.dataset.rest)})); restSecondsInput.addEventListener('input',()=>setChipsActive(restSecondsInput.value));
 function angle(a,b,c){const ab=[a.x-b.x,a.y-b.y],cb=[c.x-b.x,c.y-b.y];const dot=ab[0]*cb[0]+ab[1]*cb[1];const mag1=Math.hypot(...ab),mag2=Math.hypot(...cb);if(!mag1||!mag2)return null;return Math.acos(Math.max(-1,Math.min(1,dot/(mag1*mag2))))*180/Math.PI;}
@@ -946,8 +1072,9 @@ function processRep(detected){
         lastRepAt=now;
         phaseEl.textContent='Haut';
         movementLabel.textContent='Pose détectée';
-        setCount++;totalCount++;refreshHeader();beep(700,90); if(activeMode==='plan') finishPlanRep();
-        if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint';
+        if(sessionActive){ setCount++;totalCount++;refreshHeader(); if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint'; }
+        beep(700,90);
+        if(planSessionActive){ finishPlanRep(); }
       } else {
         phaseEl.textContent='Haut';
         movementLabel.textContent='Pose détectée';
@@ -997,13 +1124,13 @@ async function detectLoop(ts){
     if(poses&&poses[0]){
       lastKeypoints=poses[0].keypoints;
       const m=getPoseMetrics(lastKeypoints);
-      if(sessionActive&&!restActive&&calibrated){
+      if((sessionActive||planSessionActive)&&!restActive&&!planRestActive&&calibrated){
         processRep(!!m);
       }
       renderDebug(lastKeypoints, !!m);
     } else {
       lastKeypoints=null;
-      if(sessionActive&&!restActive&&calibrated){
+      if((sessionActive||planSessionActive)&&!restActive&&!planRestActive&&calibrated){
         processRep(false);
       }
       renderDebug(null, false);
@@ -1148,6 +1275,77 @@ function confirmNextSet(){
   startRest();
 }
 
+
+async function startPlanTraining(){
+  activeMode='plan';
+  if(!preparePlanSession()) return;
+  planSessionActive=true;
+  sessionActive=false;
+  syncPlanUI();
+  applyPlanModeUI();
+  updatePlanScreenState();
+  updatePlanSessionUI();
+  showToast(`Séance plan lancée : ${planSessionRepTarget} pompes pour le set 1.`,3000); updatePlanScreenState();
+}
+
+function finishPlanTraining(completed){
+  planSessionActive=false;
+  stopRest();
+  stopPlanRest();
+  stopPlanSessionTimer();
+  if(planTotalCount>0){
+    const now=new Date();
+    const isoDate=now.toISOString().slice(0,10);
+    const durationMs=planSessionStartTime?(Date.now()-planSessionStartTime):0;
+    const doneSets=(planSessionSets[0]&&planSessionSets[0].sets ? planSessionSets[0].sets.slice(0,planSessionIndex+(completed?1:0)) : []).map((reps,i)=>({set:i+1,reps}));
+    const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,total:planTotalCount,duration:formatDuration(durationMs),sets:doneSets,source:'plan'};
+    workouts.push(workout);
+    try{saveHistory();}catch(e){console.error('saveHistory error',e);}
+    try{renderHistory();}catch(e){console.error('renderHistory error',e);}
+    try{renderCalendar();}catch(e){console.error('renderCalendar error',e);}
+    try{renderStats();}catch(e){console.error('renderStats error',e);}
+  }
+  syncPlanUI();
+  applyPlanModeUI();
+  updatePlanScreenState();
+  updatePlanSessionUI();
+  showToast(completed ? `Plan terminé : ${planTotalCount} pompes enregistrées !` : `Séance arrêtée : ${planTotalCount} pompes enregistrées.`);
+  planTotalCount=0;
+  const totalEl=document.getElementById('planTotalCount');
+  if(totalEl) totalEl.textContent='0';
+  resetPlanSessionTimer();
+}
+
+
+function syncPlanUI(){
+  const stopBtn=document.getElementById('stopPlanTrainingBtn');
+  if(stopBtn) stopBtn.classList.toggle('hidden', !planSessionActive);
+}
+
+
+function applyPlanModeUI(){
+  const planActive = planSessionActive;
+  document.querySelectorAll('#tab-plan .controls button, #tab-plan .metric, #tab-plan .help, #tab-plan #debugPanel').forEach(el=>{
+    if(!el) return;
+    if(planActive) el.classList.add('plan-only-show');
+    else el.classList.remove('plan-only-show');
+  });
+  const freeButtons=['nextSetBtn','finishWorkoutBtn','resetCount'];
+  freeButtons.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.toggle('plan-only-hidden', planActive); });
+}
+
+
+function updatePlanScreenState(){
+  const planActive = planSessionActive;
+  ['nextSet','finishWorkout','resetCount'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.toggle('plan-session-only', planActive); });
+  const controls=document.querySelectorAll('#tab-plan .controls button, #tab-plan .controls .btn');
+  controls.forEach(el=>{
+    if(el.id==='toggleSession' || el.id==='startCamera') return;
+    if(planActive) el.classList.add('plan-session-only');
+    else el.classList.remove('plan-session-only');
+  });
+}
+
 function pad(n){return String(n).padStart(2,'0')} function toICSDate(d){return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;}
 function downloadCalendarEvent(workout){const start=new Date(),end=new Date(start.getTime()+30*60000);const desc=`Total: ${workout.total} pompes\\nSets: ${workout.sets.map(s=>`Set ${s.set}: ${s.reps}`).join(' | ')}`;const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pompes//FR//EN','BEGIN:VEVENT',`UID:pompes-${Date.now()}@webapp`,`DTSTAMP:${toICSDate(new Date())}`,`DTSTART:${toICSDate(start)}`,`DTEND:${toICSDate(end)}`,`SUMMARY:Séance Pompes - ${workout.total} pompes`,`DESCRIPTION:${desc}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pompes-seance.ics';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200);}
 window.addEventListener('load',()=>{startCamera();});
@@ -1177,6 +1375,72 @@ function resetSessionTimer(){
   const el=document.getElementById('sessionDuration');
   if(el) el.textContent='00:00';
 }
+
+function updatePlanDurationDisplay(){
+  const el=document.getElementById('planSessionDuration');
+  if(el && planSessionStartTime) el.textContent=formatDuration(Date.now()-planSessionStartTime);
+}
+function startPlanSessionTimer(){
+  if(planSessionStartTime) return;
+  planSessionStartTime=Date.now();
+  planSessionTimerInterval=setInterval(updatePlanDurationDisplay,1000);
+}
+function stopPlanSessionTimer(){
+  if(planSessionTimerInterval){clearInterval(planSessionTimerInterval);planSessionTimerInterval=null;}
+}
+function resetPlanSessionTimer(){
+  stopPlanSessionTimer();
+  planSessionStartTime=null;
+  const el=document.getElementById('planSessionDuration');
+  if(el) el.textContent='00:00';
+}
+function formatPlanRest(sec){
+  const m=Math.floor(sec/60), s=sec%60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function startPlanRest(seconds, nextLabel){
+  planRestActive=true;
+  planRestRemaining=seconds;
+  planRestTargetTime=Date.now()+seconds*1000;
+  const panel=document.getElementById('planRestPanel');
+  const display=document.getElementById('planRestDisplay');
+  const text=document.getElementById('planRestText');
+  if(panel) panel.classList.remove('hidden');
+  if(display) display.textContent=formatPlanRest(seconds);
+  if(text) text.textContent=nextLabel || 'Repos avant le prochain set.';
+  clearInterval(planRestTimer);
+  planRestTimer=setInterval(planRestTick,250);
+}
+function planRestTick(){
+  if(!planRestTargetTime) return;
+  const remainingMs=planRestTargetTime-Date.now();
+  const remainingSec=Math.max(0,Math.ceil(remainingMs/1000));
+  if(remainingSec!==planRestRemaining){
+    planRestRemaining=remainingSec;
+    const display=document.getElementById('planRestDisplay');
+    if(display) display.textContent=formatPlanRest(planRestRemaining);
+  }
+  if(remainingMs<=0){
+    stopPlanRest();
+  }
+}
+function stopPlanRest(){
+  clearInterval(planRestTimer);
+  planRestTimer=null;
+  planRestTargetTime=null;
+  planRestActive=false;
+  const panel=document.getElementById('planRestPanel');
+  if(panel) panel.classList.add('hidden');
+}
+const planSkipRestBtn=document.getElementById('planSkipRest');
+if(planSkipRestBtn) planSkipRestBtn.addEventListener('click',()=>{ stopPlanRest(); });
+const stopPlanTrainingBtn=document.getElementById('stopPlanTrainingBtn');
+if(stopPlanTrainingBtn) stopPlanTrainingBtn.addEventListener('click',()=>{
+  if(!planSessionActive) return;
+  if(confirm(`Arrêter l'entraînement maintenant ? ${planTotalCount} pompes seront enregistrées.`)){
+    finishPlanTraining(false);
+  }
+});
 toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(cameraReady&&!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
