@@ -1,4 +1,4 @@
-<!-- v81 -->
+<!-- v43 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -358,6 +358,15 @@
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.20.0/dist/tf-backend-webgl.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js" crossorigin="anonymous"></script>
 <script>
+// Retourne la date au format YYYY-MM-DD selon le calendrier LOCAL de l'utilisateur
+// (contrairement à .toISOString() qui convertit en UTC et peut faire glisser
+// la date d'un jour pour les fuseaux horaires en avance sur UTC, ex: France).
+function toLocalDateStr(d){
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
 const html=document.documentElement,themeBtn=document.querySelector('[data-theme-toggle]');let theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';html.setAttribute('data-theme',theme);themeBtn.addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';html.setAttribute('data-theme',theme)});
 const $=id=>document.getElementById(id); const video=$('video'), work=$('work'), wctx=work.getContext('2d'), toastEl=$('toast');
 let toastTimer=null;
@@ -412,7 +421,7 @@ function buildPlanPromptContext(){
     profile: planProfile,
     recent: getRecentPlanWorkouts(14),
     skipped: workouts.filter(w=>w && w.source==='plan' && w.skipped===true),
-    today: new Date().toISOString().slice(0,10)
+    today: toLocalDateStr(new Date())
   };
 }
 
@@ -472,7 +481,7 @@ function getAIPlanForDate(dateIso){
 }
 
 function applyAIPlanForToday(baseSets, ratio){
-  const todayIso=new Date().toISOString().slice(0,10);
+  const todayIso=toLocalDateStr(new Date());
   const aiDay=getAIPlanForDate(todayIso);
   if(aiDay && aiDay.sets.length) return {sets: aiDay.sets, restSeconds: aiDay.restSeconds || 60, note: aiDay.note || '', ai:true};
   return {sets: baseSets, restSeconds: 60, note: '', ai:false};
@@ -480,7 +489,7 @@ function applyAIPlanForToday(baseSets, ratio){
 
 function recordSkippedPlanDay(){
   if(!planProfile) return;
-  const todayIso=new Date().toISOString().slice(0,10);
+  const todayIso=toLocalDateStr(new Date());
   const existing=workouts.find(w=>w && w.source==='plan' && w.skipped===true && w.isoDate===todayIso);
   if(existing) return;
   workouts.push({date:new Date().toLocaleDateString('fr-FR')+' '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate:todayIso,total:0,duration:'00:00',sets:[],source:'plan',skipped:true});
@@ -503,7 +512,7 @@ function buildFallbackAIPlan(reason='regular'){
     let sets=generateDailyTarget(maxReps,intensity,ratio);
     if(reason==='skipped_day' && i===0) sets=sets.map(v=>Math.max(2,Math.round(v*0.92)));
     const restSeconds = sets.length>=6 ? 75 : sets.length>=5 ? 60 : 90;
-    rows.push({date:d.toISOString().slice(0,10), sets, restSeconds, note: reason==='skipped_day' && i===0 ? 'Volume réduit après jour sauté' : 'Adaptation progressive'});
+    rows.push({date:toLocalDateStr(d), sets, restSeconds, note: reason==='skipped_day' && i===0 ? 'Volume réduit après jour sauté' : 'Adaptation progressive'});
   }
   return {version:1, generatedAt:new Date().toISOString(), days:rows};
 }
@@ -512,7 +521,7 @@ function shouldMarkSkippedToday(){
   const recent=getRecentPlanWorkouts(2);
   if(!recent.length) return false;
   const last=recent[0];
-  const todayIso=new Date().toISOString().slice(0,10);
+  const todayIso=toLocalDateStr(new Date());
   const lastIso=last.isoDate;
   if(lastIso===todayIso) return false;
   const diffDays=Math.round((Date.now()-new Date(lastIso).getTime())/86400000);
@@ -638,7 +647,7 @@ function renderPlanTab(){
     const nextDates=getNextTrainingDates(planProfile.days, 5);
     const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
     nextDates.forEach((d,idx)=>{
-      const aiDay=getAIPlanForDate(d.toISOString().slice(0,10));
+      const aiDay=getAIPlanForDate(toLocalDateStr(d));
       const intensity = planProfile.days.indexOf(d.getDay()) + 1;
       const daySets=aiDay && aiDay.sets && aiDay.sets.length ? aiDay.sets : generateDailyTarget(planProfile.maxReps, intensity, ratio);
       const total=daySets.reduce((a,b)=>a+b,0);
@@ -887,6 +896,10 @@ document.getElementById('resetPlanBtn').addEventListener('click',()=>{
 });
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
+    if(planSessionActive && btn.dataset.tab!=='plan'){
+      showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+      return;
+    }
     document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(t=>t.classList.add('hidden'));
     btn.classList.add('active');
@@ -914,7 +927,7 @@ function renderCalendar(){
   const firstDay=new Date(calViewYear,calViewMonth,1);
   let startOffset=firstDay.getDay()-1; if(startOffset<0) startOffset=6;
   const daysInMonth=new Date(calViewYear,calViewMonth+1,0).getDate();
-  const todayIso=new Date().toISOString().slice(0,10);
+  const todayIso=toLocalDateStr(new Date());
   for(let i=0;i<startOffset;i++){
     const empty=document.createElement('div');
     empty.className='cal-day empty';
@@ -1028,15 +1041,15 @@ function computeStreak(){
     if(run>best) best=run;
     prevDate=d;
   });
-  const todayIso=new Date().toISOString().slice(0,10);
-  const yestIso=new Date(Date.now()-86400000).toISOString().slice(0,10);
+  const todayIso=toLocalDateStr(new Date());
+  const yestIso=toLocalDateStr(new Date(Date.now()-86400000));
   let checkDate = dateSet.has(todayIso)?todayIso:(dateSet.has(yestIso)?yestIso:null);
   if(checkDate){
     current=1;
     let d=new Date(checkDate);
     while(true){
       d.setDate(d.getDate()-1);
-      const iso=d.toISOString().slice(0,10);
+      const iso=toLocalDateStr(d);
       if(dateSet.has(iso)) current++; else break;
     }
   }
@@ -1101,7 +1114,7 @@ function renderProgressChart(byDay){
   const days=[];
   for(let i=29;i>=0;i--){
     const d=new Date(Date.now()-i*86400000);
-    days.push({iso:d.toISOString().slice(0,10),total:byDay[d.toISOString().slice(0,10)]||0});
+    days.push({iso:toLocalDateStr(d),total:byDay[toLocalDateStr(d)]||0});
   }
   const maxVal=Math.max(...days.map(d=>d.total),1);
   const padding=8;
@@ -1140,7 +1153,7 @@ document.getElementById('exportDataBtn').addEventListener('click',()=>{
   const blob=new Blob([dataStr],{type:'application/json'});
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob);
-  a.download=`pushup-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.download=`pushup-backup-${toLocalDateStr(new Date())}.json`;
   a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),1200);
   showToast('Données exportées.');
@@ -1462,7 +1475,7 @@ function finishPlanTraining(completed){
   stopPlanSessionTimer();
   if(planTotalCount>0){
     const now=new Date();
-    const isoDate=now.toISOString().slice(0,10);
+    const isoDate=toLocalDateStr(now);
     const durationMs=planSessionStartTime?(Date.now()-planSessionStartTime):0;
     const doneSets=(planSessionSets[0]&&planSessionSets[0].sets ? planSessionSets[0].sets.slice(0,planSessionIndex+(completed?1:0)) : []).map((reps,i)=>({set:i+1,reps}));
     const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,total:planTotalCount,duration:formatDuration(durationMs),sets:doneSets,source:'plan'};
@@ -1635,7 +1648,7 @@ function finalizeWorkout(finalSetReps){
   }
   stopRest();sessionActive=false;
   const now=new Date();
-  const isoDate=now.toISOString().slice(0,10);
+  const isoDate=toLocalDateStr(now);
   const durationMs=sessionStartTime?(Date.now()-sessionStartTime):0;
   const finalTotal=totalCount;
   const finalSetsCount=completedSets.length;
