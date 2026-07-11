@@ -1,4 +1,4 @@
-<!-- v43 -->
+<!-- v81 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -387,15 +387,24 @@ function loadPlan(){ try{return storageOk?JSON.parse(localStorage.getItem(PLAN_K
 function savePlan(plan){ if(storageOk) localStorage.setItem(PLAN_KEY,JSON.stringify(plan)); }
 let planProfile=loadPlan();
 let activeMode='free';
-const AI_PLAN_API_URL = localStorage.getItem('AI_PLAN_API_URL') || '';
+const AI_PLAN_API_URL = localStorage.getItem('AI_PLAN_API_URL') || 'https://pushup-plan-api.onrender.com/api/plan/generate';
 const AI_PLAN_MODEL = localStorage.getItem('AI_PLAN_MODEL') || 'gpt-4.1-mini';
 
 async function generatePlanWithAI(payload){
   if(!AI_PLAN_API_URL) return buildFallbackAIPlan(payload.reason || 'regular');
-  const res = await fetch(AI_PLAN_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:AI_PLAN_MODEL,payload})});
-  if(!res.ok) throw new Error(`AI API ${res.status}`);
-  const data = await res.json();
-  return data;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(()=>controller.abort(), 50000);
+  try{
+    const res = await fetch(AI_PLAN_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,model:AI_PLAN_MODEL}),signal:controller.signal});
+    if(!res.ok) throw new Error(`AI API ${res.status}`);
+    const data = await res.json();
+    return data;
+  }catch(e){
+    if(e.name==='AbortError') throw new Error('AI API timeout');
+    throw e;
+  }finally{
+    clearTimeout(timeoutId);
+  }
 }
 
 function buildPlanPromptContext(){
@@ -418,8 +427,11 @@ function normalizeAIPlan(ai){
   return days.length ? {version:1, generatedAt:new Date().toISOString(), days} : null;
 }
 
+let planAIRegenInFlight = false;
 async function regeneratePlanFromAI(reason='regular'){
   if(!planProfile) return null;
+  if(planAIRegenInFlight) return null;
+  planAIRegenInFlight = true;
   const ctx = buildPlanPromptContext();
   const payload = {
     reason,
@@ -427,16 +439,29 @@ async function regeneratePlanFromAI(reason='regular'){
     instructions: 'Generate a safe adaptive training plan. Return JSON only with days[]. Each day has date, sets array, restSeconds, and note. If a day was skipped, adapt the next days slightly downward or redistribute volume, never overcompensate aggressively.',
     context: ctx
   };
+  const isColdCall = !!AI_PLAN_API_URL;
+  if(isColdCall) showToast('Génération du plan... (le serveur peut prendre jusqu\'à 1 min à démarrer)', 6000);
   try{
     const ai = await generatePlanWithAI(payload);
     const plan = normalizeAIPlan(ai);
-    if(!plan) return null;
+    if(!plan) throw new Error('empty plan');
     planProfile.aiPlan = plan;
     savePlan(planProfile);
+    if(isColdCall) showToast('Plan mis à jour.', 2200);
     return plan;
   }catch(e){
     console.error('AI plan generation failed', e);
+    const fallback = buildFallbackAIPlan(reason);
+    if(fallback){
+      planProfile.aiPlan = fallback;
+      savePlan(planProfile);
+      if(isColdCall) showToast('Serveur indisponible, plan généré localement.', 3200);
+      return fallback;
+    }
     return null;
+  }finally{
+    if(typeof renderPlanTab==='function') renderPlanTab();
+    planAIRegenInFlight = false;
   }
 }
 
