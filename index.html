@@ -1,4 +1,4 @@
-<!-- v47 -->
+<!-- v49 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -103,7 +103,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:50;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v47</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v49</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
@@ -265,10 +265,16 @@
     </div>
   </div>
 <div id="tab-profile" class="tab-content hidden">
+    <div id="profileEmptyState" class="hidden">
+      <section class="panel" style="text-align:center;">
+        <h2>Aucun plan actif</h2>
+        <p style="color:var(--muted);font-size:.9rem;margin:.6rem 0 1rem;">Créez d'abord votre plan d'entraînement dans l'onglet Plan : c'est là que vous indiquez votre nombre de pompes maximum et vos jours d'entraînement.</p>
+        <button id="goToPlanFromProfileBtn" class="btn btn-primary" style="width:100%;">Aller à l'onglet Plan</button>
+      </section>
+    </div>
+    <div id="profileFormWrap">
     <section class="panel">
       <h2>Mon profil</h2>
-      <label for="planMaxRepsEdit">Pompes maximum en une fois</label>
-      <input type="number" id="planMaxRepsEdit" min="1" max="200">
       <label style="margin-top:.6rem;">Jours d'entraînement</label>
       <div class="chips" id="planDaysChipsEdit">
         <button class="chip" data-day="1">Lun</button>
@@ -282,7 +288,8 @@
       <button id="savePlanSettingsBtn" class="btn btn-primary" style="width:100%;margin-top:.7rem;">Enregistrer les modifications</button>
     </section>
     <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
-    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v47</div>
+    </div>
+    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v49</div>
   </div>
 <div id="tab-calendar" class="tab-content hidden">
     <section class="panel">
@@ -620,6 +627,20 @@ function getPlanWeekNumber(){
   return Math.max(1,Math.floor(diffDays/7)+1);
 }
 
+function renderProfileTab(){
+  const emptyState=document.getElementById('profileEmptyState');
+  const formWrap=document.getElementById('profileFormWrap');
+  if(!planProfile){
+    emptyState.classList.remove('hidden');
+    formWrap.classList.add('hidden');
+    return;
+  }
+  emptyState.classList.add('hidden');
+  formWrap.classList.remove('hidden');
+  document.querySelectorAll('#planDaysChipsEdit .chip').forEach(ch=>{
+    ch.classList.toggle('active', planProfile.days.includes(Number(ch.dataset.day)));
+  });
+}
 function renderPlanTab(){
   const onboarding=document.getElementById('planOnboarding');
   const active=document.getElementById('planActive');
@@ -634,11 +655,7 @@ function renderPlanTab(){
   }
   onboarding.classList.add('hidden');
   active.classList.remove('hidden');
-
-  document.getElementById('planMaxRepsEdit').value=planProfile.maxReps;
-  document.querySelectorAll('#planDaysChipsEdit .chip').forEach(ch=>{
-    ch.classList.toggle('active', planProfile.days.includes(Number(ch.dataset.day)));
-  });
+  renderProfileTab();
 
   const todayDow=new Date().getDay();
   const isTrainingDay=planProfile.days.includes(todayDow);
@@ -910,15 +927,17 @@ document.querySelectorAll('#planDaysChipsEdit .chip').forEach(ch=>{
   ch.addEventListener('click',()=>ch.classList.toggle('active'));
 });
 document.getElementById('savePlanSettingsBtn').addEventListener('click',()=>{
-  const newMax=Number(document.getElementById('planMaxRepsEdit').value);
+  if(!planProfile){ showToast('Créez d\'abord votre plan dans l\'onglet Plan.'); return; }
   const newDays=[...document.querySelectorAll('#planDaysChipsEdit .chip.active')].map(ch=>Number(ch.dataset.day));
-  if(!newMax||newMax<1){ showToast('Indiquez un nombre de pompes valide.'); return; }
   if(!newDays.length){ showToast('Sélectionnez au moins un jour d\'entraînement.'); return; }
-  planProfile.maxReps=newMax;
   planProfile.days=newDays;
   savePlan(planProfile);
   renderPlanTab();
-  showToast('Réglages du plan mis à jour.');
+  showToast('Jours d\'entraînement mis à jour.');
+});
+const goToPlanFromProfileBtn=document.getElementById('goToPlanFromProfileBtn');
+if(goToPlanFromProfileBtn) goToPlanFromProfileBtn.addEventListener('click',()=>{
+  document.querySelector('.tab-btn[data-tab="plan"]').click();
 });
 document.getElementById('resetPlanBtn').addEventListener('click',async()=>{
   if(!await customConfirm('Réinitialiser votre plan et recommencer le questionnaire ?')) return;
@@ -942,6 +961,7 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     document.getElementById('tab-'+btn.dataset.tab).classList.remove('hidden');
     if(btn.dataset.tab==='calendar') renderCalendar(); if(btn.dataset.tab==='training'){activeMode='free';} if(btn.dataset.tab==='plan'){activeMode='plan';}
     if(btn.dataset.tab==='stats') renderStats();
+    if(btn.dataset.tab==='profile') renderProfileTab();
     if(btn.dataset.tab==='plan') renderPlanTab();
   });
 });
