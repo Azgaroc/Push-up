@@ -1,4 +1,4 @@
-<!-- v50 -->
+<!-- v51 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -118,7 +118,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v50</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v51</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
@@ -304,7 +304,7 @@
     </section>
     <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
     </div>
-    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v50</div>
+    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v51</div>
   </div>
 <div id="tab-calendar" class="tab-content hidden">
     <section class="panel">
@@ -864,7 +864,6 @@ async function startPlanSession(){
   planSessionRemaining=planSessionRepTarget;
   planSessionCompleted=[];
   planSessionActive=true;
-  requestWakeLock();
   planTotalCount=0;
   activeMode='plan';
   resetTracking();
@@ -1704,7 +1703,6 @@ const planSkipRestBtn=document.getElementById('planSkipRest');
 if(planSkipRestBtn) planSkipRestBtn.addEventListener('click',()=>{ stopPlanRest(); });
 const stopPlanTrainingBtn=document.getElementById('stopPlanTrainingBtn');
 if(stopPlanTrainingBtn) stopPlanTrainingBtn.addEventListener('click',async()=>{
-  releaseWakeLock();
   if(!planSessionActive) return;
   if(await customConfirm(`Arrêter l'entraînement maintenant ? ${planTotalCount} pompes seront enregistrées.`)){
     finishPlanTraining(false);
@@ -1714,10 +1712,9 @@ toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||r
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
-document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent='Prêt';}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;requestWakeLock();requestWakeLock();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{phaseEl.textContent='Prêt';movementLabel.textContent='Repositionnez-vous';}});
+document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent='Prêt';}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{phaseEl.textContent='Prêt';movementLabel.textContent='Repositionnez-vous';}});
 resetBtn.addEventListener('click',()=>{setCount=0;refreshHeader();resetTracking();});
 finishWorkoutBtn.addEventListener('click',()=>{
-  releaseWakeLock();
   if(totalCount===0 && setCount===0){
     sessionActive=false;
     toggleSessionBtn.textContent='Démarrer';
@@ -1767,16 +1764,18 @@ function finalizeWorkout(finalSetReps){
   try{setTimeout(()=>{downloadCalendarEvent(workout);},300);}catch(e){console.error('downloadCalendarEvent error', e && e.message ? e.message : String(e));}
 }
 document.getElementById('closeDoneModal').addEventListener('click',()=>{document.getElementById('workoutDoneModal').classList.add('hidden');});
-</script>
 
+// Empêche l'écran de se verrouiller pendant une séance active (caméra ou mode manuel).
+// Safari iOS supporte l'API Wake Lock depuis la version 16.4.
 let wakeLockRef = null;
 async function requestWakeLock() {
+  if (wakeLockRef) return;
   try {
     if ('wakeLock' in navigator) {
       wakeLockRef = await navigator.wakeLock.request('screen');
       wakeLockRef.addEventListener('release', () => { wakeLockRef = null; });
     }
-  } catch (e) { console.warn('Wake Lock indisponible', e?.message || e); }
+  } catch (e) { console.warn('Wake Lock indisponible', e && e.message ? e.message : String(e)); }
 }
 function releaseWakeLock() {
   if (wakeLockRef) { wakeLockRef.release().catch(()=>{}); wakeLockRef = null; }
@@ -1786,6 +1785,17 @@ document.addEventListener('visibilitychange', async () => {
     await requestWakeLock();
   }
 });
+// Surveille l'état de la séance toutes les secondes et gère le verrou en conséquence,
+// sans dépendre de chaque endroit du code qui bascule sessionActive/planSessionActive
+// (évite les oublis : c'est ce qui causait les trous de couverture ci-dessus).
+let wakeLockWasActive = false;
+setInterval(() => {
+  const shouldHold = sessionActive || planSessionActive;
+  if (shouldHold && !wakeLockWasActive) requestWakeLock();
+  else if (!shouldHold && wakeLockWasActive) releaseWakeLock();
+  wakeLockWasActive = shouldHold;
+}, 1000);
+
 function warmUpBackend() {
   try {
     const healthUrl = AI_PLAN_API_URL.replace('/api/plan/generate', '/api/health');
@@ -1793,6 +1803,7 @@ function warmUpBackend() {
   } catch (_) {}
 }
 window.addEventListener('load', warmUpBackend);
+</script>
 
 </body>
 </html>
