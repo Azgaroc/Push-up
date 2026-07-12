@@ -864,6 +864,7 @@ async function startPlanSession(){
   planSessionRemaining=planSessionRepTarget;
   planSessionCompleted=[];
   planSessionActive=true;
+  requestWakeLock();
   planTotalCount=0;
   activeMode='plan';
   resetTracking();
@@ -1703,6 +1704,7 @@ const planSkipRestBtn=document.getElementById('planSkipRest');
 if(planSkipRestBtn) planSkipRestBtn.addEventListener('click',()=>{ stopPlanRest(); });
 const stopPlanTrainingBtn=document.getElementById('stopPlanTrainingBtn');
 if(stopPlanTrainingBtn) stopPlanTrainingBtn.addEventListener('click',async()=>{
+  releaseWakeLock();
   if(!planSessionActive) return;
   if(await customConfirm(`Arrêter l'entraînement maintenant ? ${planTotalCount} pompes seront enregistrées.`)){
     finishPlanTraining(false);
@@ -1712,9 +1714,10 @@ toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||r
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
-document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent='Prêt';}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{phaseEl.textContent='Prêt';movementLabel.textContent='Repositionnez-vous';}});
+document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent='Prêt';}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;requestWakeLock();requestWakeLock();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{phaseEl.textContent='Prêt';movementLabel.textContent='Repositionnez-vous';}});
 resetBtn.addEventListener('click',()=>{setCount=0;refreshHeader();resetTracking();});
 finishWorkoutBtn.addEventListener('click',()=>{
+  releaseWakeLock();
   if(totalCount===0 && setCount===0){
     sessionActive=false;
     toggleSessionBtn.textContent='Démarrer';
@@ -1765,5 +1768,31 @@ function finalizeWorkout(finalSetReps){
 }
 document.getElementById('closeDoneModal').addEventListener('click',()=>{document.getElementById('workoutDoneModal').classList.add('hidden');});
 </script>
+
+let wakeLockRef = null;
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLockRef = await navigator.wakeLock.request('screen');
+      wakeLockRef.addEventListener('release', () => { wakeLockRef = null; });
+    }
+  } catch (e) { console.warn('Wake Lock indisponible', e?.message || e); }
+}
+function releaseWakeLock() {
+  if (wakeLockRef) { wakeLockRef.release().catch(()=>{}); wakeLockRef = null; }
+}
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'visible' && (sessionActive || planSessionActive) && !wakeLockRef) {
+    await requestWakeLock();
+  }
+});
+function warmUpBackend() {
+  try {
+    const healthUrl = AI_PLAN_API_URL.replace('/api/plan/generate', '/api/health');
+    fetch(healthUrl, { method: 'GET', cache: 'no-store' }).catch(()=>{});
+  } catch (_) {}
+}
+window.addEventListener('load', warmUpBackend);
+
 </body>
 </html>
