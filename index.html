@@ -1,4 +1,4 @@
-<!-- v54 -->
+<!-- v55 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -118,7 +118,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v54</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v55</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
@@ -306,7 +306,7 @@
     </section>
     <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
     </div>
-    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v54</div>
+    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v55</div>
   </div>
 <div id="tab-calendar" class="tab-content hidden">
     <section class="panel">
@@ -734,11 +734,18 @@ function renderPlanTab(){
   const aiToday=applyAIPlanForToday(baseSets, ratio);
   const sets=aiToday.sets;
   const todayIsoStr=toLocalDateStr(new Date());
-  const todayCompleted=workouts.some(w=>w && w.source==='plan' && w.isoDate===todayIsoStr);
+  const todayWorkout=[...workouts].reverse().find(w=>w && w.source==='plan' && w.isoDate===todayIsoStr);
+  const todayCompleted=!!todayWorkout;
+  // Une fois la séance faite, on affiche ce qui a réellement été réalisé,
+  // pas une nouvelle suggestion générée après coup (ex. après un retour "difficile").
+  const displaySets = todayCompleted
+    ? (Array.isArray(todayWorkout.sets) ? todayWorkout.sets.map(s=>s.reps) : [])
+    : sets;
+  const displayTotal = todayCompleted ? (todayWorkout.total || displaySets.reduce((a,b)=>a+b,0)) : displaySets.reduce((a,b)=>a+b,0);
   titleEl.innerHTML = todayCompleted
-    ? `<span style="color:var(--primary);">✓ Séance effectuée</span> · ${sets.length} sets · ${sets.reduce((a,b)=>a+b,0)} pompes au total`
-    : `${sets.length} sets · ${sets.reduce((a,b)=>a+b,0)} pompes au total`;
-  sets.forEach((reps,i)=>{
+    ? `<span style="color:var(--primary);">✓ Séance effectuée</span> · ${displaySets.length} sets · ${displayTotal} pompes au total`
+    : `${displaySets.length} sets · ${displayTotal} pompes au total`;
+  displaySets.forEach((reps,i)=>{
     const row=document.createElement('div');
     row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:var(--surface2);border-radius:.8rem;';
     row.innerHTML=`<span>Set ${i+1}</span><strong style="color:var(--primary);">${reps} pompes</strong>`;
@@ -750,14 +757,20 @@ function renderPlanTab(){
     const nextDates=getNextTrainingDates(planProfile.days, 5);
     const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
     nextDates.forEach((d,idx)=>{
-      const aiDay=getAIPlanForDate(toLocalDateStr(d));
-      const intensity = planProfile.days.indexOf(d.getDay()) + 1;
-      const daySets=aiDay && aiDay.sets && aiDay.sets.length ? aiDay.sets : generateDailyTarget(planProfile.maxReps, intensity, ratio);
-      const total=daySets.reduce((a,b)=>a+b,0);
+      const isToday = idx===0;
+      let total;
+      if(isToday && todayCompleted){
+        total = displayTotal;
+      }else{
+        const aiDay=getAIPlanForDate(toLocalDateStr(d));
+        const dIntensity = planProfile.days.indexOf(d.getDay()) + 1;
+        const daySets=aiDay && aiDay.sets && aiDay.sets.length ? aiDay.sets : generateDailyTarget(planProfile.maxReps, dIntensity, ratio);
+        total=daySets.reduce((a,b)=>a+b,0);
+      }
       const row=document.createElement('div');
-      const isDoneRow = idx===0 && todayCompleted;
+      const isDoneRow = isToday && todayCompleted;
       row.style.cssText=`display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:${isDoneRow?'rgba(79,152,163,.18)':'var(--surface2)'};border-radius:.8rem;`;
-      const label = idx===0 ? (todayCompleted ? `✓ Aujourd'hui` : `Aujourd'hui`) : `${dayNames[d.getDay()]} ${d.getDate()} ${monthNamesShort[d.getMonth()]}`;
+      const label = isToday ? (todayCompleted ? `✓ Aujourd'hui` : `Aujourd'hui`) : `${dayNames[d.getDay()]} ${d.getDate()} ${monthNamesShort[d.getMonth()]}`;
       row.innerHTML=`<span${isDoneRow?' style="color:var(--primary);font-weight:600;"':''}>${label}</span><strong style="color:var(--primary);">${total} pompes</strong>`;
       future.appendChild(row);
     });
