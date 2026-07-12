@@ -1,4 +1,4 @@
-<!-- v55 -->
+<!-- v56 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -105,6 +105,10 @@
 .splash-logo-wrap img{width:76px;height:76px;border-radius:1.1rem;object-fit:cover;}
 .splash-text{font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.85rem;color:var(--muted);}
 @keyframes splash-spin{to{transform:rotate(360deg);}}
+#landscapeBlock{display:none;position:fixed;inset:0;z-index:300;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center;}
+@media (orientation: landscape) and (max-width: 926px){
+  #landscapeBlock{display:flex;}
+}
 </style>
 </head>
 <body>
@@ -115,22 +119,27 @@
   </div>
   <div class="splash-text">Loading</div>
 </div>
+<div id="landscapeBlock">
+  <div style="font-size:3rem;">📱</div>
+  <div style="font-weight:700;font-size:1.1rem;">Tournez votre iPhone</div>
+  <div style="color:var(--muted);font-size:.9rem;">Push-Up fonctionne uniquement en mode portrait.</div>
+</div>
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v55</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v56</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
   <div class="tabs-bar">
-    <button class="tab-btn active" data-tab="training">Libre</button>
-    <button class="tab-btn" data-tab="plan">Plan</button>
+    <button class="tab-btn active" data-tab="plan">Plan</button>
+    <button class="tab-btn" data-tab="training">Libre</button>
     <button class="tab-btn" data-tab="calendar">Calendrier</button>
     <button class="tab-btn" data-tab="stats">Stats</button>
     <button class="tab-btn" data-tab="profile">Profil</button>
   </div>
 
-  <div id="tab-training" class="tab-content">
+  <div id="tab-training" class="tab-content hidden">
   <section class="panel">
     <div class="counter-wrap" style="flex-direction:column;gap:.3rem;">
       <div style="width:100%;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.75rem;">
@@ -219,7 +228,7 @@
   </div>
 
   
-  <div id="tab-plan" class="tab-content hidden">
+  <div id="tab-plan" class="tab-content">
     <div id="planOnboarding">
       <section class="panel">
         <h2>Créer mon plan d'entraînement</h2>
@@ -276,7 +285,7 @@
         <div id="planProgressSummary" style="font-size:.9rem;color:var(--text);">Semaine <strong id="planWeekNumber">1</strong> de votre programme · <span id="planAdaptStatus" style="color:var(--muted);">Ajusté selon vos séances</span></div>
       </section>
       <section class="panel" style="margin-top:.6rem;">
-        <h2>5 séances à venir</h2>
+        <h2>7 prochains jours</h2>
         <div id="planFutureSessions" style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;"></div>
       </section>
     </div>
@@ -306,9 +315,16 @@
     </section>
     <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
     </div>
-    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v55</div>
+    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v56</div>
   </div>
 <div id="tab-calendar" class="tab-content hidden">
+    <section class="panel" id="weeklyStreakPanel" style="display:flex;align-items:center;gap:.9rem;">
+      <div id="streakFlame" style="font-size:2.2rem;line-height:1;filter:drop-shadow(0 0 6px color-mix(in srgb, var(--primary) 60%, transparent));">🔥</div>
+      <div>
+        <div style="font-size:1.6rem;font-weight:700;color:var(--primary);"><span id="streakCount">0</span> <span id="streakUnit">semaine</span></div>
+        <div style="color:var(--muted);font-size:.8rem;">Au moins une séance (libre ou plan) par semaine</div>
+      </div>
+    </section>
     <section class="panel">
       <div class="cal-nav">
         <button id="calPrevMonth" class="icon-btn">‹</button>
@@ -318,7 +334,7 @@
       <div class="cal-weekdays"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
       <div id="calGrid" class="cal-grid"></div>
     </section>
-    <button id="resetCalendarBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le calendrier (test)</button>
+    <button id="resetCalendarBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le calendrier</button>
     <div style="display:flex;gap:.5rem;margin-top:.5rem;">
       <button id="exportDataBtn" class="btn" style="flex:1;">Exporter mes données</button>
       <button id="importDataBtn" class="btn" style="flex:1;">Importer</button>
@@ -477,7 +493,7 @@ const PLAN_KEY='pompes-plan-v1';
 function loadPlan(){ try{return storageOk?JSON.parse(localStorage.getItem(PLAN_KEY)||'null'):null;}catch(e){return null;} }
 function savePlan(plan){ if(storageOk) localStorage.setItem(PLAN_KEY,JSON.stringify(plan)); }
 let planProfile=loadPlan();
-let activeMode='free';
+let activeMode='plan';
 const AI_PLAN_API_URL = localStorage.getItem('AI_PLAN_API_URL') || 'https://pushup-plan-api.onrender.com/api/plan/generate';
 const AI_PLAN_MODEL = localStorage.getItem('AI_PLAN_MODEL') || 'gpt-4.1-mini';
 
@@ -754,10 +770,19 @@ function renderPlanTab(){
   const future=document.getElementById('planFutureSessions');
   if(future){
     future.innerHTML='';
-    const nextDates=getNextTrainingDates(planProfile.days, 5);
+    const nextDates=getNextCalendarDates(7);
     const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
     nextDates.forEach((d,idx)=>{
       const isToday = idx===0;
+      const isTrainingDayRow = planProfile.days.includes(d.getDay());
+      const label = isToday ? (todayCompleted ? `✓ Aujourd'hui` : `Aujourd'hui`) : `${dayNames[d.getDay()]} ${d.getDate()} ${monthNamesShort[d.getMonth()]}`;
+      const row=document.createElement('div');
+      if(!isTrainingDayRow){
+        row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:var(--surface2);border-radius:.8rem;opacity:.6;';
+        row.innerHTML=`<span>${label}</span><span style="color:var(--muted);font-style:italic;">Repos</span>`;
+        future.appendChild(row);
+        return;
+      }
       let total;
       if(isToday && todayCompleted){
         total = displayTotal;
@@ -767,10 +792,8 @@ function renderPlanTab(){
         const daySets=aiDay && aiDay.sets && aiDay.sets.length ? aiDay.sets : generateDailyTarget(planProfile.maxReps, dIntensity, ratio);
         total=daySets.reduce((a,b)=>a+b,0);
       }
-      const row=document.createElement('div');
       const isDoneRow = isToday && todayCompleted;
       row.style.cssText=`display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:${isDoneRow?'rgba(79,152,163,.18)':'var(--surface2)'};border-radius:.8rem;`;
-      const label = isToday ? (todayCompleted ? `✓ Aujourd'hui` : `Aujourd'hui`) : `${dayNames[d.getDay()]} ${d.getDate()} ${monthNamesShort[d.getMonth()]}`;
       row.innerHTML=`<span${isDoneRow?' style="color:var(--primary);font-weight:600;"':''}>${label}</span><strong style="color:var(--primary);">${total} pompes</strong>`;
       future.appendChild(row);
     });
@@ -814,6 +837,17 @@ function getNextTrainingDates(days, count){
     }
     cursor.setDate(cursor.getDate()+1);
     guard++;
+  }
+  return result;
+}
+
+function getNextCalendarDates(count){
+  const result=[];
+  const cursor=new Date();
+  cursor.setHours(0,0,0,0);
+  for(let i=0;i<count;i++){
+    result.push(new Date(cursor));
+    cursor.setDate(cursor.getDate()+1);
   }
   return result;
 }
@@ -1042,10 +1076,50 @@ function workoutsForDate(iso){
   return workouts.map((w,i)=>({...w,idx:i})).filter(w=>w.isoDate===iso);
 }
 
+function getWeekStart(date){
+  const d=new Date(date);
+  d.setHours(0,0,0,0);
+  const day=d.getDay();
+  const diff=(day===0?-6:1-day); // semaine démarrant le lundi
+  d.setDate(d.getDate()+diff);
+  return d;
+}
+function computeWeeklyStreak(){
+  const weeksWithActivity=new Set();
+  workouts.forEach(w=>{
+    if(!w || !w.isoDate) return;
+    const d=new Date(w.isoDate+'T00:00:00');
+    if(isNaN(d.getTime())) return;
+    weeksWithActivity.add(toLocalDateStr(getWeekStart(d)));
+  });
+  let streak=0;
+  const cursor=getWeekStart(new Date());
+  // Si la semaine en cours n'a pas encore de séance, ça ne casse pas la série
+  // (la semaine n'est pas terminée) : on commence le comptage à la semaine précédente.
+  if(!weeksWithActivity.has(toLocalDateStr(cursor))){
+    cursor.setDate(cursor.getDate()-7);
+  }
+  while(weeksWithActivity.has(toLocalDateStr(cursor))){
+    streak++;
+    cursor.setDate(cursor.getDate()-7);
+  }
+  return streak;
+}
+function updateStreakDisplay(){
+  const countEl=document.getElementById('streakCount');
+  const unitEl=document.getElementById('streakUnit');
+  if(!countEl) return;
+  const streak=computeWeeklyStreak();
+  countEl.textContent=streak;
+  if(unitEl) unitEl.textContent = streak>1 ? 'semaines' : 'semaine';
+  const flame=document.getElementById('streakFlame');
+  if(flame) flame.style.opacity = streak>0 ? '1' : '.35';
+}
 function renderCalendar(){
   const grid=document.getElementById('calGrid');
   const label=document.getElementById('calMonthLabel');
   if(!grid||!label) return;
+  updateStreakDisplay();
   label.textContent=calMonthNames[calViewMonth]+' '+calViewYear;
   grid.innerHTML='';
   const firstDay=new Date(calViewYear,calViewMonth,1);
@@ -1265,7 +1339,7 @@ function renderProgressChart(byDay){
   });
 }
 document.getElementById('resetCalendarBtn').addEventListener('click',async()=>{
-  if(!await customConfirm('Réinitialiser tout le calendrier ? Cette action supprime toutes les séances enregistrées (test uniquement).')) return;
+  if(!await customConfirm('Réinitialiser tout le calendrier ? Cette action supprime toutes les séances enregistrées.')) return;
   workouts.length=0;
   saveHistory();
   renderCalendar();renderStats();
@@ -1662,6 +1736,12 @@ function updatePlanScreenState(){
 function pad(n){return String(n).padStart(2,'0')} function toICSDate(d){return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;}
 function downloadCalendarEvent(workout){const start=new Date(),end=new Date(start.getTime()+30*60000);const desc=`Total: ${workout.total} pompes\\nSets: ${workout.sets.map(s=>`Set ${s.set}: ${s.reps}`).join(' | ')}`;const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pompes//FR//EN','BEGIN:VEVENT',`UID:pompes-${Date.now()}@webapp`,`DTSTAMP:${toICSDate(new Date())}`,`DTSTART:${toICSDate(start)}`,`DTEND:${toICSDate(end)}`,`SUMMARY:Séance Pompes - ${workout.total} pompes`,`DESCRIPTION:${desc}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pompes-seance.ics';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200);}
 window.addEventListener('load',async()=>{
+  // Verrouillage natif si le navigateur le supporte (iOS Safari ne le supporte pas ;
+  // le blocage visuel CSS #landscapeBlock reste la protection réelle sur iPhone).
+  try{ if(screen.orientation && screen.orientation.lock) await screen.orientation.lock('portrait'); }catch(e){}
+  // Le Plan est l'onglet actif par défaut, mais son contenu est construit
+  // dynamiquement en JS : on le peuple ici, une fois tout le script chargé.
+  renderPlanTab();
   try{
     await Promise.race([
       startCamera(),
