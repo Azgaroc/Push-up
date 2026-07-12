@@ -1,4 +1,4 @@
-<!-- v51 -->
+<!-- v53 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -118,7 +118,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v51</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v53</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
@@ -245,6 +245,7 @@
       <section class="panel" style="text-align:center;">
         <div class="counter-label">Séance du jour</div>
         <div id="planTodayTitle" style="font-size:1.3rem;font-weight:700;margin-top:.3rem;">—</div>
+        <div id="planSessionMetrics" class="hidden">
         <div style="position:relative;width:min(60vw,220px);aspect-ratio:1/1;margin:1rem auto 0;">
           <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
             <circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface2)" stroke-width="6"></circle>
@@ -266,6 +267,7 @@
         <div style="display:flex;justify-content:space-around;gap:.5rem;margin-top:1rem;">
           <div class="metric" style="text-align:center;"><span>Pompes séance</span><strong id="planTotalCount" style="font-size:1.8rem;">0</strong></div>
           <div class="metric" style="text-align:center;"><span>Durée</span><strong id="planSessionDuration" style="font-size:1.8rem;">00:00</strong></div>
+        </div>
         </div>
         <div id="planTodaySets" style="margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;text-align:left;"></div>
       </section>
@@ -304,7 +306,7 @@
     </section>
     <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
     </div>
-    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v51</div>
+    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v53</div>
   </div>
 <div id="tab-calendar" class="tab-content hidden">
     <section class="panel">
@@ -384,6 +386,14 @@
         </div>
       </div>
     </div>
+    <div id="sessionFeedbackModal" class="modal-overlay hidden">
+      <div class="modal-box" style="max-width:380px;text-align:center;">
+        <h2 style="margin-top:0;">Comment s'est passée cette séance ?</h2>
+        <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.2rem;">Ça aide à ajuster vos prochaines séances.</p>
+        <button id="feedbackOkBtn" class="btn btn-primary" style="width:100%;margin-bottom:.6rem;">Bien passée</button>
+        <button id="feedbackHardBtn" class="btn" style="width:100%;">Difficile (pauses supplémentaires)</button>
+      </div>
+    </div>
   </div>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.20.0/dist/tf-core.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@4.20.0/dist/tf-converter.min.js" crossorigin="anonymous"></script>
@@ -419,6 +429,24 @@ function customConfirm(message){
     function onCancel(){cleanup(false);}
     okBtn.addEventListener('click',onOk);
     cancelBtn.addEventListener('click',onCancel);
+  });
+}
+function askSessionFeedback(){
+  return new Promise(resolve=>{
+    const modal=document.getElementById('sessionFeedbackModal');
+    const okBtn=document.getElementById('feedbackOkBtn');
+    const hardBtn=document.getElementById('feedbackHardBtn');
+    modal.classList.remove('hidden');
+    function cleanup(result){
+      modal.classList.add('hidden');
+      okBtn.removeEventListener('click',onOk);
+      hardBtn.removeEventListener('click',onHard);
+      resolve(result);
+    }
+    function onOk(){cleanup('ok');}
+    function onHard(){cleanup('hard');}
+    okBtn.addEventListener('click',onOk);
+    hardBtn.addEventListener('click',onHard);
   });
 }
 const html=document.documentElement,themeBtn=document.querySelector('[data-theme-toggle]');let theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';html.setAttribute('data-theme',theme);themeBtn.addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';html.setAttribute('data-theme',theme)});
@@ -475,6 +503,7 @@ function buildPlanPromptContext(){
     profile: planProfile,
     recent: getRecentPlanWorkouts(14),
     skipped: workouts.filter(w=>w && w.source==='plan' && w.skipped===true),
+    recentHard: workouts.filter(w=>w && w.source==='plan' && w.difficulty==='hard'),
     today: toLocalDateStr(new Date())
   };
 }
@@ -619,6 +648,10 @@ function hasSkippedRecentPlanDay(){
   return workouts.some(w=>w && w.source==='plan' && w.skipped===true && w.isoDate && (Date.now()-new Date(w.isoDate).getTime())<=7*86400000);
 }
 
+function hasRecentHardSession(){
+  return workouts.some(w=>w && w.source==='plan' && w.difficulty==='hard' && w.isoDate && (Date.now()-new Date(w.isoDate).getTime())<=7*86400000);
+}
+
 function computeDailyPlanAdjustment(){
   if(!planProfile) return {ratio:1, daysPenalty:0, avgTotal:0, recentCount:0};
   const recent=getRecentPlanWorkouts(14);
@@ -665,12 +698,14 @@ function renderPlanTab(){
     return;
   }
   if(shouldMarkSkippedToday()) recordSkippedPlanDay();
-  if(!planProfile.aiPlan || hasSkippedRecentPlanDay()){
-    regeneratePlanFromAI(hasSkippedRecentPlanDay() ? 'skipped_day' : 'initial').catch(()=>{});
+  if(!planProfile.aiPlan || hasSkippedRecentPlanDay() || hasRecentHardSession()){
+    const regenReason = hasSkippedRecentPlanDay() ? 'skipped_day' : (hasRecentHardSession() ? 'was_hard' : 'initial');
+    regeneratePlanFromAI(regenReason).catch(()=>{});
   }
   onboarding.classList.add('hidden');
   active.classList.remove('hidden');
   renderProfileTab();
+  syncPlanUI();
 
   const todayDow=new Date().getDay();
   const isTrainingDay=planProfile.days.includes(todayDow);
@@ -717,7 +752,7 @@ function renderPlanTab(){
       const total=daySets.reduce((a,b)=>a+b,0);
       const row=document.createElement('div');
       row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:var(--surface2);border-radius:.8rem;';
-      const label = idx===0 ? `Aujourd'hui · ${dayNames[d.getDay()]} ${d.getDate()}` : `${dayNames[d.getDay()]} ${d.getDate()} ${monthNamesShort[d.getMonth()]}`;
+      const label = idx===0 ? `Aujourd'hui` : `${dayNames[d.getDay()]} ${d.getDate()} ${monthNamesShort[d.getMonth()]}`;
       row.innerHTML=`<span>${label}</span><strong style="color:var(--primary);">${total} pompes</strong>`;
       future.appendChild(row);
     });
@@ -1539,7 +1574,7 @@ async function startPlanTraining(){
   showToast(`Séance plan lancée : ${planSessionRepTarget} pompes pour le set 1.`,3000); updatePlanScreenState();
 }
 
-function finishPlanTraining(completed){
+async function finishPlanTraining(completed){
   planSessionActive=false;
   stopRest();
   stopPlanRest();
@@ -1555,6 +1590,12 @@ function finishPlanTraining(completed){
     try{renderHistory();}catch(e){console.error('renderHistory error', e && e.message ? e.message : String(e));}
     try{renderCalendar();}catch(e){console.error('renderCalendar error', e && e.message ? e.message : String(e));}
     try{renderStats();}catch(e){console.error('renderStats error', e && e.message ? e.message : String(e));}
+    const difficulty=await askSessionFeedback();
+    workout.difficulty=difficulty;
+    try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
+    if(difficulty==='hard'){
+      regeneratePlanFromAI('was_hard').catch(()=>{});
+    }
   }
   syncPlanUI();
   applyPlanModeUI();
@@ -1571,6 +1612,8 @@ function finishPlanTraining(completed){
 function syncPlanUI(){
   const stopBtn=document.getElementById('stopPlanTrainingBtn');
   if(stopBtn) stopBtn.classList.toggle('hidden', !planSessionActive);
+  const metricsBlock=document.getElementById('planSessionMetrics');
+  if(metricsBlock) metricsBlock.classList.toggle('hidden', !planSessionActive);
 }
 
 
