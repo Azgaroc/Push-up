@@ -1,4 +1,4 @@
-<!-- v49 -->
+<!-- v50 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -97,13 +97,28 @@
     .bar-fill{width:100%;background:var(--primary);border-radius:.3rem .3rem 0 0;min-height:4px;}
     .bar-value{font-size:.65rem;font-weight:700;}
     .bar-label{font-size:.6rem;color:var(--muted);}
-.plan-only-hidden{display:none!important;} .plan-only-show{display:block!important;} .plan-session-only{display:none!important;} </style>
+.plan-only-hidden{display:none!important;} .plan-only-show{display:block!important;} .plan-session-only{display:none!important;}
+#splashScreen{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4rem;transition:opacity .4s ease;}
+#splashScreen.hidden{opacity:0;pointer-events:none;}
+.splash-logo-wrap{position:relative;width:112px;height:112px;display:flex;align-items:center;justify-content:center;}
+.splash-ring{position:absolute;inset:0;border-radius:50%;border:4px solid var(--border);border-top-color:var(--primary);animation:splash-spin 1s linear infinite;}
+.splash-logo-wrap img{width:76px;height:76px;border-radius:1.1rem;object-fit:cover;}
+.splash-text{font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.85rem;color:var(--muted);}
+@keyframes splash-spin{to{transform:rotate(360deg);}}
+</style>
 </head>
 <body>
-<div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:50;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
-<div class="app">
+<div id="splashScreen">
+  <div class="splash-logo-wrap">
+    <div class="splash-ring"></div>
+    <img src="logo.jpg" alt="Push-Up logo">
+  </div>
+  <div class="splash-text">Loading</div>
+</div>
+<div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
+<div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v49</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v50</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
@@ -289,7 +304,7 @@
     </section>
     <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
     </div>
-    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v49</div>
+    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v50</div>
   </div>
 <div id="tab-calendar" class="tab-content hidden">
     <section class="panel">
@@ -1584,7 +1599,23 @@ function updatePlanScreenState(){
 
 function pad(n){return String(n).padStart(2,'0')} function toICSDate(d){return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;}
 function downloadCalendarEvent(workout){const start=new Date(),end=new Date(start.getTime()+30*60000);const desc=`Total: ${workout.total} pompes\\nSets: ${workout.sets.map(s=>`Set ${s.set}: ${s.reps}`).join(' | ')}`;const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pompes//FR//EN','BEGIN:VEVENT',`UID:pompes-${Date.now()}@webapp`,`DTSTAMP:${toICSDate(new Date())}`,`DTSTART:${toICSDate(start)}`,`DTEND:${toICSDate(end)}`,`SUMMARY:Séance Pompes - ${workout.total} pompes`,`DESCRIPTION:${desc}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pompes-seance.ics';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200);}
-window.addEventListener('load',()=>{startCamera();});
+window.addEventListener('load',async()=>{
+  try{
+    await Promise.race([
+      startCamera(),
+      new Promise(resolve=>setTimeout(resolve,15000))
+    ]);
+  }catch(e){
+    console.error('startCamera error on boot', e && e.message ? e.message : String(e));
+  }
+  const splash=document.getElementById('splashScreen');
+  const appRoot=document.getElementById('appRoot');
+  appRoot.style.display='';
+  if(splash){
+    splash.classList.add('hidden');
+    setTimeout(()=>{splash.remove();},450);
+  }
+});
 
 
 function formatDuration(ms){
