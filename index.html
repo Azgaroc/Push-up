@@ -1,4 +1,4 @@
-<!-- v60 -->
+<!-- v61 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -45,77 +45,43 @@
 
 
   
-    /* Mode compact adaptatif : iPhone (SE à Pro Max) et Android (tous formats) */
+    /* Mise en page compacte : tient sur un seul écran, s'adapte à toutes les tailles iOS/Android */
     html,body{height:100%;}
-    :root{--app-max-w:min(94vw,460px);}
-    .app{
-      max-width:var(--app-max-w);
-      width:100%;
-      height:100vh;
-      height:100dvh;
-      margin:0 auto;
-      display:flex;
-      flex-direction:column;
-      padding:max(env(safe-area-inset-top),.5rem) max(env(safe-area-inset-right),.7rem) calc(max(env(safe-area-inset-bottom),.5rem)) max(env(safe-area-inset-left),.7rem);
-      box-sizing:border-box;
-      overflow:hidden;
-    }
+    .app{max-width:430px;height:100dvh;display:flex;flex-direction:column;padding:.5rem .7rem calc(.5rem + env(safe-area-inset-bottom));box-sizing:border-box;overflow:hidden;}
     .topbar{margin-bottom:.4rem;}
-    .logo{width:clamp(28px,8vw,34px);height:clamp(28px,8vw,34px);border-radius:10px;}
-    .topbar h1{font-size:clamp(.9rem,3.2vw,1.05rem);margin:0;line-height:1.1;}
-    .topbar p{font-size:clamp(.6rem,2.2vw,.7rem);margin:0;}
-    .tabs-bar{padding:.2rem;margin-bottom:.5rem;flex-wrap:wrap;}
-    .tab-btn{padding:.4rem .5rem;font-size:clamp(.68rem,2.4vw,.8rem);}
-    .tab-content{flex:1;display:flex;flex-direction:column;overflow-y:auto;min-height:0;-webkit-overflow-scrolling:touch;}
+    .logo{width:32px;height:32px;border-radius:10px;}
+    .topbar h1{font-size:1rem;margin:0;line-height:1.1;}
+    .topbar p{font-size:.68rem;margin:0;}
+    .tabs-bar{padding:.2rem;margin-bottom:.5rem;}
+    .tab-btn{padding:.45rem .6rem;font-size:.78rem;}
+    .tab-content{flex:1;display:flex;flex-direction:column;overflow-y:auto;min-height:0;}
     .tab-content.hidden{display:none;}
-    .panel{padding:clamp(.5rem,2vw,.7rem) clamp(.55rem,2.2vw,.75rem);border-radius:.9rem;}
-    .panel h2{font-size:clamp(.75rem,2.6vw,.88rem);margin:0 0 .3rem;}
+    .panel{padding:.6rem .7rem;border-radius:.9rem;}
+    .panel h2{font-size:.85rem;margin:0 0 .3rem;}
     section.panel{margin-top:.5rem !important;}
     section.panel:first-child{margin-top:0 !important;}
-    .counter-label{font-size:clamp(.56rem,2vw,.64rem);}
-    .section-title{font-size:clamp(1rem,3.6vw,1.2rem);}
-    .counter{font-size:clamp(2.8rem,15vh,5.5rem) !important;line-height:1;text-align:center;}
-    #setInfo{font-size:clamp(.75rem,2.6vw,.88rem);}
-    #phase{font-size:clamp(.62rem,2.2vw,.72rem);}
+    .counter-label{font-size:.62rem;}
+    .section-title{font-size:1.15rem;}
+    .counter{font-size:clamp(3.5rem,16vw,5.5rem) !important;line-height:1;text-align:center;}
+    #setInfo{font-size:.85rem;}
+    #phase{font-size:.7rem;}
     .camera-shell{margin-top:.4rem !important;}
     .camera-overlay{gap:.4rem;}
-    .pill{font-size:clamp(.6rem,2.2vw,.68rem);padding:.3rem .55rem;}
+    .pill{font-size:.65rem;padding:.3rem .55rem;}
     .controls{margin-top:.5rem !important;gap:.4rem;}
-    .btn{padding:clamp(.5rem,2vh,.6rem) .6rem;font-size:clamp(.72rem,2.4vw,.8rem);border-radius:.8rem;min-height:44px;}
-    .rest-time{font-size:clamp(1.4rem,7vh,1.9rem);}
-    #restText{font-size:clamp(.68rem,2.2vw,.78rem);}
-    .metric strong{font-size:clamp(1rem,3.6vw,1.25rem) !important;}
-    .metric span{font-size:clamp(.68rem,2.2vw,.78rem);}
-    label[for="restSeconds"]{font-size:clamp(.68rem,2.2vw,.78rem);}
-    #restSeconds{font-size:clamp(.78rem,2.6vw,.88rem);padding:.4rem;}
-    .chips{gap:.3rem;margin-top:.4rem;flex-wrap:wrap;}
-    .chip{font-size:clamp(.62rem,2.2vw,.7rem);padding:.32rem .5rem;}
+    .btn{padding:.55rem .6rem;font-size:.78rem;border-radius:.8rem;}
+    .rest-time{font-size:1.8rem;}
+    #restText{font-size:.75rem;}
+    .metric strong{font-size:1.2rem !important;}
+    .metric span{font-size:.75rem;}
+    label[for="restSeconds"]{font-size:.75rem;}
+    #restSeconds{font-size:.85rem;padding:.4rem;}
+    .chips{gap:.3rem;margin-top:.4rem;}
+    .chip{font-size:.68rem;padding:.35rem .55rem;}
     #historyList{max-height:70px;overflow-y:auto;}
-    .history-item{font-size:clamp(.66rem,2.2vw,.75rem);padding:.4rem .6rem;}
+    .history-item{font-size:.72rem;padding:.4rem .6rem;}
     #calendarList{max-height:none;}
-    .calendar-item{font-size:clamp(.72rem,2.4vw,.8rem);padding:.55rem .65rem;}
-
-    /* Petits écrans en hauteur (iPhone SE, Android compacts) */
-    @media (max-height:700px){
-      .app{padding-top:max(env(safe-area-inset-top),.35rem);}
-      .topbar{margin-bottom:.25rem;}
-      .tabs-bar{margin-bottom:.35rem;}
-      .panel{padding:.5rem .6rem;}
-      section.panel{margin-top:.35rem !important;}
-      .counter{font-size:clamp(2.4rem,13vh,4.2rem) !important;}
-    }
-
-    /* Grands écrans / tablettes Android et iPad en mode portrait */
-    @media (min-width:600px){
-      :root{--app-max-w:520px;}
-      .btn{font-size:.95rem;}
-      .counter{font-size:clamp(3.5rem,14vh,6rem) !important;}
-    }
-
-    /* Android : s'assurer que 100dvh se comporte comme 100vh si non supporté */
-    @supports not (height:100dvh){
-      .app{height:100vh;}
-    }
+    .calendar-item{font-size:.78rem;padding:.6rem .7rem;}
 
     .cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;}
     .cal-nav h2{font-size:.85rem;margin:0;}
@@ -142,7 +108,7 @@
 .splash-text{font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.85rem;color:var(--muted);}
 @keyframes splash-spin{to{transform:rotate(360deg);}}
 #landscapeBlock{display:none;position:fixed;inset:0;z-index:300;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center;}
-@media (orientation: landscape) and (max-width: 926px){
+@media (orientation: landscape) and (max-width: 1024px){
   #landscapeBlock{display:flex;}
 }
 </style>
@@ -163,7 +129,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v60</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v61</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
@@ -351,7 +317,7 @@
     </section>
     <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
     </div>
-    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v60</div>
+    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v61</div>
   </div>
 <div id="tab-calendar" class="tab-content hidden">
     <section class="panel" id="weeklyStreakPanel" style="display:flex;align-items:center;gap:.9rem;">
