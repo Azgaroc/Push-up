@@ -1,4 +1,4 @@
-<!-- v56 -->
+<!-- v57 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -127,7 +127,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v56</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v57</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
   </header>
 
@@ -315,11 +315,15 @@
     </section>
     <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
     </div>
-    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v56</div>
+    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v57</div>
   </div>
 <div id="tab-calendar" class="tab-content hidden">
     <section class="panel" id="weeklyStreakPanel" style="display:flex;align-items:center;gap:.9rem;">
-      <div id="streakFlame" style="font-size:2.2rem;line-height:1;filter:drop-shadow(0 0 6px color-mix(in srgb, var(--primary) 60%, transparent));">🔥</div>
+      <div id="streakFlame" style="width:2.4rem;height:2.4rem;color:var(--primary);filter:drop-shadow(0 0 6px color-mix(in srgb, var(--primary) 60%, transparent));">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:100%;height:100%;">
+          <path d="M12 2c1 3-2 4-2 7 0 1.5 1 2.5 2 2.5s2-1 2-2.2c1.2 1 2 2.6 2 4.2 0 3-2.2 5.5-6 5.5s-6.5-2.7-6.5-6.2c0-4 2.5-6.3 4.5-9C8.5 4.5 10 3 12 2z"/>
+        </svg>
+      </div>
       <div>
         <div style="font-size:1.6rem;font-weight:700;color:var(--primary);"><span id="streakCount">0</span> <span id="streakUnit">semaine</span></div>
         <div style="color:var(--muted);font-size:.8rem;">Au moins une séance (libre ou plan) par semaine</div>
@@ -818,6 +822,7 @@ let planSessionRemaining=0;
 let planSessionCompleted=[];
 let planTotalCount=0;
 let planRestActive=false;
+let planRestBeepedSeconds=new Set();
 let planRestTimer=null;
 let planRestTargetTime=null;
 let planRestRemaining=0;
@@ -1474,17 +1479,18 @@ function processRep(detected){
 }
 
 function renderDebug(keypoints, detected){
+  const inSession = sessionActive || planSessionActive;
   if(!keypoints || !detected){
-    if(!sessionActive && !calibrated) movementLabel.textContent='Placez-vous dans le cadre';
-    else if(!sessionActive && calibrated) movementLabel.textContent='Calibré';
-    else if(sessionActive) movementLabel.textContent='Aucune pose détectée';
+    if(!inSession && !calibrated) movementLabel.textContent='Placez-vous dans le cadre';
+    else if(!inSession && calibrated) movementLabel.textContent='Calibré';
+    else if(inSession) movementLabel.textContent='Aucune pose détectée';
     return;
   }
-  if(!sessionActive && calibrated){
+  if(!inSession && calibrated){
     movementLabel.textContent='Calibré';
-  } else if(!sessionActive && detected){
+  } else if(!inSession && detected){
     movementLabel.textContent='Appuyez sur Démarrer';
-  } else if(sessionActive){
+  } else if(inSession){
     movementLabel.textContent='Pose détectée';
   }
 }
@@ -1811,6 +1817,7 @@ function startPlanRest(seconds, nextLabel){
   planRestActive=true;
   planRestRemaining=seconds;
   planRestTargetTime=Date.now()+seconds*1000;
+  planRestBeepedSeconds=new Set();
   const panel=document.getElementById('planRestPanel');
   const display=document.getElementById('planRestDisplay');
   const text=document.getElementById('planRestText');
@@ -1828,6 +1835,11 @@ function planRestTick(){
     planRestRemaining=remainingSec;
     const display=document.getElementById('planRestDisplay');
     if(display) display.textContent=formatPlanRest(planRestRemaining);
+    if(planRestRemaining<=3 && planRestRemaining>=0 && !planRestBeepedSeconds.has(planRestRemaining)){
+      planRestBeepedSeconds.add(planRestRemaining);
+      playCountdownBeep(planRestRemaining);
+      if(navigator.vibrate) navigator.vibrate(planRestRemaining===0?[120,80,120,80,120,80,200]:100);
+    }
   }
   if(remainingMs<=0){
     stopPlanRest();
