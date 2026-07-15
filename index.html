@@ -1,4 +1,4 @@
-<!-- v63 -->
+<!-- v64 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -129,7 +129,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v63</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v64</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
     <button id="debugToggleBtn" class="icon-btn" aria-label="Debug caméra" style="margin-left:.4rem;">🐞</button>
   </header>
@@ -319,7 +319,7 @@
     </section>
     <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
     </div>
-    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v63</div>
+    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v64</div>
   </div>
 <div id="tab-calendar" class="tab-content hidden">
     <section class="panel" id="weeklyStreakPanel" style="display:flex;align-items:center;gap:.9rem;">
@@ -1488,17 +1488,36 @@ function autoCalibrate(){
 
 function processRep(metrics){
   const now=performance.now();
+
   if(!metrics){
-    poseVisible=false;
-    lastDebugInfo={mode:'aucune pose détectée'};
+    // Perte de pose : signal valide de position basse pour un téléphone posé au sol,
+    // qui perd le suivi quand on s'approche de lui en bas de la pompe.
+    if(poseVisible){ poseLostAt=now; poseVisible=false; }
+    if(state==='up' && (now-poseLostAt)>=250){
+      state='down'; downFrames=0; upFrames=0; phaseEl.textContent='Bas';
+    }
+    lastDebugInfo={mode:'aucune pose détectée', state, sincePerte:Math.round(now-poseLostAt)};
     return;
   }
+
+  const reappeared = !poseVisible;
   poseVisible=true;
   poseWasDetected=true;
 
+  if(reappeared && state==='down' && now-lastRepAt>350){
+    // La pose revient après avoir disparu pendant qu'on était en bas : ça valide la répétition,
+    // sans dépendre du suivi de position/angle pour cette répétition-ci.
+    lastRepAt=now; state='up'; downFrames=0; upFrames=0;
+    phaseEl.textContent='Haut';
+    if(sessionActive){ setCount++;totalCount++;refreshHeader(); if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint'; }
+    beep(700,90);
+    if(planSessionActive){ finishPlanRep(); }
+    baseline=null; trackingMode=null; // on recalibre la référence pour la répétition suivante
+    lastDebugInfo={mode:metrics.mode, info:'rep comptée via réapparition de pose'};
+    return;
+  }
+
   const frameMode = (metrics.mode==='full' && metrics.elbowAngle!=null) ? 'angle' : 'position';
-  // On verrouille le mode de suivi au premier relevé du set, pour ne pas changer de base
-  // de calcul en plein milieu d'une répétition si le mode bascule (ex. coude qui sort du cadre).
   if(trackingMode===null) trackingMode=frameMode;
   if(frameMode!==trackingMode){
     lastDebugInfo={skipped:true, frameMode, trackingMode};
@@ -1506,8 +1525,6 @@ function processRep(metrics){
   }
   const usingAngle = trackingMode==='angle';
   const value = usingAngle ? metrics.elbowAngle : metrics.shoulderY;
-  // La référence "position haute" est capturée une seule fois puis figée : la faire suivre
-  // en continu annulait le mouvement avant même qu'il ne dépasse le seuil de détection.
   if(baseline===null) baseline=value;
 
   let isDown, isUp;
@@ -1516,9 +1533,10 @@ function processRep(metrics){
     isDown = value <= 100;
     isUp = value >= 145;
   } else {
+    // Amplitude plus petite que prévu en pratique : seuils resserrés par rapport à la version précédente.
     const delta = Math.abs(value - baseline);
-    isDown = delta >= 0.045;
-    isUp = delta <= 0.018;
+    isDown = delta >= 0.025;
+    isUp = delta <= 0.01;
   }
 
   if(state==='up'){
