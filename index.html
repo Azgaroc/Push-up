@@ -1489,92 +1489,170 @@ function autoCalibrate(){
 }
 
 function processRep(metrics){
-  const now=performance.now();
+  const now = performance.now();
 
+  // Pose perdue : on annule le cycle en cours.
+  // On ne considère jamais une absence de pose comme une position basse.
   if(!metrics){
-    // Perte de pose : signal valide de position basse pour un téléphone posé au sol,
-    // qui perd le suivi quand on s'approche de lui en bas de la pompe — mais seulement
-    // si on se rapprochait bien de la caméra juste avant (largeur des épaules qui augmente),
-    // sinon on considère que la personne est simplement sortie du cadre.
     if(poseVisible){
-      poseLostAt=now;
-      poseVisible=false;
-      // Une disparition n'est jamais une répétition à elle seule. On n'autorise
-      // la validation au retour que si le bas a été détecté auparavant par l'angle.
+      poseVisible = false;
+      poseLostAt = now;
+
+      state = 'up';
+      downFrames = 0;
+      upFrames = 0;
+      baseline = null;
+      trackingMode = null;
+      recentWidths = [];
       approachConfirmed = false;
-      recentWidths=[];
+
+      phaseEl.textContent = 'Pose perdue';
     }
-    if(state==='up' && (now-poseLostAt)>=250){
-      // Hors champ : on réinitialise un cycle propre, sans simuler la position basse.
-      state='up'; downFrames=0; upFrames=0; baseline=null; trackingMode=null;
-      phaseEl.textContent='Pose perdue';
-    }
-    lastDebugInfo={mode:'aucune pose détectée', state, approachConfirmed, sincePerte:Math.round(now-poseLostAt)};
+
+    lastDebugInfo = {
+      mode: 'aucune pose détectée',
+      state,
+      info: 'Cycle annulé : sortie du champ'
+    };
     return;
   }
 
   const reappeared = !poseVisible;
-  poseVisible=true;
-  poseWasDetected=true;
+  poseVisible = true;
+  poseWasDetected = true;
 
+  // Au retour dans le champ, repartir proprement.
+  // Le premier mouvement suivant ne peut pas être compté sans bas puis haut visibles.
   if(reappeared){
-    // Revenir dans le cadre ne valide jamais une pompe : on exige un cycle complet
-    // bas -> haut observé alors que la pose reste visible.
-    state='up'; downFrames=0; upFrames=0; baseline=null; trackingMode=null; recentWidths=[];
-    phaseEl.textContent='Recalibrage';
+    state = 'up';
+    downFrames = 0;
+    upFrames = 0;
+    baseline = null;
+    trackingMode = null;
+    recentWidths = [];
+    approachConfirmed = false;
+    phaseEl.textContent = 'Recalibrage';
   }
 
-  const frameMode = (metrics.mode==='full' && metrics.elbowAngle!=null) ? 'angle' : 'position';
-  if(trackingMode===null) trackingMode=frameMode;
-  if(frameMode!==trackingMode){
-    lastDebugInfo={skipped:true, frameMode, trackingMode};
-    return; // trame ignorée : on ne corrompt pas l'état en cours avec une autre base de mesure
+  const frameMode =
+    (metrics.mode === 'full' && metrics.elbowAngle != null)
+      ? 'angle'
+      : 'position';
+
+  // Après une sortie du champ, on établit une nouvelle référence.
+  if(trackingMode === null){
+    trackingMode = frameMode;
   }
-  const usingAngle = trackingMode==='angle';
+
+  // Ne pas mélanger les mesures par angle et par position dans un même cycle.
+  if(frameMode !== trackingMode){
+    lastDebugInfo = {
+      skipped: true,
+      frameMode,
+      trackingMode,
+      info: 'Changement de mode : frame ignorée'
+    };
+    return;
+  }
+
+  const usingAngle = trackingMode === 'angle';
   const value = usingAngle ? metrics.elbowAngle : metrics.shoulderY;
-  if(baseline===null) baseline=value;
 
-  if(state==='up' && metrics.shoulderWidth!=null){
-    recentWidths.push(metrics.shoulderWidth);
-    if(recentWidths.length>4) recentWidths.shift();
+  if(!Number.isFinite(value)) return;
+
+  // La baseline est uniquement initialisée lorsque la personne réapparaît
+  // ou au début de séance ; aucun comptage possible sur cette frame.
+  if(baseline === null){
+    baseline = value;
+    phaseEl.textContent = 'Prêt';
+    lastDebugInfo = {
+      mode: metrics.mode,
+      trackingMode,
+      value: Math.round(value * 1000) / 1000,
+      baseline: Math.round(baseline * 1000) / 1000,
+      state,
+      info: 'Nouvelle baseline'
+    };
+    return;
   }
 
-  let isDown, isUp;
+  let isDown = false;
+  let isUp = false;
+
   if(usingAngle){
-    // Angle du coude en degrés : bras tendu ~150-180° en haut, bras plié <100° en bas de la pompe.
+    // Bras pliés : position basse ; bras tendus : position haute.
     isDown = value <= 100;
     isUp = value >= 145;
   } else {
-    // Amplitude plus petite que prévu en pratique : seuils resserrés par rapport à la version précédente.
+    // Fallback si un bras entier n'est plus visible.
     const delta = Math.abs(value - baseline);
     isDown = delta >= 0.025;
     isUp = delta <= 0.01;
   }
 
-  if(state==='up'){
+  // Étape 1 : la position basse doit être observée sur deux frames.
+  if(state === 'up'){
     if(isDown){
       downFrames++;
-      if(downFrames>=2){ state='down'; downFrames=0; phaseEl.textContent='Bas'; }
-    } else {
-      downFrames=0;
-    }
-  } else {
-    if(isUp){
-      upFrames++;
-      if(upFrames>=2 && now-lastRepAt>350){
-        lastRepAt=now; state='up'; upFrames=0;
-        phaseEl.textContent='Haut';
-        if(sessionActive){ setCount++;totalCount++;refreshHeader(); if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint'; }
-        beep(700,90);
-        if(planSessionActive){ finishPlanRep(); }
+
+      if(downFrames >= 2){
+        state = 'down';
+        downFrames = 0;
+        upFrames = 0;
+        phaseEl.textContent = 'Bas';
       }
     } else {
-      upFrames=0;
+      downFrames = 0;
     }
   }
-  lastDebugInfo={mode:metrics.mode, trackingMode, value:Math.round(value*1000)/1000, baseline:Math.round(baseline*1000)/1000, state, isDown, isUp, downFrames, upFrames, quality:metrics.quality};
-}
 
+  // Étape 2 : après un bas confirmé, retour en haut sur deux frames.
+  else if(state === 'down'){
+    if(isUp){
+      upFrames++;
+
+      if(upFrames >= 2 && now - lastRepAt > 400){
+        lastRepAt = now;
+        state = 'up';
+        downFrames = 0;
+        upFrames = 0;
+
+        if(sessionActive){
+          setCount++;
+          totalCount++;
+          refreshHeader();
+
+          if(setCount >= Number(targetRepsInput.value || 10)){
+            phaseEl.textContent = 'Objectif atteint';
+          } else {
+            phaseEl.textContent = 'Haut';
+          }
+        }
+
+        if(planSessionActive){
+          finishPlanRep();
+        }
+
+        beep(700, 90);
+      }
+    } else {
+      upFrames = 0;
+    }
+  }
+
+  lastDebugInfo = {
+    mode: metrics.mode,
+    trackingMode,
+    value: Math.round(value * 1000) / 1000,
+    baseline: Math.round(baseline * 1000) / 1000,
+    state,
+    isDown,
+    isUp,
+    downFrames,
+    upFrames,
+    quality: metrics.quality
+  };
+}
 function renderDebug(keypoints, detected){
   const inSession = sessionActive || planSessionActive;
   if(!keypoints || !detected){
