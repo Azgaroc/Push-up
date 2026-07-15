@@ -1499,15 +1499,15 @@ function processRep(metrics){
     if(poseVisible){
       poseLostAt=now;
       poseVisible=false;
-      if(recentWidths.length>=2){
-        const first=recentWidths[0], last=recentWidths[recentWidths.length-1];
-        approachConfirmed = last > first*1.06;
-      } else {
-        approachConfirmed = true; // pas assez de données (ex: mode 'face' direct) : comportement précédent
-      }
+      // Une disparition n'est jamais une répétition à elle seule. On n'autorise
+      // la validation au retour que si le bas a été détecté auparavant par l'angle.
+      approachConfirmed = false;
+      recentWidths=[];
     }
     if(state==='up' && (now-poseLostAt)>=250){
-      state='down'; downFrames=0; upFrames=0; phaseEl.textContent='Bas';
+      // Hors champ : on réinitialise un cycle propre, sans simuler la position basse.
+      state='up'; downFrames=0; upFrames=0; baseline=null; trackingMode=null;
+      phaseEl.textContent='Pose perdue';
     }
     lastDebugInfo={mode:'aucune pose détectée', state, approachConfirmed, sincePerte:Math.round(now-poseLostAt)};
     return;
@@ -1518,21 +1518,10 @@ function processRep(metrics){
   poseWasDetected=true;
 
   if(reappeared){
-    if(state==='down' && now-lastRepAt>350 && approachConfirmed){
-      // La pose revient après avoir disparu pendant qu'on se rapprochait de la caméra :
-      // ça valide la répétition, sans dépendre du suivi de position/angle pour celle-ci.
-      lastRepAt=now; state='up'; downFrames=0; upFrames=0;
-      phaseEl.textContent='Haut';
-      if(sessionActive){ setCount++;totalCount++;refreshHeader(); if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint'; }
-      beep(700,90);
-      if(planSessionActive){ finishPlanRep(); }
-      baseline=null; trackingMode=null; recentWidths=[];
-      lastDebugInfo={mode:metrics.mode, info:'rep comptée via réapparition de pose (rapprochement confirmé)'};
-      return;
-    }
-    // Pose réapparue sans rapprochement confirmé (probablement sorti du cadre) : on annule
-    // silencieusement, sans compter de répétition, et on repart d'un état stable en haut.
+    // Revenir dans le cadre ne valide jamais une pompe : on exige un cycle complet
+    // bas -> haut observé alors que la pose reste visible.
     state='up'; downFrames=0; upFrames=0; baseline=null; trackingMode=null; recentWidths=[];
+    phaseEl.textContent='Recalibrage';
   }
 
   const frameMode = (metrics.mode==='full' && metrics.elbowAngle!=null) ? 'angle' : 'position';
