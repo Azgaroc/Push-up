@@ -1,4 +1,4 @@
-<!-- v93 -->
+<!-- v94 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -129,7 +129,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v93</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v94</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
     <button id="debugToggleBtn" class="icon-btn" aria-label="Debug caméra" style="margin-left:.4rem;">🐞</button>
   </header>
@@ -196,11 +196,18 @@
   </section>
 
 
-  <div id="startCountdownModal" class="modal-overlay hidden">
+  <div id="freeCountdownModal" class="modal-overlay hidden">
   <div class="modal-box">
     <div class="section-title">Préparez-vous</div>
-    <div class="modal-count" id="startCountdownValue">10</div>
-    <div style="color:var(--muted);font-size:.9rem">La séance démarre automatiquement.</div>
+    <div class="modal-count" id="freeCountdownValue">10</div>
+    <div style="color:var(--muted);font-size:.9rem">La séance libre démarre automatiquement.</div>
+  </div>
+</div>
+<div id="planCountdownModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="section-title">Préparez-vous</div>
+    <div class="modal-count" id="planCountdownValue">10</div>
+    <div style="color:var(--muted);font-size:.9rem">La séance plan démarre automatiquement.</div>
   </div>
 </div>
 <div id="validateModal" class="modal-overlay hidden">
@@ -840,8 +847,26 @@ function renderPlanTab(){
         total=daySets.reduce((a,b)=>a+b,0);
       }
       const isDoneRow = isToday && todayCompleted;
-      row.style.cssText=`display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:${isDoneRow?'rgba(79,152,163,.18)':'var(--surface2)'};border-radius:.8rem;`;
-      row.innerHTML=`<span${isDoneRow?' style="color:var(--primary);font-weight:600;"':''}>${label}</span><strong style="color:var(--primary);">${total} pompes</strong>`;
+      row.style.cssText=`display:flex;flex-direction:column;gap:.4rem;padding:.6rem .8rem;background:${isDoneRow?'rgba(79,152,163,.18)':'var(--surface2)'};border-radius:.8rem;`;
+      const isoStr=toLocalDateStr(d);
+      const alreadyDone = workouts.some(w=>w.source==='plan' && w.isoDate===isoStr);
+      row.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;"><span${isDoneRow?' style="color:var(--primary);font-weight:600;"':''}>${label}</span><strong style="color:var(--primary);">${total} pompes</strong></div>`;
+      if(!isToday && !alreadyDone){
+        const advanceBtn=document.createElement('button');
+        advanceBtn.className='btn';
+        advanceBtn.style.cssText='width:100%;font-size:.8rem;padding:.55rem .6rem;';
+        advanceBtn.textContent='Faire cette séance en avance';
+        advanceBtn.addEventListener('click',(e)=>{
+          e.stopPropagation();
+          startPlanSession(isoStr);
+        });
+        row.appendChild(advanceBtn);
+      } else if(!isToday && alreadyDone){
+        const doneTag=document.createElement('div');
+        doneTag.style.cssText='color:var(--primary);font-size:.78rem;font-style:italic;';
+        doneTag.textContent='Déjà effectuée en avance';
+        row.appendChild(doneTag);
+      }
       future.appendChild(row);
     });
   }
@@ -856,7 +881,7 @@ function renderPlanTab(){
       const baseSets=generateDailyTarget(planProfile.maxReps,intensity,ratio);
       const aiToday=applyAIPlanForToday(baseSets, ratio);
       document.getElementById('targetReps').value=aiToday.sets[0];
-      startPlanSession();
+      startPlanSession(todayIso);
     });
     setsEl.appendChild(startBtn);
   }
@@ -979,14 +1004,22 @@ function updatePlanSessionUI(){
 }
 
 
-function startPlanSession(){
+function startPlanSession(dateIso){
   if(!planProfile || !planProfile.maxReps) return;
-  runStartCountdown(()=>{ startPlanSessionInner(); });
+  runPlanCountdown(()=>{ startPlanSessionInner(dateIso); });
 }
 
-async function startPlanSessionInner(){
+let planSessionTargetDate=null;
+async function startPlanSessionInner(targetDateIso){
   if(!planProfile || !planProfile.maxReps) return;
-  const weekNumber=Number.isFinite(getPlanWeekNumber()) ? getPlanWeekNumber() : 1;
+  const isoDate = targetDateIso || toLocalDateStr(new Date());
+  planSessionTargetDate = isoDate;
+  const targetDate = new Date(isoDate+'T00:00:00');
+  const dow = targetDate.getDay();
+  const intensity = Math.max(1, planProfile.days.indexOf(dow)+1);
+  const weekNumber = targetDateIso
+    ? Math.max(1, Math.round((targetDate.getTime()-new Date(planProfile.startDate||isoDate).getTime())/86400000/7)+1)
+    : (Number.isFinite(getPlanWeekNumber()) ? getPlanWeekNumber() : 1);
   const adjustment=computeDailyPlanAdjustment();
   const ratio=Number.isFinite(adjustment.ratio) ? adjustment.ratio : 1;
   const baseSets=generateDailyTarget(Number(planProfile.maxReps)||10, weekNumber, ratio).filter(n=>Number.isFinite(n)&&n>0);
@@ -1777,7 +1810,7 @@ async function finishPlanTraining(completed){
   stopPlanSessionTimer();
   if(planTotalCount>0){
     const now=new Date();
-    const isoDate=toLocalDateStr(now);
+    const isoDate=planSessionTargetDate || toLocalDateStr(now);
     const durationMs=planSessionStartTime?(Date.now()-planSessionStartTime):0;
     const doneSets=(planSessionSets[0]&&planSessionSets[0].sets ? planSessionSets[0].sets.slice(0,planSessionIndex+(completed?1:0)) : []).map((reps,i)=>({set:i+1,reps}));
     const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,total:planTotalCount,duration:formatDuration(durationMs),sets:doneSets,source:'plan'};
@@ -1800,6 +1833,7 @@ async function finishPlanTraining(completed){
   if(typeof renderPlanTab==='function') renderPlanTab();
   showToast(completed ? `Plan terminé : ${planTotalCount} pompes enregistrées !` : `Séance arrêtée : ${planTotalCount} pompes enregistrées.`);
   planTotalCount=0;
+  planSessionTargetDate=null;
   const totalEl=document.getElementById('planTotalCount');
   if(totalEl) totalEl.textContent='0';
   resetPlanSessionTimer();
@@ -1961,29 +1995,51 @@ if(stopPlanTrainingBtn) stopPlanTrainingBtn.addEventListener('click',async()=>{
   }
 });
 
-let startCountdownTimer=null;
-function runStartCountdown(onComplete){
-  const modal=document.getElementById('startCountdownModal');
-  const valueEl=document.getElementById('startCountdownValue');
+let freeCountdownTimer=null;
+function runFreeCountdown(onComplete){
+  const modal=document.getElementById('freeCountdownModal');
+  const valueEl=document.getElementById('freeCountdownValue');
   if(!modal||!valueEl){ onComplete(); return; }
-  clearInterval(startCountdownTimer);
+  clearInterval(freeCountdownTimer);
   let remaining=10;
   valueEl.textContent=remaining;
   modal.classList.remove('hidden');
   try{beep(520,70);}catch(_){}
-  startCountdownTimer=setInterval(()=>{
+  freeCountdownTimer=setInterval(()=>{
     remaining--;
     valueEl.textContent=remaining;
     if(remaining>0){ try{beep(520,70);}catch(_){} return; }
-    clearInterval(startCountdownTimer);
-    startCountdownTimer=null;
+    clearInterval(freeCountdownTimer);
+    freeCountdownTimer=null;
     modal.classList.add('hidden');
     try{beep(820,150);}catch(_){}
     onComplete();
   },1000);
 }
 
-toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(toggleSessionBtn.dataset.countdownDone!=='1'){runStartCountdown(()=>{toggleSessionBtn.dataset.countdownDone='1';toggleSessionBtn.click();});return;}delete toggleSessionBtn.dataset.countdownDone;if(cameraReady&&!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
+let planCountdownTimer=null;
+function runPlanCountdown(onComplete){
+  const modal=document.getElementById('planCountdownModal');
+  const valueEl=document.getElementById('planCountdownValue');
+  if(!modal||!valueEl){ onComplete(); return; }
+  clearInterval(planCountdownTimer);
+  let remaining=10;
+  valueEl.textContent=remaining;
+  modal.classList.remove('hidden');
+  try{beep(520,70);}catch(_){}
+  planCountdownTimer=setInterval(()=>{
+    remaining--;
+    valueEl.textContent=remaining;
+    if(remaining>0){ try{beep(520,70);}catch(_){} return; }
+    clearInterval(planCountdownTimer);
+    planCountdownTimer=null;
+    modal.classList.add('hidden');
+    try{beep(820,150);}catch(_){}
+    onComplete();
+  },1000);
+}
+
+toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(toggleSessionBtn.dataset.countdownDone!=='1'){runFreeCountdown(()=>{toggleSessionBtn.dataset.countdownDone='1';toggleSessionBtn.click();});return;}delete toggleSessionBtn.dataset.countdownDone;if(cameraReady&&!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
