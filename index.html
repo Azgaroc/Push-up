@@ -1964,6 +1964,7 @@ function stopPlanRest(){
   planRestActive=false;
   const panel=document.getElementById('planRestPanel');
   if(panel) panel.classList.add('hidden');
+  if(planSessionActive) updatePlanSessionUI();
 }
 const planSkipRestBtn=document.getElementById('planSkipRest');
 if(planSkipRestBtn) planSkipRestBtn.addEventListener('click',()=>{ stopPlanRest(); });
@@ -2064,7 +2065,7 @@ setInterval(() => {
 
 function warmUpBackend() {
   try {
-    const healthUrl = AI_PLAN_API_URL.replace('/api/plan/generate', '/api/health');
+    const healthUrl = AIPLANAPIURL.replace('/api/plan/generate', '/api/health');
     fetch(healthUrl, { method: 'GET', cache: 'no-store' }).catch(()=>{});
   } catch (_) {}
 }
