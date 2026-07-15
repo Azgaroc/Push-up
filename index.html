@@ -1,4 +1,4 @@
-<!-- v64 -->
+<!-- v65 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -129,7 +129,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v64</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v65</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
     <button id="debugToggleBtn" class="icon-btn" aria-label="Debug caméra" style="margin-left:.4rem;">🐞</button>
   </header>
@@ -319,7 +319,7 @@
     </section>
     <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
     </div>
-    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v64</div>
+    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v65</div>
   </div>
 <div id="tab-calendar" class="tab-content hidden">
     <section class="panel" id="weeklyStreakPanel" style="display:flex;align-items:center;gap:.9rem;">
@@ -505,6 +505,7 @@ const DETECT_INTERVAL=300; // ms — bon compromis fluidité/fiabilité
 let setCount=0,totalCount=0,currentSet=1,completedSets=[],restTimer=null,restRemaining=0;
 let sessionStartTime=null,sessionTimerInterval=null;
 let baseline=null,state='up',downFrames=0,upFrames=0,lastRepAt=0,poseWasDetected=false,poseVisible=true,poseLostAt=0,pendingReps=0,trackingMode=null;
+let recentWidths=[],approachConfirmed=true;
 let lastDebugInfo={};
 const storageOk=typeof localStorage!=='undefined';const workouts=storageOk?JSON.parse(localStorage.getItem('pompes-workouts')||'[]'):[];
 function saveHistory(){if(storageOk)localStorage.setItem('pompes-workouts',JSON.stringify(workouts.slice(0,20)))}
@@ -1456,6 +1457,7 @@ function kp(list,name){const p=list.find(k=>k.name===name);return (p&&p.score>=0
 function getPoseMetrics(keypoints){
   const ls=kp(keypoints,'left_shoulder'),rs=kp(keypoints,'right_shoulder'),le=kp(keypoints,'left_elbow'),re=kp(keypoints,'right_elbow'),lw=kp(keypoints,'left_wrist'),rw=kp(keypoints,'right_wrist');
   const nose=kp(keypoints,'nose');
+  const shoulderWidth = (ls&&rs) ? Math.hypot(ls.x-rs.x, ls.y-rs.y) : null;
   // Mode angle : au moins UN bras entièrement visible (épaule+coude+poignet).
   // On ne réclame plus les hanches, inutiles pour l'angle du coude et souvent hors cadre.
   const leftAngle=(ls&&le&&lw)?angle(ls,le,lw):null;
@@ -1465,16 +1467,16 @@ function getPoseMetrics(keypoints){
     const shoulderY = ls&&rs ? (ls.y+rs.y)/2 : (ls?ls.y:rs.y);
     const qualityParts=[ls,rs,le,re,lw,rw].filter(Boolean).map(p=>p.visibility);
     const quality=qualityParts.length?Math.round((qualityParts.reduce((a,b)=>a+b,0)/qualityParts.length)*100):0;
-    return {mode:'full',shoulderY,elbowAngle,quality};
+    return {mode:'full',shoulderY,elbowAngle,shoulderWidth,quality};
   }
   // Mode simplifié : trop proche pour voir les bras, on suit juste visage + épaules
   if(nose && ls && rs){
     const shoulderY=(ls.y+rs.y)/2;
-    return {mode:'simple',shoulderY,elbowAngle:null,quality:Math.round(((nose.visibility+ls.visibility+rs.visibility)/3)*100)};
+    return {mode:'simple',shoulderY,elbowAngle:null,shoulderWidth,quality:Math.round(((nose.visibility+ls.visibility+rs.visibility)/3)*100)};
   }
   // Mode minimal : seulement le visage visible (très proche de la caméra)
   if(nose){
-    return {mode:'face',shoulderY:nose.y,elbowAngle:null,quality:Math.round(nose.visibility*100)};
+    return {mode:'face',shoulderY:nose.y,elbowAngle:null,shoulderWidth:null,quality:Math.round(nose.visibility*100)};
   }
   return null;
 }
@@ -1491,12 +1493,23 @@ function processRep(metrics){
 
   if(!metrics){
     // Perte de pose : signal valide de position basse pour un téléphone posé au sol,
-    // qui perd le suivi quand on s'approche de lui en bas de la pompe.
-    if(poseVisible){ poseLostAt=now; poseVisible=false; }
+    // qui perd le suivi quand on s'approche de lui en bas de la pompe — mais seulement
+    // si on se rapprochait bien de la caméra juste avant (largeur des épaules qui augmente),
+    // sinon on considère que la personne est simplement sortie du cadre.
+    if(poseVisible){
+      poseLostAt=now;
+      poseVisible=false;
+      if(recentWidths.length>=2){
+        const first=recentWidths[0], last=recentWidths[recentWidths.length-1];
+        approachConfirmed = last > first*1.06;
+      } else {
+        approachConfirmed = true; // pas assez de données (ex: mode 'face' direct) : comportement précédent
+      }
+    }
     if(state==='up' && (now-poseLostAt)>=250){
       state='down'; downFrames=0; upFrames=0; phaseEl.textContent='Bas';
     }
-    lastDebugInfo={mode:'aucune pose détectée', state, sincePerte:Math.round(now-poseLostAt)};
+    lastDebugInfo={mode:'aucune pose détectée', state, approachConfirmed, sincePerte:Math.round(now-poseLostAt)};
     return;
   }
 
@@ -1504,17 +1517,22 @@ function processRep(metrics){
   poseVisible=true;
   poseWasDetected=true;
 
-  if(reappeared && state==='down' && now-lastRepAt>350){
-    // La pose revient après avoir disparu pendant qu'on était en bas : ça valide la répétition,
-    // sans dépendre du suivi de position/angle pour cette répétition-ci.
-    lastRepAt=now; state='up'; downFrames=0; upFrames=0;
-    phaseEl.textContent='Haut';
-    if(sessionActive){ setCount++;totalCount++;refreshHeader(); if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint'; }
-    beep(700,90);
-    if(planSessionActive){ finishPlanRep(); }
-    baseline=null; trackingMode=null; // on recalibre la référence pour la répétition suivante
-    lastDebugInfo={mode:metrics.mode, info:'rep comptée via réapparition de pose'};
-    return;
+  if(reappeared){
+    if(state==='down' && now-lastRepAt>350 && approachConfirmed){
+      // La pose revient après avoir disparu pendant qu'on se rapprochait de la caméra :
+      // ça valide la répétition, sans dépendre du suivi de position/angle pour celle-ci.
+      lastRepAt=now; state='up'; downFrames=0; upFrames=0;
+      phaseEl.textContent='Haut';
+      if(sessionActive){ setCount++;totalCount++;refreshHeader(); if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint'; }
+      beep(700,90);
+      if(planSessionActive){ finishPlanRep(); }
+      baseline=null; trackingMode=null; recentWidths=[];
+      lastDebugInfo={mode:metrics.mode, info:'rep comptée via réapparition de pose (rapprochement confirmé)'};
+      return;
+    }
+    // Pose réapparue sans rapprochement confirmé (probablement sorti du cadre) : on annule
+    // silencieusement, sans compter de répétition, et on repart d'un état stable en haut.
+    state='up'; downFrames=0; upFrames=0; baseline=null; trackingMode=null; recentWidths=[];
   }
 
   const frameMode = (metrics.mode==='full' && metrics.elbowAngle!=null) ? 'angle' : 'position';
@@ -1526,6 +1544,11 @@ function processRep(metrics){
   const usingAngle = trackingMode==='angle';
   const value = usingAngle ? metrics.elbowAngle : metrics.shoulderY;
   if(baseline===null) baseline=value;
+
+  if(state==='up' && metrics.shoulderWidth!=null){
+    recentWidths.push(metrics.shoulderWidth);
+    if(recentWidths.length>4) recentWidths.shift();
+  }
 
   let isDown, isUp;
   if(usingAngle){
@@ -1640,7 +1663,7 @@ async function startCamera(){
     showToast('Caméra indisponible : passage en mode manuel. Utilisez les boutons +/- pour compter vos pompes.',4500);
   }
 }
-function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;phaseEl.textContent='Prêt';}
+function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;phaseEl.textContent='Prêt';}
 function formatRest(s){const m=String(Math.floor(s/60)).padStart(2,'0');const sec=String(s%60).padStart(2,'0');return `${m}:${sec}`;}
 
 let audioCtx=null;
