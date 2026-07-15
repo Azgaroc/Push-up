@@ -1,4 +1,4 @@
-<!-- v87 -->
+<!-- v89 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -129,7 +129,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v87</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v89</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
     <button id="debugToggleBtn" class="icon-btn" aria-label="Debug caméra" style="margin-left:.4rem;">🐞</button>
   </header>
@@ -196,7 +196,14 @@
   </section>
 
 
-  <div id="validateModal" class="modal-overlay hidden">
+  <div id="planStartCountdownModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="section-title">Préparez-vous</div>
+    <div class="modal-count" id="planStartCountdownValue">10</div>
+    <div style="color:var(--muted);font-size:.9rem">La séance démarre automatiquement.</div>
+  </div>
+</div>
+<div id="validateModal" class="modal-overlay hidden">
     <div class="modal-box">
       <div class="section-title">Set terminé</div>
       <div class="modal-count" id="validateCount">0</div>
@@ -849,7 +856,7 @@ function renderPlanTab(){
       const baseSets=generateDailyTarget(planProfile.maxReps,intensity,ratio);
       const aiToday=applyAIPlanForToday(baseSets, ratio);
       document.getElementById('targetReps').value=aiToday.sets[0];
-      startPlanSession();
+      startPlanCountdown();
     });
     setsEl.appendChild(startBtn);
   }
@@ -971,7 +978,32 @@ function updatePlanSessionUI(){
   }
 }
 
-async function startPlanSession(){
+async let planStartCountdownTimer=null;
+function startPlanCountdown(){
+  const modal=document.getElementById('planStartCountdownModal');
+  const valueEl=document.getElementById('planStartCountdownValue');
+  if(!modal || !valueEl) return startPlanSession();
+  clearInterval(planStartCountdownTimer);
+  let remaining=10;
+  valueEl.textContent=remaining;
+  modal.classList.remove('hidden');
+  beep(520,70);
+  planStartCountdownTimer=setInterval(()=>{
+    remaining--;
+    valueEl.textContent=remaining;
+    if(remaining>0){
+      beep(520,70);
+      return;
+    }
+    clearInterval(planStartCountdownTimer);
+    planStartCountdownTimer=null;
+    modal.classList.add('hidden');
+    beep(820,150);
+    startPlanSession();
+  },1000);
+}
+
+function startPlanSession(){
   if(!planProfile || !planProfile.maxReps) return;
   const weekNumber=Number.isFinite(getPlanWeekNumber()) ? getPlanWeekNumber() : 1;
   const adjustment=computeDailyPlanAdjustment();
@@ -1947,7 +1979,33 @@ if(stopPlanTrainingBtn) stopPlanTrainingBtn.addEventListener('click',async()=>{
     finishPlanTraining(false);
   }
 });
-toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(cameraReady&&!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
+let freeStartCountdownTimer=null;
+function startFreeCountdown(){
+  const modal=document.getElementById('planStartCountdownModal');
+  const valueEl=document.getElementById('planStartCountdownValue');
+  if(!modal || !valueEl){
+    toggleSessionBtn.dataset.countdownConfirmed='1';
+    toggleSessionBtn.click();
+    return;
+  }
+  clearInterval(freeStartCountdownTimer);
+  let remaining=10;
+  valueEl.textContent=remaining;
+  modal.classList.remove('hidden');
+  beep(520,70);
+  freeStartCountdownTimer=setInterval(()=>{
+    remaining--;
+    valueEl.textContent=remaining;
+    if(remaining>0){ beep(520,70); return; }
+    clearInterval(freeStartCountdownTimer);
+    freeStartCountdownTimer=null;
+    modal.classList.add('hidden');
+    beep(820,150);
+    toggleSessionBtn.dataset.countdownConfirmed='1';
+    toggleSessionBtn.click();
+  },1000);
+}
+toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive && toggleSessionBtn.dataset.countdownConfirmed!=='1'){startFreeCountdown();return;}delete toggleSessionBtn.dataset.countdownConfirmed;if(!sessionActive){if(cameraReady&&!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
