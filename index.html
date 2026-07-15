@@ -1,4 +1,4 @@
-<!-- v96 -->
+<!-- v97 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -129,7 +129,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v96</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v97</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
     <button id="debugToggleBtn" class="icon-btn" aria-label="Debug caméra" style="margin-left:.4rem;">🐞</button>
   </header>
@@ -826,6 +826,7 @@ function renderPlanTab(){
     future.innerHTML='';
     const nextDates=getNextCalendarDates(7);
     const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    let nextAdvanceUnlocked=false;
     nextDates.forEach((d,idx)=>{
       const isToday = idx===0;
       const isTrainingDayRow = planProfile.days.includes(d.getDay());
@@ -849,9 +850,13 @@ function renderPlanTab(){
       const isDoneRow = isToday && todayCompleted;
       row.style.cssText=`display:flex;flex-direction:column;gap:.4rem;padding:.6rem .8rem;background:${isDoneRow?'rgba(79,152,163,.18)':'var(--surface2)'};border-radius:.8rem;`;
       const isoStr=toLocalDateStr(d);
-      const alreadyDone = workouts.some(w=>w.source==='plan' && w.isoDate===isoStr);
+      const alreadyDone = workouts.some(w=>w.source==='plan' && (w.targetDate===isoStr || (!w.targetDate && w.isoDate===isoStr)));
       row.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;"><span${isDoneRow?' style="color:var(--primary);font-weight:600;"':''}>${label}</span><strong style="color:var(--primary);">${total} pompes</strong></div>`;
-      if(!isToday && !alreadyDone){
+      // Seul le tout prochain jour d'entraînement (pas encore réalisé) peut être avancé.
+      // On ne débloque le suivant qu'une fois celui-là fait, jamais plusieurs à la fois.
+      const isNextUnlockableTrainingDay = !isToday && !alreadyDone && !nextAdvanceUnlocked;
+      if(isNextUnlockableTrainingDay) nextAdvanceUnlocked=true;
+      if(isNextUnlockableTrainingDay){
         const advanceBtn=document.createElement('button');
         advanceBtn.className='btn';
         advanceBtn.style.cssText='width:100%;font-size:.8rem;padding:.55rem .6rem;';
@@ -866,6 +871,11 @@ function renderPlanTab(){
         doneTag.style.cssText='color:var(--primary);font-size:.78rem;font-style:italic;';
         doneTag.textContent='Déjà effectuée en avance';
         row.appendChild(doneTag);
+      } else if(!isToday && !alreadyDone){
+        const lockedTag=document.createElement('div');
+        lockedTag.style.cssText='color:var(--muted);font-size:.78rem;font-style:italic;';
+        lockedTag.textContent='Terminez d\'abord la séance précédente';
+        row.appendChild(lockedTag);
       }
       future.appendChild(row);
     });
@@ -1810,10 +1820,14 @@ async function finishPlanTraining(completed){
   stopPlanSessionTimer();
   if(planTotalCount>0){
     const now=new Date();
-    const isoDate=planSessionTargetDate || toLocalDateStr(now);
+    // Le calendrier reflète toujours le jour réel où la séance a été effectuée.
+    // targetDate garde une trace du jour planifié que cette séance a satisfait
+    // (utile pour débloquer le jour suivant), même si ce n'est pas le même jour.
+    const isoDate=toLocalDateStr(now);
+    const targetDateForPlan=planSessionTargetDate || isoDate;
     const durationMs=planSessionStartTime?(Date.now()-planSessionStartTime):0;
     const doneSets=(planSessionSets[0]&&planSessionSets[0].sets ? planSessionSets[0].sets.slice(0,planSessionIndex+(completed?1:0)) : []).map((reps,i)=>({set:i+1,reps}));
-    const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,total:planTotalCount,duration:formatDuration(durationMs),sets:doneSets,source:'plan'};
+    const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,targetDate:targetDateForPlan,total:planTotalCount,duration:formatDuration(durationMs),sets:doneSets,source:'plan'};
     workouts.push(workout);
     try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
     try{renderHistory();}catch(e){console.error('renderHistory error', e && e.message ? e.message : String(e));}
