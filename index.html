@@ -1,4 +1,4 @@
-<!-- v98 -->
+<!-- v99 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -129,7 +129,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v98</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v99</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
     <button id="debugToggleBtn" class="icon-btn" aria-label="Debug caméra" style="margin-left:.4rem;">🐞</button>
   </header>
@@ -1048,7 +1048,7 @@ async function startPlanSessionInner(targetDateIso){
     showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.',3000);
     return;
   }
-  planSessionSets=[{week:weekNumber, sets:safeSets, total:safeSets.reduce((a,b)=>a+b,0)}];
+  planSessionSets=[{week:intensity, sets:safeSets, total:safeSets.reduce((a,b)=>a+b,0)}];
   planSessionIndex=0;
   planSessionRepTarget=planSessionSets[0].sets[0];
   planSessionRemaining=planSessionRepTarget;
