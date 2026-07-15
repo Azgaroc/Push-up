@@ -1,4 +1,4 @@
-<!-- v90 -->
+<!-- v91 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -129,7 +129,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v90</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v91</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
     <button id="debugToggleBtn" class="icon-btn" aria-label="Debug caméra" style="margin-left:.4rem;">🐞</button>
   </header>
@@ -426,14 +426,7 @@
       </div>
     </div>
   </div>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.20.0/dist/tf-core.min.js" crossorigin="anonymous">setTimeout(()=>{
-  const splash=document.getElementById('splashScreen');
-  const root=document.getElementById('appRoot');
-  if(splash && !splash.classList.contains('hidden')) splash.classList.add('hidden');
-  if(root && root.style.display==='none') root.style.display='block';
-},5000);
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.20.0/dist/tf-core.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@4.20.0/dist/tf-converter.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.20.0/dist/tf-backend-webgl.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js" crossorigin="anonymous"></script>
@@ -1986,49 +1979,7 @@ if(stopPlanTrainingBtn) stopPlanTrainingBtn.addEventListener('click',async()=>{
     finishPlanTraining(false);
   }
 });
-let freeCountdownPending=false;
-const originalFreeSessionClick=toggleSessionBtn.onclick;
-// The existing listener remains the source of truth. The capture handler only
-// intercepts an initial start; it never touches camera boot or session stop.
-toggleSessionBtn.addEventListener('click',function freeCountdownCapture(e){
-  if(freeCountdownPending || sessionActive || restActive || !cameraReady || manualMode) return;
-  e.stopImmediatePropagation();
-  const modal=document.getElementById('planStartCountdownModal');
-  const value=document.getElementById('planStartCountdownValue');
-  if(!modal || !value) return;
-  let seconds=10;
-  value.textContent=seconds;
-  modal.classList.remove('hidden');
-  beep(520,70);
-  const timer=setInterval(()=>{
-    seconds--;
-    value.textContent=seconds;
-    if(seconds>0){ beep(520,70); return; }
-    clearInterval(timer);
-    modal.classList.add('hidden');
-    beep(820,150);
-    freeCountdownPending=true;
-    toggleSessionBtn.click();
-    freeCountdownPending=false;
-  },1000);
-},{capture:true});
-
 toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(cameraReady&&!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
-nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
-document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
-document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
-document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent='Prêt';}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{phaseEl.textContent='Prêt';movementLabel.textContent='Repositionnez-vous';}});
-resetBtn.addEventListener('click',()=>{setCount=0;refreshHeader();resetTracking();});
-finishWorkoutBtn.addEventListener('click',()=>{
-  if(totalCount===0 && setCount===0){
-    sessionActive=false;
-    toggleSessionBtn.textContent='Démarrer';
-    phaseEl.textContent='Prêt';
-    showToast('Aucune pompe enregistrée. Appuyez sur Démarrer pour reprendre.',3000);
-    return;
-  }
-  openValidateModal('finish');
-});
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
@@ -2125,5 +2076,18 @@ function warmUpBackend() {
 window.addEventListener('load', warmUpBackend);
 </script>
 
+<script>
+(function(){
+  function reveal(){
+    var splash=document.getElementById('splashScreen');
+    var app=document.getElementById('appRoot');
+    if(splash) splash.classList.add('hidden');
+    if(app) app.style.display='flex';
+  }
+  window.addEventListener('error', function(){ setTimeout(reveal, 0); });
+  window.addEventListener('unhandledrejection', function(){ setTimeout(reveal, 0); });
+  setTimeout(reveal, 4500);
+})();
+</script>
 </body>
 </html>
