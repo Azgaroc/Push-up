@@ -1,4 +1,4 @@
-<!-- v103 -->
+<!-- v105 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -58,11 +58,12 @@
     body.plan-session-active #tab-plan{overflow:hidden;}
     body.plan-session-active #tab-plan #planActive{display:flex;flex-direction:column;height:100%;overflow:hidden;}
     body.plan-session-active #tab-plan #planActive > section.panel:first-child{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;padding:.5rem .6rem;}
-    body.plan-session-active #planSessionMetrics{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
+    body.plan-session-active #planSessionMetrics{display:flex;flex-direction:column;flex-shrink:0;overflow:visible;}
     body.plan-session-active #planSessionMetrics > div[style*="aspect-ratio:1/1"]{width:min(38vw,150px);margin:.3rem auto 0;flex-shrink:0;}
     body.plan-session-active #planCurrentRepValue{font-size:2.6rem !important;}
     body.plan-session-active #planCurrentSetInfo,body.plan-session-active #planSetProgressInfo{font-size:.75rem;margin-top:0;}
     body.plan-session-active #stopPlanTrainingBtn{margin-top:.5rem;flex-shrink:0;}
+    body.plan-session-active #planSessionMetricsRow{margin-top:.5rem !important;flex-shrink:0;}
     body.plan-session-active #planRestPanel{padding:.6rem;margin-top:.5rem;flex-shrink:0;}
     body.plan-session-active #planRestDisplay{font-size:1.6rem;margin:.15rem 0;}
     body.plan-session-active #planTodaySets{flex:1;min-height:0;overflow-y:auto;margin-top:.5rem;gap:.35rem;}
@@ -142,7 +143,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v103</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v105</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
     <button id="debugToggleBtn" class="icon-btn" aria-label="Debug caméra" style="margin-left:.4rem;">🐞</button>
   </header>
@@ -304,7 +305,7 @@
           <div id="planRestText" style="color:var(--muted);font-size:.85rem;">Repos avant le prochain set.</div>
           <button id="planSkipRest" class="btn btn-primary" style="width:100%;margin-top:.8rem;">Reprendre maintenant</button>
         </div>
-        <div style="display:flex;justify-content:space-around;gap:.5rem;margin-top:1rem;">
+        <div id="planSessionMetricsRow" style="display:flex;justify-content:space-around;gap:.5rem;margin-top:1rem;flex-shrink:0;">
           <div class="metric" style="text-align:center;"><span>Pompes séance</span><strong id="planTotalCount" style="font-size:1.8rem;">0</strong></div>
           <div class="metric" style="text-align:center;"><span>Durée</span><strong id="planSessionDuration" style="font-size:1.8rem;">00:00</strong></div>
         </div>
