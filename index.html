@@ -1,4 +1,4 @@
-<!-- v99 -->
+<!-- v100 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -129,7 +129,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v99</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v100</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
     <button id="debugToggleBtn" class="icon-btn" aria-label="Debug caméra" style="margin-left:.4rem;">🐞</button>
   </header>
@@ -1014,8 +1014,18 @@ function updatePlanSessionUI(){
 }
 
 
-function startPlanSession(dateIso){
+async function startPlanSession(dateIso){
   if(!planProfile || !planProfile.maxReps) return;
+  // La caméra doit être activée dans le geste de clic lui-même, sinon les navigateurs
+  // mobiles bloquent silencieusement getUserMedia après le délai du compte à rebours.
+  if(!cameraReady){
+    showToast('Activation de la caméra...',2000);
+    await startCamera();
+  }
+  if(!cameraReady){
+    showToast('Impossible d\'activer la caméra. Autorisez l\'accès puis réessayez.',4000);
+    return;
+  }
   runPlanCountdown(()=>{ startPlanSessionInner(dateIso); });
 }
 
@@ -1036,10 +1046,6 @@ async function startPlanSessionInner(targetDateIso){
   const aiDay=applyAIPlanForToday(baseSets, ratio, isoDate);
   const safeSets=(aiDay.sets && aiDay.sets.length ? aiDay.sets : baseSets).filter(n=>Number.isFinite(n)&&n>0);
   if(!safeSets.length) return;
-  if(!cameraReady){
-    showToast('Activation de la caméra...',2000);
-    await startCamera();
-  }
   if(!cameraReady){
     showToast('Impossible d\'activer la caméra. Autorisez l\'accès puis réessayez.',4000);
     return;
