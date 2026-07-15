@@ -1,4 +1,4 @@
-<!-- v86 -->
+<!-- v87 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -129,7 +129,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v86</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v87</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
     <button id="debugToggleBtn" class="icon-btn" aria-label="Debug caméra" style="margin-left:.4rem;">🐞</button>
   </header>
@@ -1493,13 +1493,17 @@ function processRep(metrics){
   const active=sessionActive || planSessionActive;
   if(!active) return;
 
-  // Pas de pose = aucune répétition. On annule le cycle sans créer de "bas".
+  // Cette configuration est volontairement prévue pour un téléphone au sol :
+  // haut = pose visible, bas = visage/corps souvent hors champ, haut = retour.
   if(!metrics){
     if(poseVisible){
       poseVisible=false;
-      state='up'; downFrames=0; upFrames=0;
-      baseline=null; trackingMode=null;
-      phaseEl.textContent='Repositionnez-vous';
+      poseLostAt=now;
+      downFrames=1;
+      upFrames=0;
+      phaseEl.textContent='Bas';
+    } else if(downFrames>0){
+      downFrames++;
     }
     return;
   }
@@ -1508,64 +1512,52 @@ function processRep(metrics){
   poseVisible=true;
   poseWasDetected=true;
 
-  // Le mode "simple" est le plus stable lorsque le téléphone est posé au sol :
-  // la largeur/hauteur apparente change beaucoup entre le haut et le bas.
-  const value=Number(metrics.shoulderY ?? metrics.centerY ?? metrics.bodyY);
-  if(!Number.isFinite(value)) return;
-
-  // Retour dans le cadre ou début de séance : une image de référence, sans compter.
-  if(returned || baseline===null){
-    baseline=value;
-    state='up'; downFrames=0; upFrames=0;
+  // Première pose de séance : calibration uniquement.
+  if(!calibrated){
+    calibrated=true;
+    state='up';
+    downFrames=0;
+    upFrames=0;
+    lastRepAt=now;
     phaseEl.textContent='Prêt';
-    lastDebugInfo={mode:metrics.mode,value,baseline,info:'calibrage'};
     return;
   }
 
-  const delta=Math.abs(value-baseline);
-  const DOWN=0.018;
-  const UP=0.008;
-  const isDown=delta>=DOWN;
-  const isUp=delta<=UP;
-
-  if(state==='up'){
-    if(isDown){
-      downFrames++;
-      if(downFrames>=2){
-        state='down';
-        downFrames=0;
-        upFrames=0;
-        phaseEl.textContent='Bas';
-      }
-    }else{
+  if(returned){
+    const outOfView=now-poseLostAt;
+    // Une pompe a un aller-retour bref. Une sortie prolongée du champ est ignorée.
+    const validDescent=downFrames>=2 && outOfView>=350 && outOfView<=2200;
+    if(validDescent && now-lastRepAt>=350){
+      lastRepAt=now;
+      state='up';
       downFrames=0;
-      // adaptation lente si la posture haute bouge légèrement
-      baseline=baseline*0.96+value*0.04;
-    }
-  }else if(state==='down'){
-    if(isUp){
-      upFrames++;
-      if(upFrames>=2 && now-lastRepAt>300){
-        lastRepAt=now;
-        state='up';
-        upFrames=0;
-        downFrames=0;
-        phaseEl.textContent='Haut';
-        if(sessionActive){
-          setCount++;
-          totalCount++;
-          refreshHeader();
-          if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint';
-        }
-        if(planSessionActive) finishPlanRep();
-        beep(700,90);
-      }
-    }else{
       upFrames=0;
+      phaseEl.textContent='Haut';
+
+      if(sessionActive){
+        setCount++;
+        totalCount++;
+        refreshHeader();
+        if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint';
+      }
+      if(planSessionActive) finishPlanRep();
+      beep(700,90);
+      lastDebugInfo={info:'pompe validée : disparition puis retour',outOfView};
+      return;
     }
+
+    // Retour après une absence trop courte ou trop longue : aucune répétition.
+    state='up';
+    downFrames=0;
+    upFrames=0;
+    phaseEl.textContent='Prêt';
+    lastDebugInfo={info:'retour ignoré',outOfView};
+    return;
   }
 
-  lastDebugInfo={mode:metrics.mode,value:Math.round(value*1000)/1000,baseline:Math.round(baseline*1000)/1000,delta:Math.round(delta*1000)/1000,state,isDown,isUp,downFrames,upFrames};
+  // Pose stable en haut : aucune action. Cette version ne dépend pas des angles.
+  phaseEl.textContent='Haut';
+  lastDebugInfo={mode:metrics.mode,state:'up',info:'pose détectée'};
 }
 function renderDebug(keypoints, detected){
   const inSession = sessionActive || planSessionActive;
