@@ -1491,98 +1491,82 @@ function autoCalibrate(){
 function processRep(metrics){
   const now=performance.now();
 
+  // La pose qui disparaît annule seulement la répétition en cours ; elle ne crée
+  // jamais une position basse. Le compteur ne fonctionne qu'avec une pose visible.
   if(!metrics){
-    // Perte de pose : signal valide de position basse pour un téléphone posé au sol,
-    // qui perd le suivi quand on s'approche de lui en bas de la pompe — mais seulement
-    // si on se rapprochait bien de la caméra juste avant (largeur des épaules qui augmente),
-    // sinon on considère que la personne est simplement sortie du cadre.
     if(poseVisible){
-      poseLostAt=now;
       poseVisible=false;
-      // Une disparition n'est jamais une répétition à elle seule. On n'autorise
-      // la validation au retour que si le bas a été détecté auparavant par l'angle.
-      approachConfirmed = false;
-      recentWidths=[];
+      poseLostAt=now;
+      state='up'; downFrames=0; upFrames=0;
+      baseline=null; trackingMode=null; recentWidths=[];
+      phaseEl.textContent='Repositionnez-vous';
     }
-    if(state==='up' && (now-poseLostAt)>=250){
-      // Hors champ : on réinitialise un cycle propre, sans simuler la position basse.
-      state='up'; downFrames=0; upFrames=0; baseline=null; trackingMode=null;
-      phaseEl.textContent='Pose perdue';
-    }
-    lastDebugInfo={mode:'aucune pose détectée', state, approachConfirmed, sincePerte:Math.round(now-poseLostAt)};
     return;
   }
 
-  const reappeared = !poseVisible;
+  const reappeared=!poseVisible;
   poseVisible=true;
   poseWasDetected=true;
 
-  if(trackingResumeBlocked){
-    trackingResumeBlocked=false;
-    state='up'; downFrames=0; upFrames=0; baseline=null; trackingMode=null; recentWidths=[];
-    phaseEl.textContent='Recalibrage';
-    lastDebugInfo={mode:metrics.mode, info:'reprise sécurisée : frame ignorée'};
+  const frameMode=(metrics.mode==='full' && Number.isFinite(metrics.elbowAngle)) ? 'angle' : 'position';
+  const value=frameMode==='angle' ? metrics.elbowAngle : metrics.shoulderY;
+  if(!Number.isFinite(value)) return;
+
+  // À la reprise, une seule frame suffit à créer la référence et les frames
+  // suivantes reprennent immédiatement le comptage normal.
+  if(reappeared || baseline===null || trackingMode!==frameMode){
+    state='up'; downFrames=0; upFrames=0;
+    trackingMode=frameMode;
+    baseline=value;
+    recentWidths=[];
+    phaseEl.textContent='Prêt';
+    lastDebugInfo={mode:metrics.mode, info:'référence recalibrée'};
     return;
   }
 
-  if(reappeared){
-    // Revenir dans le cadre ne valide jamais une pompe : on exige un cycle complet
-    // bas -> haut observé alors que la pose reste visible.
-    state='up'; downFrames=0; upFrames=0; baseline=null; trackingMode=null; recentWidths=[];
-    phaseEl.textContent='Recalibrage';
-  }
-
-  const frameMode = (metrics.mode==='full' && metrics.elbowAngle!=null) ? 'angle' : 'position';
-  if(trackingMode===null) trackingMode=frameMode;
-  if(frameMode!==trackingMode){
-    lastDebugInfo={skipped:true, frameMode, trackingMode};
-    return; // trame ignorée : on ne corrompt pas l'état en cours avec une autre base de mesure
-  }
-  const usingAngle = trackingMode==='angle';
-  const value = usingAngle ? metrics.elbowAngle : metrics.shoulderY;
-  if(baseline===null) baseline=value;
-
-  if(state==='up' && metrics.shoulderWidth!=null){
-    recentWidths.push(metrics.shoulderWidth);
-    if(recentWidths.length>4) recentWidths.shift();
-  }
-
-  let isDown, isUp;
-  if(usingAngle){
-    // Angle du coude en degrés : bras tendu ~150-180° en haut, bras plié <100° en bas de la pompe.
-    isDown = value <= 100;
-    isUp = value >= 145;
+  let isDown=false, isUp=false;
+  if(frameMode==='angle'){
+    isDown=value<=115;
+    isUp=value>=140;
   } else {
-    // Amplitude plus petite que prévu en pratique : seuils resserrés par rapport à la version précédente.
-    const delta = Math.abs(value - baseline);
-    isDown = delta >= 0.025;
-    isUp = delta <= 0.01;
+    const delta=Math.abs(value-baseline);
+    isDown=delta>=0.025;
+    isUp=delta<=0.012;
   }
 
   if(state==='up'){
     if(isDown){
       downFrames++;
-      if(downFrames>=2){ state='down'; downFrames=0; phaseEl.textContent='Bas'; }
+      if(downFrames>=2){
+        state='down'; downFrames=0; upFrames=0;
+        phaseEl.textContent='Bas';
+      }
     } else {
       downFrames=0;
+      // Référence lente pour absorber les petits déplacements du téléphone.
+      baseline=baseline*0.92+value*0.08;
     }
   } else {
     if(isUp){
       upFrames++;
       if(upFrames>=2 && now-lastRepAt>350){
-        lastRepAt=now; state='up'; upFrames=0;
+        lastRepAt=now;
+        state='up'; downFrames=0; upFrames=0;
         phaseEl.textContent='Haut';
-        if(sessionActive){ setCount++;totalCount++;refreshHeader(); if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint'; }
+        if(sessionActive){
+          setCount++; totalCount++; refreshHeader();
+          if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint';
+        }
+        if(planSessionActive) finishPlanRep();
         beep(700,90);
-        if(planSessionActive){ finishPlanRep(); }
       }
     } else {
       upFrames=0;
     }
   }
-  lastDebugInfo={mode:metrics.mode, trackingMode, value:Math.round(value*1000)/1000, baseline:Math.round(baseline*1000)/1000, state, isDown, isUp, downFrames, upFrames, quality:metrics.quality};
-}
 
+  lastDebugInfo={mode:metrics.mode,trackingMode,value:Math.round(value*1000)/1000,baseline:Math.round(baseline*1000)/1000,state,isDown,isUp,downFrames,upFrames,quality:metrics.quality};
+}
 function renderDebug(keypoints, detected){
   const inSession = sessionActive || planSessionActive;
   if(!keypoints || !detected){
@@ -1660,14 +1644,7 @@ async function startCamera(){
     showToast('Caméra indisponible : passage en mode manuel. Utilisez les boutons +/- pour compter vos pompes.',4500);
   }
 }
-let trackingResumeBlocked=false;
-function invalidatePoseCycle(message='Pose perdue'){
-  state='up'; downFrames=0; upFrames=0; baseline=null; trackingMode=null;
-  recentWidths=[]; approachConfirmed=false; poseVisible=false;
-  poseLostAt=performance.now(); trackingResumeBlocked=true;
-  if(phaseEl) phaseEl.textContent=message;
-}
-function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;trackingResumeBlocked=false;phaseEl.textContent='Prêt';}
+function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;phaseEl.textContent='Prêt';}
 function formatRest(s){const m=String(Math.floor(s/60)).padStart(2,'0');const sec=String(s%60).padStart(2,'0');return `${m}:${sec}`;}
 
 let audioCtx=null;
@@ -2038,14 +2015,6 @@ document.getElementById('closeDoneModal').addEventListener('click',()=>{document
 
 // Empêche l'écran de se verrouiller pendant une séance active (caméra ou mode manuel).
 // Safari iOS supporte l'API Wake Lock depuis la version 16.4.
-document.addEventListener('visibilitychange',()=>{
-  if(sessionActive || planSessionActive){
-    if(typeof invalidatePoseCycle==='function'){
-      invalidatePoseCycle(document.hidden ? 'Session en arrière-plan' : 'Repositionnez-vous');
-    }
-  }
-});
-
 let wakeLockRef = null;
 async function requestWakeLock() {
   if (wakeLockRef) return;
