@@ -1,4 +1,4 @@
-<!-- v130 -->
+<!-- v133 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -22,8 +22,8 @@
     .logo svg{width:24px;height:24px}.topbar{margin-bottom:1rem}.brand h1{margin:0;font-size:1.35rem}.brand p{margin:.15rem 0 0;font-size:.82rem;color:var(--muted)}
     .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem}.counter-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)} .counter{font-size:clamp(4rem,18vw,7rem);font-weight:700;line-height:.92}
     .section-title{font-size:1.4rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--text);margin-bottom:.4rem;}
-    .home-quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.6rem;}
-    .home-quick-grid .home-nav-btn{background:transparent;color:var(--text);border:1px solid var(--border);}
+    .home-quick-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;margin-top:.6rem;}
+    .home-quick-grid .home-nav-btn{background:transparent;color:var(--text);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;padding:.5rem .2rem;min-height:60px;font-size:.72rem;}
     .camera-shell{position:relative;overflow:hidden;border-radius:1rem;background:#0f1113;aspect-ratio:3/4;margin-top:1rem}.camera-shell video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.camera-shell canvas{display:none}
     .camera-overlay{position:absolute;left:.8rem;right:.8rem;bottom:.8rem;z-index:2}.pill{display:inline-flex;align-items:center;gap:.45rem;border-radius:var(--pill);padding:.45rem .75rem;background:rgba(17,20,24,.62);backdrop-filter:blur(10px);color:#fff;font-size:.78rem}.dot{width:.55rem;height:.55rem;border-radius:50%;background:#9ca3af}.dot.live{background:#22c55e}.dot.warn{background:#f59e0b}
     .grid,.controls{display:grid;gap:.75rem}.controls,.grid,.two-col{grid-template-columns:1fr 1fr}.btn,.chip,.icon-btn,input{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--pill)} .btn{min-height:52px;padding:.9rem 1rem;font-weight:700}.btn-primary{background:var(--primary);color:var(--inv);border:none}.btn-danger{background:var(--text);color:var(--inv);border:none}.icon-btn{width:48px;height:48px}
@@ -147,7 +147,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v130</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v133</p></div></div>
     <button id="homeShortcutBtn" aria-label="Accueil" style="background:var(--primary);color:#fff;border:none;border-radius:var(--pill);padding:.5rem 1rem;font-weight:700;font-size:.85rem;">Accueil</button>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème" style="margin-left:.4rem;">◐</button>
   </header>
@@ -166,18 +166,20 @@
           <div id="homeGreeting" style="font-size:1.3rem;font-weight:700;">Bonjour</div>
         </div>
         <div style="display:flex;align-items:center;gap:.35rem;margin-top:.15rem;">
-          <span id="homeGreetingFlame" style="font-size:1.05rem;display:none;">🔥</span>
+          <span id="homeGreetingFlame" style="display:none;"><svg viewBox="0 0 24 24" width="15" height="15" fill="var(--primary)" stroke="none"><path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c0-1-.5-1.5-.5-2.5 2 1 3.5 3 3.5 5.5a6 6 0 01-12 0c0-5 4-6 6-11z"/></svg></span>
           <span id="homeGreetingStreakCount" style="font-size:.9rem;font-weight:600;color:var(--muted);"></span>
         </div>
       </div>
       <span id="homeTodayDate" style="color:var(--muted);font-size:.85rem;white-space:nowrap;padding-top:.2rem;"></span>
     </div>
 
-    <section class="panel" style="display:flex;align-items:center;gap:.8rem;">
+    <!-- Citation de motivation masquée temporairement pour gagner de la place :
+<section class="panel" style="display:flex;align-items:center;gap:.8rem;">
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--primary)" stroke-width="2" style="flex-shrink:0;"><path d="M7 8c-2 0-3 1.5-3 4s1.5 4 3 4 3-1.5 3-4c0-2.5-1.2-4-3-4zm10 0c-2 0-3 1.5-3 4s1.5 4 3 4 3-1.5 3-4c0-2.5-1.2-4-3-4z"/></svg>
       <div id="homeMotivationQuote" style="font-size:.9rem;color:var(--text);flex:1;">Les petites victoires répétées deviennent de grands résultats.</div>
       <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--primary)" stroke-width="1.6" style="flex-shrink:0;"><path d="M6 10h2v4H6zm10 0h2v4h-2zM8 10l3-3 2 2 3-3M8 14l3 3 2-2 3 3"/></svg>
     </section>
+-->
 
     <section class="panel" style="margin-top:.8rem;">
       <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
@@ -188,8 +190,8 @@
           <div id="homeTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span></div>
           <div id="homeTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
           <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
-            <div style="font-size:.78rem;color:var(--muted);">⏱ Temps estimé<br><strong id="homeTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
-            <div style="font-size:.78rem;color:var(--muted);">📶 Niveau<br><strong id="homeTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
+            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Temps estimé<br><strong id="homeTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
+            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"/></svg> Niveau<br><strong id="homeTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
           </div>
         </div>
         <div style="position:relative;width:104px;height:104px;flex-shrink:0;">
@@ -198,7 +200,7 @@
             <circle id="homeRingProgress" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.4" stroke-dashoffset="276.4"></circle>
           </svg>
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-            <span style="color:var(--primary);"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="4" cy="12" r="2.2" fill="currentColor" stroke="none"/><circle cx="20" cy="12" r="2.2" fill="currentColor" stroke="none"/><path d="M6.2 12h11.6M4 9.5v5M20 9.5v5"/></svg></span>
+            <span style="color:var(--primary);"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="3.5" cy="12" r="2.8" fill="currentColor" stroke="none"/><circle cx="20.5" cy="12" r="2.8" fill="currentColor" stroke="none"/><path d="M6.3 12h11.4M3.5 8.5v7M20.5 8.5v7"/></svg></span>
             <span id="homeRingNumber" style="font-size:1.15rem;font-weight:800;">0</span>
             <span style="font-size:.6rem;color:var(--muted);">au total</span>
           </div>
@@ -232,7 +234,7 @@
           <div style="font-size:.72rem;color:var(--muted);">séances complétées</div>
         </div>
         <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
-          <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round"><circle cx="4" cy="12" r="2.4" fill="var(--primary)" stroke="none"/><circle cx="20" cy="12" r="2.4" fill="var(--primary)" stroke="none"/><path d="M6.4 12h11.2M4 9v6M20 9v6"/></svg></div>
+          <div><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round"><circle cx="3.5" cy="12" r="2.8" fill="var(--primary)" stroke="none"/><circle cx="20.5" cy="12" r="2.8" fill="var(--primary)" stroke="none"/><path d="M6.3 12h11.4M3.5 8.5v7M20.5 8.5v7"/></svg></div>
           <div id="homeWeekTotal" style="font-size:1.3rem;font-weight:800;">0</div>
           <div style="font-size:.72rem;color:var(--muted);">pompes au total</div>
         </div>
@@ -248,8 +250,9 @@
     <div class="home-quick-grid" style="margin-top:.5rem;">
       <button class="btn home-nav-btn" data-tab="calendar" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span style="color:var(--text);">Calendrier</span></button>
       <button class="btn home-nav-btn" data-tab="stats" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span style="color:var(--text);">Stats</span></button>
-      <button class="btn home-nav-btn" data-tab="profile" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg><span style="color:var(--text);">Profil</span></button>
+      <button class="btn home-nav-btn" data-tab="plan" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span style="color:var(--text);">Plan</span></button>
       <button class="btn home-nav-btn" data-tab="training" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg><span style="color:var(--text);">Libre</span></button>
+      <button class="btn home-nav-btn" data-tab="profile" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg><span style="color:var(--text);">Profil</span></button>
     </div>
   </div>
 
@@ -1529,7 +1532,7 @@ function renderHomeTab(){
     if(durationEl) durationEl.textContent = setCount ? `${Math.max(2,Math.round(setCount*1.4))} min` : '–';
     if(levelEl){
       const mx=planProfile.maxReps||0;
-      levelEl.textContent = mx<8?'Débutant':(mx<20?'Intermédiaire':(mx<45?'Avancé':(mx<80?'Confirmé':'Élite')));
+      levelEl.textContent = mx<12?'Débutant':(mx<25?'Novice':(mx<45?'Intermédiaire':(mx<70?'Avancé':(mx<110?'Confirmé':'Élite'))));
     }
     if(startBtn){
       startBtn.style.display = isRestDay ? 'none' : 'flex';
@@ -1577,14 +1580,14 @@ function renderHomeTab(){
     if(badgesEl){
       badgesEl.innerHTML='';
       const items=[];
-      if(planProfile.aiPlan) items.push('🤖 Plan IA actif');
-      if(statusTxt.includes('allégé')) items.push('🐢 Rythme allégé');
-      else if(statusTxt.includes('accéléré')) items.push('🚀 Rythme accéléré');
-      else items.push('📊 Rythme stable');
-      items.push('🌱 Reprise en douceur');
+      if(planProfile.aiPlan) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V4M9 4h6"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg> Plan IA actif`);
+      if(statusTxt.includes('allégé')) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h4l2-3 3 6 2-3h5"/></svg> Rythme allégé`);
+      else if(statusTxt.includes('accéléré')) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg> Rythme accéléré`);
+      else items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h16"/></svg> Rythme stable`);
+      items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M5 20c0-8 6-14 14-14 0 8-6 14-14 14zM5 20c2-4 5-7 9-9"/></svg> Reprise en douceur`);
       items.forEach(txt=>{
         const span=document.createElement('span');
-        span.textContent=txt;
+        span.innerHTML=txt;
         badgesEl.appendChild(span);
       });
     }
