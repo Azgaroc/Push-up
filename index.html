@@ -1,4 +1,4 @@
-<!-- v110 -->
+<!-- v112 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -146,7 +146,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v110</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v112</p></div></div>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
     <button id="debugToggleBtn" class="icon-btn" aria-label="Debug caméra" style="margin-left:.4rem;">🐞</button>
   </header>
@@ -645,6 +645,7 @@ async function regeneratePlanFromAI(reason='regular'){
     return null;
   }finally{
     if(typeof renderPlanTab==='function') renderPlanTab();
+    if(typeof renderHomeTab==='function') renderHomeTab();
     planAIRegenInFlight = false;
   }
 }
@@ -836,6 +837,7 @@ function renderPlanTab(){
   if(!isTrainingDay){
     titleEl.textContent='Jour de repos';
     setsEl.innerHTML='<div style="color:var(--muted);font-size:.85rem;">Aucune séance planifiée aujourd\'hui. Profitez du repos, ou faites une séance libre si vous en avez envie.</div>';
+    window.lastTodayPlanSnapshot=null;
   }else{
     const intensity=planProfile.days.indexOf(todayDow)+1;
     const baseSets=generateDailyTarget(planProfile.maxReps,intensity,ratio);
@@ -850,6 +852,7 @@ function renderPlanTab(){
       ? (Array.isArray(todayWorkout.sets) ? todayWorkout.sets.map(s=>s.reps) : [])
       : sets;
     displayTotal = todayCompleted ? (todayWorkout.total || displaySets.reduce((a,b)=>a+b,0)) : displaySets.reduce((a,b)=>a+b,0);
+    window.lastTodayPlanSnapshot = {sets:displaySets.slice(), total:displayTotal, completed:todayCompleted};
     titleEl.innerHTML = todayCompleted
       ? `<span style="color:var(--primary);">✓ Séance effectuée</span> · ${displaySets.length} sets · ${displayTotal} pompes au total`
       : `${displaySets.length} sets · ${displayTotal} pompes au total`;
@@ -1215,16 +1218,15 @@ function renderHomeTab(){
   const summaryEl=document.getElementById('homeTodaySummary');
   if(planProfile){
     renderPlanTab();
-    const planSetsEl=document.getElementById('planTodaySets');
-    const setCount=planSetsEl?planSetsEl.children.length:0;
     const titleEl=document.getElementById('planTodayTitle');
     const isRestDay=titleEl && titleEl.textContent.trim()==='Jour de repos';
+    const snap=window.lastTodayPlanSnapshot;
     if(summaryEl){
-      if(isRestDay || !setCount){
+      if(isRestDay || !snap || !snap.sets || !snap.sets.length){
         summaryEl.innerHTML=titleEl?titleEl.innerHTML:'Aucune séance planifiée aujourd\'hui.';
       } else {
-        const totalMatch=titleEl.textContent.match(/(\d+)\s*pompes/);
-        const total=totalMatch?totalMatch[1]:0;
+        const setCount=snap.sets.length;
+        const total=snap.total;
         summaryEl.textContent=`${setCount} set${setCount>1?'s':''} · ${total} pompes au total`;
       }
     }
