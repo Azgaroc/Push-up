@@ -1,4 +1,4 @@
-<!-- v120 -->
+<!-- v121 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -147,7 +147,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v120</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v121</p></div></div>
     <button id="homeShortcutBtn" aria-label="Accueil" style="background:var(--primary);color:#fff;border:none;border-radius:var(--pill);padding:.5rem 1rem;font-weight:700;font-size:.85rem;">Accueil</button>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème" style="margin-left:.4rem;">◐</button>
   </header>
@@ -574,6 +574,10 @@ function askSessionFeedback(){
 }
 const html=document.documentElement,themeBtn=document.querySelector('[data-theme-toggle]');let theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';html.setAttribute('data-theme',theme);themeBtn.addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';html.setAttribute('data-theme',theme)});
 document.getElementById('homeShortcutBtn').addEventListener('click',()=>{
+  if(planSessionActive || sessionActive){
+    showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+    return;
+  }
   goToTab('home');
 });
 const $=id=>document.getElementById(id); const video=$('video'), work=$('work'), wctx=work.getContext('2d'), toastEl=$('toast');
@@ -943,8 +947,8 @@ function renderPlanTab(){
       row.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;"><span${isDoneRow?' style="color:var(--primary);font-weight:600;"':''}>${label}</span><strong style="color:var(--primary);">${total} pompes</strong></div>`;
       // Seul le tout prochain jour d'entraînement (pas encore réalisé) peut être avancé.
       // On ne débloque le suivant qu'une fois celui-là fait, jamais plusieurs à la fois.
-      const isNextUnlockableTrainingDay = !isToday && !alreadyDone && !nextAdvanceUnlocked && todayCompleted;
-      if(isNextUnlockableTrainingDay) nextAdvanceUnlocked=true;
+      const isNextUnlockableTrainingDay = isTrainingDayRow && !alreadyDone && !nextAdvanceUnlocked && todayCompleted;
+      if(isTrainingDayRow && !isToday) nextAdvanceUnlocked=true;
       if(isNextUnlockableTrainingDay){
         const advanceBtn=document.createElement('button');
         advanceBtn.className='btn';
