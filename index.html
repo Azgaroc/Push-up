@@ -1,4 +1,4 @@
-<!-- v112 -->
+<!-- v115 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -146,15 +146,12 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v112</p></div></div>
-    <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
-    <button id="debugToggleBtn" class="icon-btn" aria-label="Debug caméra" style="margin-left:.4rem;">🐞</button>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v115</p></div></div>
+    <button id="homeShortcutBtn" aria-label="Accueil" style="background:var(--primary);color:#fff;border:none;border-radius:var(--pill);padding:.5rem 1rem;font-weight:700;font-size:.85rem;">Accueil</button>
+    <button class="icon-btn" data-theme-toggle aria-label="Changer de thème" style="margin-left:.4rem;">◐</button>
   </header>
-  <div id="debugPanel" class="hidden" style="position:fixed;top:calc(env(safe-area-inset-top,0px) + 3.2rem);left:.6rem;right:.6rem;z-index:260;background:rgba(0,0,0,.82);color:#0f0;font-family:monospace;font-size:.7rem;line-height:1.5;padding:.6rem .8rem;border-radius:.7rem;white-space:pre-wrap;pointer-events:none;"></div>
-
   <div class="tabs-bar" id="tabsBar">
-    <button class="tab-btn active" data-tab="home">Accueil</button>
-    <button class="tab-btn" data-tab="plan">Plan</button>
+    <button class="tab-btn active" data-tab="plan">Plan</button>
     <button class="tab-btn" data-tab="training">Libre</button>
     <button class="tab-btn" data-tab="calendar">Calendrier</button>
     <button class="tab-btn" data-tab="stats">Stats</button>
@@ -371,6 +368,13 @@
       <button id="savePlanSettingsBtn" class="btn btn-primary" style="width:100%;margin-top:.7rem;">Enregistrer les modifications</button>
     </section>
     <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
+    <section class="panel" style="margin-top:.6rem;">
+      <h2>Préférences</h2>
+      <div style="display:flex;justify-content:space-around;gap:.6rem;margin-top:.6rem;">
+        <button id="toggleSoundBtn" class="icon-btn" aria-label="Activer/désactiver le son" style="flex:1;font-size:1.4rem;padding:.7rem;">🔊</button>
+        <button id="toggleVibrationBtn" class="icon-btn" aria-label="Activer/désactiver le vibreur" style="flex:1;font-size:1.4rem;padding:.7rem;">📳</button>
+      </div>
+    </section>
     </div>
     <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v65</div>
   </div>
@@ -527,19 +531,9 @@ function askSessionFeedback(){
   });
 }
 const html=document.documentElement,themeBtn=document.querySelector('[data-theme-toggle]');let theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';html.setAttribute('data-theme',theme);themeBtn.addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';html.setAttribute('data-theme',theme)});
-let debugPanelOn=false;
-document.getElementById('debugToggleBtn').addEventListener('click',()=>{
-  debugPanelOn=!debugPanelOn;
-  document.getElementById('debugPanel').classList.toggle('hidden', !debugPanelOn);
+document.getElementById('homeShortcutBtn').addEventListener('click',()=>{
+  goToTab('home');
 });
-setInterval(()=>{
-  if(!debugPanelOn) return;
-  const panel=document.getElementById('debugPanel');
-  const info=lastDebugInfo||{};
-  panel.textContent = Object.keys(info).length
-    ? Object.entries(info).map(([k,v])=>`${k}: ${v}`).join('\n')
-    : 'En attente de données de pose...';
-},200);
 const $=id=>document.getElementById(id); const video=$('video'), work=$('work'), wctx=work.getContext('2d'), toastEl=$('toast');
 let toastTimer=null;
 function showToast(msg,duration=2600){
@@ -1198,13 +1192,46 @@ document.getElementById('resetPlanBtn').addEventListener('click',async()=>{
   savePlan(null);
   renderPlanTab();
 });
+function updateSoundBtnUI(){
+  const btn=document.getElementById('toggleSoundBtn');
+  if(!btn) return;
+  btn.textContent = soundEnabled ? '🔊' : '🔇';
+  btn.style.opacity = soundEnabled ? '1' : '.5';
+}
+function updateVibrationBtnUI(){
+  const btn=document.getElementById('toggleVibrationBtn');
+  if(!btn) return;
+  btn.textContent = vibrationEnabled ? '📳' : '🚫';
+  btn.style.opacity = vibrationEnabled ? '1' : '.5';
+}
+const toggleSoundBtn=document.getElementById('toggleSoundBtn');
+if(toggleSoundBtn){
+  updateSoundBtnUI();
+  toggleSoundBtn.addEventListener('click',()=>{
+    soundEnabled=!soundEnabled;
+    localStorage.setItem('pref_sound', soundEnabled?'on':'off');
+    updateSoundBtnUI();
+    if(soundEnabled) beep();
+  });
+}
+const toggleVibrationBtn=document.getElementById('toggleVibrationBtn');
+if(toggleVibrationBtn){
+  updateVibrationBtnUI();
+  toggleVibrationBtn.addEventListener('click',()=>{
+    vibrationEnabled=!vibrationEnabled;
+    localStorage.setItem('pref_vibration', vibrationEnabled?'on':'off');
+    updateVibrationBtnUI();
+    if(vibrationEnabled) triggerVibration();
+  });
+}
 function goToTab(tabName){
   const targetBtn=document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
-  if(!targetBtn) return;
+  const targetContent=document.getElementById('tab-'+tabName);
+  if(!targetContent) return;
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.add('hidden'));
-  targetBtn.classList.add('active');
-  document.getElementById('tab-'+tabName).classList.remove('hidden');
+  if(targetBtn) targetBtn.classList.add('active');
+  targetContent.classList.remove('hidden');
   document.body.classList.toggle('home-active', tabName==='home');
   if(tabName==='home') renderHomeTab();
   if(tabName==='calendar') renderCalendar();
@@ -1740,16 +1767,12 @@ async function detectLoop(ts){
       const m=getPoseMetrics(lastKeypoints);
       if((sessionActive||planSessionActive)&&!restActive&&!planRestActive&&calibrated){
         processRep(m);
-      } else if(debugPanelOn){
-        lastDebugInfo = m ? {mode:m.mode, elbowAngle:m.elbowAngle!=null?Math.round(m.elbowAngle):null, shoulderY:Math.round(m.shoulderY*1000)/1000, quality:m.quality, info:'hors séance (aperçu calibrage)'} : {mode:'aucune pose détectée'};
       }
       renderDebug(lastKeypoints, !!m);
     } else {
       lastKeypoints=null;
       if((sessionActive||planSessionActive)&&!restActive&&!planRestActive&&calibrated){
         processRep(null);
-      } else if(debugPanelOn){
-        lastDebugInfo={mode:'aucune pose détectée'};
       }
       renderDebug(null, false);
     }
@@ -1789,7 +1812,15 @@ function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasD
 function formatRest(s){const m=String(Math.floor(s/60)).padStart(2,'0');const sec=String(s%60).padStart(2,'0');return `${m}:${sec}`;}
 
 let audioCtx=null;
+let soundEnabled = localStorage.getItem('pref_sound')!=='off';
+let vibrationEnabled = localStorage.getItem('pref_vibration')!=='off';
+function triggerVibration(){
+  if(!vibrationEnabled) return;
+  try{ if(navigator.vibrate) navigator.vibrate(80); }catch(e){}
+}
 function beep(freq=880,duration=150){
+  triggerVibration();
+  if(!soundEnabled) return;
   try{
     if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
     const osc=audioCtx.createOscillator();
@@ -1967,7 +1998,7 @@ function syncPlanUI(){
 
 function applyPlanModeUI(){
   const planActive = planSessionActive;
-  document.querySelectorAll('#tab-plan .controls button, #tab-plan .metric, #tab-plan .help, #tab-plan #debugPanel').forEach(el=>{
+  document.querySelectorAll('#tab-plan .controls button, #tab-plan .metric, #tab-plan .help').forEach(el=>{
     if(!el) return;
     if(planActive) el.classList.add('plan-only-show');
     else el.classList.remove('plan-only-show');
