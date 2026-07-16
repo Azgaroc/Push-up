@@ -1,4 +1,4 @@
-<!-- v125 -->
+<!-- v127 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -147,7 +147,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v125</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v127</p></div></div>
     <button id="homeShortcutBtn" aria-label="Accueil" style="background:var(--primary);color:#fff;border:none;border-radius:var(--pill);padding:.5rem 1rem;font-weight:700;font-size:.85rem;">Accueil</button>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème" style="margin-left:.4rem;">◐</button>
   </header>
@@ -160,15 +160,21 @@
   </div>
 
   <div id="tab-home" class="tab-content">
-    <div id="homeGreeting" style="font-size:1.3rem;font-weight:700;margin-bottom:.2rem;">Bonjour</div>
-    <div id="homeTodayDate" style="color:var(--muted);font-size:.85rem;margin-bottom:.8rem;"></div>
+    <div style="display:flex;align-items:center;gap:.4rem;margin-bottom:.8rem;">
+      <div id="homeGreeting" style="font-size:1.3rem;font-weight:700;">Bonjour</div>
+      <span id="homeGreetingFlame" style="font-size:1.2rem;display:none;">🔥</span>
+      <span id="homeGreetingStreakCount" style="font-size:.95rem;font-weight:700;color:var(--muted);"></span>
+    </div>
     <section class="panel" id="homeStreakBadgeSection" style="display:none;text-align:center;">
       <div id="homeStreakBadgeIcon" style="font-size:2.4rem;line-height:1;">🔥</div>
       <div id="homeStreakBadgeLabel" style="font-weight:700;margin-top:.3rem;"></div>
       <div id="homeStreakBadgeSub" style="color:var(--muted);font-size:.8rem;margin-top:.2rem;"></div>
     </section>
     <section class="panel" style="margin-top:.8rem;">
-      <h2>Séance du jour</h2>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:.3rem;">
+        <h2 style="margin:0;">Séance du jour</h2>
+        <span id="homeTodayDate" style="color:var(--muted);font-size:.85rem;"></span>
+      </div>
       <div id="homeTodaySummary" style="margin-top:.4rem;color:var(--text);font-size:.95rem;">Aucun plan actif pour le moment.</div>
     </section>
     <section class="panel" style="margin-top:.8rem;">
@@ -518,8 +524,8 @@ function beep(freq=880,duration=150){
   triggerVibration();
   if(!soundEnabled) return;
   try{
-    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    if(audioCtx.state==='suspended') audioCtx.resume().catch(()=>{});
+    if(!audioCtx || audioCtx.state==='closed') audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended' || audioCtx.state==='interrupted') audioCtx.resume().catch(()=>{});
     const osc=audioCtx.createOscillator();
     const gain=audioCtx.createGain();
     osc.connect(gain);gain.connect(audioCtx.destination);
@@ -1354,6 +1360,8 @@ function renderStreakBadge(){
 function renderHomeGreeting(){
   const greetingEl=document.getElementById('homeGreeting');
   const dateEl=document.getElementById('homeTodayDate');
+  const flameEl=document.getElementById('homeGreetingFlame');
+  const streakCountEl=document.getElementById('homeGreetingStreakCount');
   if(greetingEl){
     const nickname=getUserNickname();
     greetingEl.textContent = nickname ? `Bonjour ${nickname}` : 'Bonjour';
@@ -1361,6 +1369,16 @@ function renderHomeGreeting(){
   if(dateEl){
     const todayLabel=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
     dateEl.textContent = todayLabel.charAt(0).toUpperCase()+todayLabel.slice(1);
+  }
+  if(flameEl && streakCountEl){
+    const streak=computeStreak();
+    if(streak.current>0){
+      flameEl.style.display='';
+      streakCountEl.textContent = `${streak.current} jour${streak.current>1?'s':''}`;
+    } else {
+      flameEl.style.display='none';
+      streakCountEl.textContent='';
+    }
   }
 }
 function renderHomeTab(){
@@ -1973,7 +1991,18 @@ function stopCameraResources(){
   if(rafId){cancelAnimationFrame(rafId);rafId=null;}
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
 }
-document.addEventListener('visibilitychange',()=>{ if(document.hidden){ if(stream) stream.getTracks().forEach(t=>t.enabled=false); } else if(stream){ stream.getTracks().forEach(t=>t.enabled=true); } });
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    if(stream) stream.getTracks().forEach(t=>t.enabled=false);
+  } else {
+    if(stream) stream.getTracks().forEach(t=>t.enabled=true);
+    try{
+      if(audioCtx && (audioCtx.state==='suspended' || audioCtx.state==='interrupted')){
+        audioCtx.resume().catch(()=>{});
+      }
+    }catch(e){}
+  }
+});
 window.addEventListener('pagehide',stopCameraResources);
 async function startCamera(){
   if(stream) return;
