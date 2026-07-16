@@ -1,4 +1,4 @@
-<!-- v122 -->
+<!-- v124 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -147,7 +147,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v122</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v124</p></div></div>
     <button id="homeShortcutBtn" aria-label="Accueil" style="background:var(--primary);color:#fff;border:none;border-radius:var(--pill);padding:.5rem 1rem;font-weight:700;font-size:.85rem;">Accueil</button>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème" style="margin-left:.4rem;">◐</button>
   </header>
@@ -965,6 +965,15 @@ function renderPlanTab(){
         doneTag.style.cssText='color:var(--primary);font-size:.78rem;font-style:italic;';
         doneTag.textContent='Déjà effectuée en avance';
         row.appendChild(doneTag);
+        const redoBtn=document.createElement('button');
+        redoBtn.className='btn';
+        redoBtn.style.cssText='width:100%;font-size:.8rem;padding:.5rem .6rem;margin-top:.3rem;';
+        redoBtn.textContent='Refaire cette séance';
+        redoBtn.addEventListener('click',(e)=>{
+          e.stopPropagation();
+          startPlanSession(isoStr);
+        });
+        row.appendChild(redoBtn);
       }
       future.appendChild(row);
     });
@@ -993,6 +1002,7 @@ let planSessionIndex=0;
 let planSessionRepTarget=0;
 let planSessionRemaining=0;
 let planSessionCompleted=[];
+let planSessionRestSeconds=60;
 let planTotalCount=0;
 let planRestActive=false;
 let planRestBeepedSeconds=new Set();
@@ -1144,6 +1154,7 @@ async function startPlanSessionInner(targetDateIso){
     return;
   }
   planSessionSets=[{week:intensity, sets:safeSets, total:safeSets.reduce((a,b)=>a+b,0)}];
+  planSessionRestSeconds = Math.max(10, Math.round(Number(aiDay.restSeconds)||60));
   planSessionIndex=0;
   planSessionRepTarget=planSessionSets[0].sets[0];
   planSessionRemaining=planSessionRepTarget;
@@ -1177,7 +1188,7 @@ function finishPlanRep(){
     const sets = planSessionSets[0].sets;
     const isLastSet = (planSessionIndex+1) >= sets.length;
     if(!isLastSet){
-      const restSeconds = Number(restSecondsInput.value||60);
+      const restSeconds = planSessionRestSeconds;
       const nextReps = sets[planSessionIndex+1];
       planSessionIndex++;
       planSessionRepTarget = nextReps;
