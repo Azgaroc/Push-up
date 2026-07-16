@@ -1,4 +1,4 @@
-<!-- v115 -->
+<!-- v116 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -146,7 +146,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v115</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v116</p></div></div>
     <button id="homeShortcutBtn" aria-label="Accueil" style="background:var(--primary);color:#fff;border:none;border-radius:var(--pill);padding:.5rem 1rem;font-weight:700;font-size:.85rem;">Accueil</button>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème" style="margin-left:.4rem;">◐</button>
   </header>
@@ -481,6 +481,29 @@
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.20.0/dist/tf-backend-webgl.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js" crossorigin="anonymous"></script>
 <script>
+let audioCtx=null;
+let soundEnabled = localStorage.getItem('pref_sound')!=='off';
+let vibrationEnabled = localStorage.getItem('pref_vibration')!=='off';
+function triggerVibration(){
+  if(!vibrationEnabled) return;
+  try{ if(navigator.vibrate) navigator.vibrate(80); }catch(e){}
+}
+function beep(freq=880,duration=150){
+  triggerVibration();
+  if(!soundEnabled) return;
+  try{
+    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    const osc=audioCtx.createOscillator();
+    const gain=audioCtx.createGain();
+    osc.connect(gain);gain.connect(audioCtx.destination);
+    osc.frequency.value=freq;
+    osc.type='sine';
+    gain.gain.setValueAtTime(0.25,audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+duration/1000);
+    osc.start();
+    osc.stop(audioCtx.currentTime+duration/1000);
+  }catch(e){}
+}
 // Retourne la date au format YYYY-MM-DD selon le calendrier LOCAL de l'utilisateur
 // (contrairement à .toISOString() qui convertit en UTC et peut faire glisser
 // la date d'un jour pour les fuseaux horaires en avance sur UTC, ex: France).
@@ -1811,29 +1834,7 @@ async function startCamera(){
 function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;phaseEl.textContent='Prêt';}
 function formatRest(s){const m=String(Math.floor(s/60)).padStart(2,'0');const sec=String(s%60).padStart(2,'0');return `${m}:${sec}`;}
 
-let audioCtx=null;
-let soundEnabled = localStorage.getItem('pref_sound')!=='off';
-let vibrationEnabled = localStorage.getItem('pref_vibration')!=='off';
-function triggerVibration(){
-  if(!vibrationEnabled) return;
-  try{ if(navigator.vibrate) navigator.vibrate(80); }catch(e){}
-}
-function beep(freq=880,duration=150){
-  triggerVibration();
-  if(!soundEnabled) return;
-  try{
-    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-    const osc=audioCtx.createOscillator();
-    const gain=audioCtx.createGain();
-    osc.connect(gain);gain.connect(audioCtx.destination);
-    osc.frequency.value=freq;
-    osc.type='sine';
-    gain.gain.setValueAtTime(0.25,audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+duration/1000);
-    osc.start();
-    osc.stop(audioCtx.currentTime+duration/1000);
-  }catch(e){}
-}
+
 function playCountdownBeep(secondsLeft){
   if(secondsLeft>0) beep();
   else { for(let i=0;i<10;i++){ setTimeout(()=>beep(), i*180); } }
