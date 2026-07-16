@@ -1,4 +1,4 @@
-<!-- v124 -->
+<!-- v125 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -147,7 +147,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v124</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v125</p></div></div>
     <button id="homeShortcutBtn" aria-label="Accueil" style="background:var(--primary);color:#fff;border:none;border-radius:var(--pill);padding:.5rem 1rem;font-weight:700;font-size:.85rem;">Accueil</button>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème" style="margin-left:.4rem;">◐</button>
   </header>
@@ -160,6 +160,8 @@
   </div>
 
   <div id="tab-home" class="tab-content">
+    <div id="homeGreeting" style="font-size:1.3rem;font-weight:700;margin-bottom:.2rem;">Bonjour</div>
+    <div id="homeTodayDate" style="color:var(--muted);font-size:.85rem;margin-bottom:.8rem;"></div>
     <section class="panel" id="homeStreakBadgeSection" style="display:none;text-align:center;">
       <div id="homeStreakBadgeIcon" style="font-size:2.4rem;line-height:1;">🔥</div>
       <div id="homeStreakBadgeLabel" style="font-weight:700;margin-top:.3rem;"></div>
@@ -352,6 +354,12 @@
     </div>
   </div>
 <div id="tab-profile" class="tab-content hidden">
+    <section class="panel">
+      <h2>Comment vous appeler ?</h2>
+      <label for="userNicknameInput">Prénom ou surnom</label>
+      <input id="userNicknameInput" type="text" maxlength="24" placeholder="Ex : Alex">
+      <button id="saveUserNicknameBtn" class="btn btn-primary" style="width:100%;margin-top:.6rem;">Enregistrer</button>
+    </section>
     <div id="profileEmptyState" class="hidden">
       <section class="panel" style="text-align:center;">
         <h2>Aucun plan actif</h2>
@@ -1256,6 +1264,24 @@ document.getElementById('resetPlanBtn').addEventListener('click',async()=>{
   savePlan(null);
   renderPlanTab();
 });
+function getUserNickname(){
+  return localStorage.getItem('user_nickname') || '';
+}
+function initUserNicknameField(){
+  const input=document.getElementById('userNicknameInput');
+  if(input) input.value = getUserNickname();
+}
+initUserNicknameField();
+const saveUserNicknameBtn=document.getElementById('saveUserNicknameBtn');
+if(saveUserNicknameBtn){
+  saveUserNicknameBtn.addEventListener('click',()=>{
+    const input=document.getElementById('userNicknameInput');
+    const val=(input && input.value || '').trim().slice(0,24);
+    localStorage.setItem('user_nickname', val);
+    showToast(val ? `Enregistré, à bientôt ${val} !` : 'Surnom effacé.', 2200);
+    renderHomeTab();
+  });
+}
 function updateSoundBtnUI(){
   const btn=document.getElementById('toggleSoundBtn');
   if(!btn) return;
@@ -1325,7 +1351,20 @@ function renderStreakBadge(){
   document.getElementById('homeStreakBadgeSub').textContent=`Série actuelle : ${streak.current} jour${streak.current>1?'s':''}`;
   section.style.display='';
 }
+function renderHomeGreeting(){
+  const greetingEl=document.getElementById('homeGreeting');
+  const dateEl=document.getElementById('homeTodayDate');
+  if(greetingEl){
+    const nickname=getUserNickname();
+    greetingEl.textContent = nickname ? `Bonjour ${nickname}` : 'Bonjour';
+  }
+  if(dateEl){
+    const todayLabel=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+    dateEl.textContent = todayLabel.charAt(0).toUpperCase()+todayLabel.slice(1);
+  }
+}
 function renderHomeTab(){
+  renderHomeGreeting();
   renderStreakBadge();
   const summaryEl=document.getElementById('homeTodaySummary');
   if(planProfile){
