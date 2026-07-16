@@ -1,4 +1,4 @@
-<!-- v121 -->
+<!-- v122 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -147,7 +147,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v121</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v122</p></div></div>
     <button id="homeShortcutBtn" aria-label="Accueil" style="background:var(--primary);color:#fff;border:none;border-radius:var(--pill);padding:.5rem 1rem;font-weight:700;font-size:.85rem;">Accueil</button>
     <button class="icon-btn" data-theme-toggle aria-label="Changer de thème" style="margin-left:.4rem;">◐</button>
   </header>
@@ -731,6 +731,7 @@ function buildFallbackAIPlan(reason='regular'){
     const note = reason==='skipped_day' && i===0 ? 'Volume réduit après jour sauté'
       : reason==='was_hard' ? 'Volume réduit après une séance difficile'
       : reason==='ahead_session' && i===0 ? 'Ajusté après une séance réalisée en avance'
+      : reason==='extra_reps' ? 'Ajusté suite à des pompes supplémentaires réalisées'
       : 'Adaptation progressive';
     rows.push({date:toLocalDateStr(d), sets, restSeconds, note});
   }
@@ -787,7 +788,7 @@ function computeRecentPerformanceRatio(){
 
 function getRecentPlanWorkouts(days=14){
   const cutoff=Date.now()-days*86400000;
-  return workouts.filter(w=>w && w.source==='plan' && w.isoDate && new Date(w.isoDate).getTime()>=cutoff).sort((a,b)=>new Date(b.isoDate)-new Date(a.isoDate));
+  return workouts.filter(w=>w && w.isoDate && new Date(w.isoDate).getTime()>=cutoff).sort((a,b)=>new Date(b.isoDate)-new Date(a.isoDate));
 }
 
 function hasSkippedRecentPlanDay(){
@@ -964,11 +965,6 @@ function renderPlanTab(){
         doneTag.style.cssText='color:var(--primary);font-size:.78rem;font-style:italic;';
         doneTag.textContent='Déjà effectuée en avance';
         row.appendChild(doneTag);
-      } else if(!isToday && !alreadyDone){
-        const lockedTag=document.createElement('div');
-        lockedTag.style.cssText='color:var(--muted);font-size:.78rem;font-style:italic;';
-        lockedTag.textContent='Terminez d\'abord la séance précédente';
-        row.appendChild(lockedTag);
       }
       future.appendChild(row);
     });
@@ -2080,9 +2076,7 @@ async function finishPlanTraining(completed){
     const difficulty=await askSessionFeedback();
     workout.difficulty=difficulty;
     try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
-    if(difficulty==='hard'){
-      regeneratePlanFromAI('was_hard').catch(()=>{});
-    }
+    regeneratePlanFromAI(difficulty==='hard' ? 'was_hard' : 'extra_reps').catch(()=>{});
   }
   syncPlanUI();
   applyPlanModeUI();
@@ -2360,6 +2354,7 @@ function finalizeWorkout(finalSetReps){
   triggerVibration();
 
   workouts.push(workout);
+  if(planProfile) regeneratePlanFromAI('extra_reps').catch(()=>{});
   try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
   try{renderHistory();}catch(e){console.error('renderHistory error', e && e.message ? e.message : String(e));}
   try{renderCalendar();}catch(e){console.error('renderCalendar error', e && e.message ? e.message : String(e));}
