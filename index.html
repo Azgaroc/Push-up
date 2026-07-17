@@ -149,7 +149,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v143</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v145</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid" style="margin-top:.5rem;">
       <button class="btn home-nav-btn" data-tab="home" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span style="color:var(--text);">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span style="color:var(--text);">Plan</span></button>
@@ -432,10 +432,6 @@
         </div>
         </div>
         <div id="planTodaySets" style="margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;text-align:left;"></div>
-      </section>
-      <section id="planProgressPanel" class="panel" style="margin-top:.6rem;">
-        <h2>Progression du plan</h2>
-        <div id="planProgressSummary" style="font-size:.9rem;color:var(--text);">Semaine <strong id="planWeekNumber">1</strong> de votre programme · <span id="planAdaptStatus" style="color:var(--muted);">Ajusté selon vos séances</span></div>
       </section>
       <section id="planFuturePanel" class="panel" style="margin-top:.6rem;">
         <h2>7 prochains jours</h2>
@@ -1000,8 +996,10 @@ function renderPlanTab(){
   const adjustment=computeDailyPlanAdjustment();
   const ratio=adjustment.ratio;
 
-  document.getElementById('planWeekNumber').textContent=weekNumber;
-  document.getElementById('planAdaptStatus').textContent=
+  const planWeekNumberEl=document.getElementById('planWeekNumber');
+  if(planWeekNumberEl) planWeekNumberEl.textContent=weekNumber;
+  const planAdaptStatusEl=document.getElementById('planAdaptStatus');
+  if(planAdaptStatusEl) planAdaptStatusEl.textContent=
     (planProfile.aiPlan ? 'Plan IA actif · ' : '') + (
     ratio>1.05?'Rythme accéléré · plus de volume aujourd\'hui':
     ratio<0.82?'Rythme allégé · reprise en douceur':'Rythme stable · volume habituel');
@@ -1056,6 +1054,27 @@ function renderPlanTab(){
     const restCard=document.createElement('section');
     restCard.className='panel plan-dynamic-card';
     restCard.style.marginTop='.6rem';
+    const nSets=displaySets.length;
+    const nRests=Math.max(0,nSets-1);
+    const totalRestSec=nRests*restSecForToday;
+    const estimatedTotalSec=Math.max(2,Math.round(nSets*1.4))*60;
+    const secPerSet=nSets>0?Math.round(Math.max(estimatedTotalSec-totalRestSec,nSets*8)/nSets):20;
+    const cappedSecPerSet=Math.max(8,secPerSet);
+    const grandTotal=(cappedSecPerSet*nSets)+totalRestSec;
+    const circumferenceRest=264;
+    const segLens=[];
+    for(let s=0;s<nSets;s++){
+      segLens.push({len:cappedSecPerSet, color:'#22c55e'});
+      if(s<nSets-1) segLens.push({len:restSecForToday, color:'var(--primary)'});
+    }
+    let offsetAcc=0;
+    const segHtml=segLens.map(seg=>{
+      const segLen=grandTotal>0?(seg.len/grandTotal)*circumferenceRest:0;
+      const dashArray=`${segLen} ${circumferenceRest-segLen}`;
+      const dashOffset=-offsetAcc;
+      offsetAcc+=segLen;
+      return `<circle cx="50" cy="50" r="42" fill="none" stroke="${seg.color}" stroke-width="10" stroke-dasharray="${dashArray}" stroke-dashoffset="${dashOffset}" transform="rotate(-90 50 50)"></circle>`;
+    }).join('');
     restCard.innerHTML=`
       <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Temps de repos</span>
@@ -1068,10 +1087,11 @@ function renderPlanTab(){
         <div style="position:relative;width:64px;height:64px;">
           <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
             <circle cx="50" cy="50" r="42" fill="none" stroke="var(--surface2)" stroke-width="10"></circle>
-            <circle cx="50" cy="50" r="42" fill="none" stroke="var(--primary)" stroke-width="10" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="66"></circle>
+            ${segHtml}
           </svg>
         </div>
-      </div>`;
+      </div>
+`;
     setsEl.parentElement.insertBefore(restCard, setsEl.nextSibling);
 
     const histCard=document.createElement('section');
@@ -1089,12 +1109,12 @@ function renderPlanTab(){
     const barsHtml=days.map(d=>{
       const h=d.total>0?Math.max(8,Math.round((d.total/maxVal)*64)):4;
       const isToday=d.iso===todayIso2;
-      return `<div style="display:flex;flex-direction:column;align-items:center;gap:.3rem;flex:1;">
-        <div style="font-size:.72rem;font-weight:700;color:${d.total>0?'var(--text)':'var(--muted)'};">${d.total>0?d.total:''}</div>
+      return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:108px;">
+        <div style="font-size:.72rem;font-weight:700;color:${d.total>0?'var(--text)':'var(--muted)'};min-height:1em;">${d.total>0?d.total:''}</div>
         <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
           <div style="width:100%;height:${h}px;border-radius:.4rem;background:${isToday?'var(--primary)':'var(--surface2)'};"></div>
         </div>
-        <div style="font-size:.68rem;color:var(--muted);">${d.label}</div>
+        <div style="font-size:.68rem;color:var(--muted);min-height:1em;">${d.label}</div>
       </div>`;
     }).join('');
     histCard.innerHTML=`
