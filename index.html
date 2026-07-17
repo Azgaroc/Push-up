@@ -1,0 +1,2884 @@
+<!-- v140 -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#01696f" />
+  <title>Push-Up</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <link rel="apple-touch-icon" href="logo.jpg">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Push-Up">
+  <meta name="theme-color" content="#1c6e6e">
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+  <style>
+    :root,[data-theme="light"]{--bg:#f7f6f2;--surface:#f9f8f5;--surface2:#fbfbf9;--text:#28251d;--muted:#66645f;--inv:#f9f8f4;--primary:#01696f;--border:rgba(40,37,29,.1);--radius:1.2rem;--pill:999px}
+    [data-theme="dark"]{--bg:#171614;--surface:#1c1b19;--surface2:#201f1d;--text:#ece9e3;--muted:#b4b1aa;--inv:#171614;--primary:#4f98a3;--border:rgba(236,233,227,.12)}
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent} html,body{touch-action:manipulation;overscroll-behavior:none} body{margin:0;font-family:'Satoshi',system-ui,sans-serif;background:var(--bg);color:var(--text)} input,button{font:inherit} input,select,textarea{font-size:16px}
+    .app{max-width:580px;margin:0 auto;padding:max(env(safe-area-inset-top),1rem) 1rem max(env(safe-area-inset-bottom),1rem)}
+    .topbar,.counter-wrap,.camera-overlay,.two{display:flex;justify-content:space-between;align-items:center;gap:.8rem}.brand{display:flex;gap:.8rem;align-items:center}.logo{width:42px;height:42px;border-radius:14px;background:var(--primary);display:grid;place-items:center;color:var(--inv)}
+    .logo svg{width:24px;height:24px}.topbar{margin-bottom:1rem}.brand h1{margin:0;font-size:1.35rem}.brand p{margin:.15rem 0 0;font-size:.82rem;color:var(--muted)}
+    .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem}.counter-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)} .counter{font-size:clamp(4rem,18vw,7rem);font-weight:700;line-height:.92}
+    .section-title{font-size:1.4rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--text);margin-bottom:.4rem;}
+    .home-quick-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.35rem;margin-top:.6rem;}
+    .home-quick-grid .home-nav-btn{background:transparent;color:var(--text);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;padding:.4rem .1rem;min-height:56px;font-size:.62rem;}
+.home-quick-grid .home-nav-btn svg{width:17px;height:17px;}
+.home-quick-grid .home-nav-btn.active{border-color:var(--primary);}
+    .camera-shell{position:relative;overflow:hidden;border-radius:1rem;background:#0f1113;aspect-ratio:3/4;margin-top:1rem}.camera-shell video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.camera-shell canvas{display:none}
+    .camera-overlay{position:absolute;left:.8rem;right:.8rem;bottom:.8rem;z-index:2}.pill{display:inline-flex;align-items:center;gap:.45rem;border-radius:var(--pill);padding:.45rem .75rem;background:rgba(17,20,24,.62);backdrop-filter:blur(10px);color:#fff;font-size:.78rem}.dot{width:.55rem;height:.55rem;border-radius:50%;background:#9ca3af}.dot.live{background:#22c55e}.dot.warn{background:#f59e0b}
+    .grid,.controls{display:grid;gap:.75rem}.controls,.grid,.two-col{grid-template-columns:1fr 1fr}.btn,.chip,.icon-btn,input{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--pill)} .btn{min-height:52px;padding:.9rem 1rem;font-weight:700}.btn-primary{background:var(--primary);color:var(--inv);border:none}.btn-danger{background:var(--text);color:var(--inv);border:none}.icon-btn{width:48px;height:48px}
+    .metric span,label,h2{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.35rem}.metric strong{font-size:1.45rem} .metric{padding:1rem} input{width:100%;min-height:48px;padding:0 .9rem;background:var(--surface2)}
+    .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}.chip{padding:.65rem .9rem;font-weight:700}.chip.active{background:var(--primary);color:var(--inv);border-color:transparent}
+    .history-list{display:grid;gap:.6rem}.history-item{padding:.85rem 1rem;border-radius:1rem;background:var(--surface2);display:flex;justify-content:space-between;gap:1rem;font-size:.92rem}.hidden{display:none!important}.rest-time{font-size:clamp(2.8rem,12vw,4rem);font-weight:700}.help p,.help li{color:var(--muted);font-size:.92rem}
+    .modal-overlay{position:fixed;inset:0;background:rgba(10,10,10,.6);display:flex;align-items:center;justify-content:center;z-index:100;padding:1.5rem;}
+    @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(320px) rotate(540deg);opacity:0;}}
+    .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.6rem;max-width:360px;width:100%;text-align:center;}
+    .modal-count{font-size:clamp(3.5rem,16vw,5rem);font-weight:700;line-height:1;margin:.6rem 0;}
+    .modal-stepper{display:flex;align-items:center;justify-content:center;gap:1.2rem;margin-top:.6rem;}
+    .stepper-btn{font-size:1.6rem;font-weight:700;width:56px;height:56px;}
+    .modal-count-label{font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+    .tabs-bar{display:flex;gap:.5rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--pill);padding:.3rem;margin-bottom:1rem;}
+    .tab-btn{flex:1;border:none;background:transparent;color:var(--muted);padding:.6rem .3rem;border-radius:var(--pill);font-weight:700;font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .tab-btn.active{background:var(--primary);color:var(--inv);}
+    .tab-content.hidden{display:none;}
+    
+    .calendar-item{padding:.85rem 1rem;border-radius:1rem;background:var(--surface2);display:flex;justify-content:space-between;align-items:center;gap:1rem;font-size:.92rem;cursor:pointer;}
+    .calendar-item:active{opacity:.7;}
+    .calendar-item .cal-date{font-weight:700;}
+    .calendar-item .cal-total{color:var(--primary);font-weight:700;}
+
+
+  
+    /* Mise en page compacte : tient sur un seul écran, s'adapte à toutes les tailles iOS/Android */
+    html,body{height:100%;}
+    .app{max-width:430px;height:100dvh;display:flex;flex-direction:column;padding:.5rem .7rem calc(.5rem + env(safe-area-inset-bottom));box-sizing:border-box;overflow:hidden;}
+    .topbar{margin-bottom:.4rem;}
+    .logo{width:32px;height:32px;border-radius:10px;}
+    .topbar h1{font-size:1rem;margin:0;line-height:1.1;}
+    .topbar p{font-size:.68rem;margin:0;}
+    .tabs-bar{padding:.2rem;margin-bottom:.5rem;}
+    .tab-btn{padding:.45rem .6rem;font-size:.78rem;}
+    .tab-content{flex:1;display:flex;flex-direction:column;overflow-y:auto;min-height:0;}
+    body.plan-session-active #tab-plan{overflow:hidden;}
+    body.plan-session-active #tab-plan #planActive{display:flex;flex-direction:column;height:100%;overflow:hidden;}
+    body.plan-session-active #tab-plan #planActive > section.panel:first-child{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;padding:.5rem .6rem;}
+    body.plan-session-active #planSessionMetrics{display:flex;flex-direction:column;flex-shrink:0;overflow:visible;}
+    body.plan-session-active #planSessionMetrics > div[style*="aspect-ratio:1/1"]{width:min(38vw,150px);margin:.3rem auto 0;flex-shrink:0;}
+    body.plan-session-active #planCurrentRepValue{font-size:2.6rem !important;}
+    body.plan-session-active #planCurrentSetInfo,body.plan-session-active #planSetProgressInfo{font-size:.75rem;margin-top:0;}
+    body.plan-session-active #stopPlanTrainingBtn{margin-top:.5rem;flex-shrink:0;}
+    body.plan-session-active #planSessionMetricsRow{margin-top:.5rem !important;flex-shrink:0;}
+    body.plan-session-active #planRestPanel{padding:.6rem;margin-top:.5rem;flex-shrink:0;}
+    body.plan-session-active #planRestDisplay{font-size:1.6rem;margin:.15rem 0;}
+    body.plan-session-active #planTodaySets{flex:1;min-height:0;overflow-y:auto;margin-top:.5rem;gap:.35rem;}
+    body.plan-session-active #planTodaySets > div{padding:.4rem .6rem;font-size:.85rem;}
+    body.plan-session-active .metric strong{font-size:1.3rem !important;}
+    .tab-content.hidden{display:none;}
+    .panel{padding:.6rem .7rem;border-radius:.9rem;}
+    .panel h2{font-size:.85rem;margin:0 0 .3rem;}
+    section.panel{margin-top:.5rem !important;}
+    section.panel:first-child{margin-top:0 !important;}
+    .counter-label{font-size:.62rem;}
+    .section-title{font-size:1.15rem;}
+    .counter{font-size:clamp(3.5rem,16vw,5.5rem) !important;line-height:1;text-align:center;}
+    #setInfo{font-size:.85rem;}
+    #phase{font-size:.7rem;}
+    .camera-shell{margin-top:.4rem !important;}
+    .camera-overlay{gap:.4rem;}
+    .pill{font-size:.65rem;padding:.3rem .55rem;}
+    .controls{margin-top:.5rem !important;gap:.4rem;}
+    .btn{padding:.55rem .6rem;font-size:.78rem;border-radius:.8rem;}
+    .rest-time{font-size:1.8rem;}
+    #restText{font-size:.75rem;}
+    .metric strong{font-size:1.2rem !important;}
+    .metric span{font-size:.75rem;}
+    label[for="restSeconds"]{font-size:.75rem;}
+    #restSeconds{font-size:.85rem;padding:.4rem;}
+    .chips{gap:.3rem;margin-top:.4rem;}
+    .chip{font-size:.68rem;padding:.35rem .55rem;}
+    #historyList{max-height:70px;overflow-y:auto;}
+    .history-item{font-size:.72rem;padding:.4rem .6rem;}
+    #calendarList{max-height:none;}
+    .calendar-item{font-size:.78rem;padding:.6rem .7rem;}
+
+    .cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;}
+    .cal-nav h2{font-size:.85rem;margin:0;}
+    .cal-nav .icon-btn{width:28px;height:28px;font-size:1rem;}
+    .cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;font-size:.62rem;color:var(--muted);margin-bottom:.2rem;}
+    .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.25rem;}
+    .cal-day{aspect-ratio:1/1;border-radius:.5rem;background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:.68rem;position:relative;cursor:default;}
+    .cal-day.empty{background:transparent;}
+    .cal-day.has-workout{cursor:pointer;background:color-mix(in srgb, var(--primary) 18%, var(--surface2));border:1px solid var(--primary);}
+    .cal-day.today{outline:2px solid var(--primary);}
+    .cal-day .cal-dot{width:6px;height:6px;border-radius:50%;background:var(--primary);position:absolute;bottom:4px;}
+    .cal-day .cal-count-badge{position:absolute;top:2px;right:2px;font-size:.5rem;background:var(--primary);color:var(--inv);border-radius:50%;width:13px;height:13px;display:flex;align-items:center;justify-content:center;}
+    .bar-chart{display:flex;align-items:flex-end;gap:.4rem;height:110px;margin-top:.6rem;padding:0 .2rem;}
+    .bar-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:.25rem;}
+    .bar-fill{width:100%;background:var(--primary);border-radius:.3rem .3rem 0 0;min-height:4px;}
+    .bar-value{font-size:.65rem;font-weight:700;}
+    .bar-label{font-size:.6rem;color:var(--muted);}
+.plan-only-hidden{display:none!important;} .plan-only-show{display:block!important;} .plan-session-only{display:none!important;}
+#splashScreen{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.4rem;transition:opacity .4s ease;}
+#splashScreen.hidden{opacity:0;pointer-events:none;}
+.splash-logo-wrap{position:relative;width:112px;height:112px;display:flex;align-items:center;justify-content:center;}
+.splash-ring{position:absolute;inset:0;border-radius:50%;border:4px solid var(--border);border-top-color:var(--primary);animation:splash-spin 1s linear infinite;}
+.splash-logo-wrap img{width:76px;height:76px;border-radius:1.1rem;object-fit:cover;}
+.splash-text{font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.85rem;color:var(--muted);}
+@keyframes splash-spin{to{transform:rotate(360deg);}}
+#landscapeBlock{display:none;position:fixed;inset:0;z-index:300;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem;text-align:center;}
+@media (orientation: landscape) and (max-width: 1024px){
+  #landscapeBlock{display:flex;}
+}
+</style>
+</head>
+<body>
+<div id="splashScreen">
+  <div class="splash-logo-wrap">
+    <div class="splash-ring"></div>
+    <img src="logo.jpg" alt="Push-Up logo">
+  </div>
+  <div class="splash-text">Loading</div>
+</div>
+<div id="landscapeBlock">
+  <div style="font-size:3rem;">📱</div>
+  <div style="font-weight:700;font-size:1.1rem;">Tournez votre téléphone</div>
+  <div style="color:var(--muted);font-size:.9rem;">Push-Up fonctionne uniquement en mode portrait.</div>
+</div>
+<div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
+<div class="app" id="appRoot" style="display:none;">
+  <header class="topbar" style="flex-direction:column;align-items:stretch;">
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v145</p></div></div>
+    <div class="home-quick-grid app-nav-grid" id="globalNavGrid" style="margin-top:.5rem;">
+      <button class="btn home-nav-btn" data-tab="home" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span style="color:var(--text);">Accueil</span></button>
+      <button class="btn home-nav-btn" data-tab="plan" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span style="color:var(--text);">Plan</span></button>
+      <button class="btn home-nav-btn" data-tab="training" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg><span style="color:var(--text);">Libre</span></button>
+      <button class="btn home-nav-btn" data-tab="calendar" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span style="color:var(--text);">Calendrier</span></button>
+      <button class="btn home-nav-btn" data-tab="stats" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span style="color:var(--text);">Stats</span></button>
+      <button class="btn home-nav-btn" data-tab="profile" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg><span style="color:var(--text);">Profil</span></button>
+    </div>
+  </header>
+  
+
+  <div id="tab-home" class="tab-content">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.8rem;flex-wrap:wrap;gap:.3rem;">
+      <div>
+        <div style="display:flex;align-items:center;gap:.4rem;">
+          <div id="homeGreeting" style="font-size:1.3rem;font-weight:700;">Bonjour</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:.35rem;margin-top:.15rem;">
+          <span id="homeGreetingFlame" style="display:none;"><svg viewBox="0 0 24 24" width="19" height="19" fill="var(--primary)" stroke="none"><path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c0-1-.5-1.5-.5-2.5 2 1 3.5 3 3.5 5.5a6 6 0 01-12 0c0-5 4-6 6-11z"/></svg></span>
+          <span id="homeGreetingStreakCount" style="font-size:1.05rem;font-weight:700;color:var(--text);"></span>
+        </div>
+      </div>
+      <span id="homeTodayDate" style="color:var(--muted);font-size:.85rem;white-space:nowrap;padding-top:.2rem;"></span>
+    </div>
+
+    <!-- Citation de motivation masquée temporairement pour gagner de la place :
+<section class="panel" style="display:flex;align-items:center;gap:.8rem;">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--primary)" stroke-width="2" style="flex-shrink:0;"><path d="M7 8c-2 0-3 1.5-3 4s1.5 4 3 4 3-1.5 3-4c0-2.5-1.2-4-3-4zm10 0c-2 0-3 1.5-3 4s1.5 4 3 4 3-1.5 3-4c0-2.5-1.2-4-3-4z"/></svg>
+      <div id="homeMotivationQuote" style="font-size:.9rem;color:var(--text);flex:1;">Les petites victoires répétées deviennent de grands résultats.</div>
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--primary)" stroke-width="1.6" style="flex-shrink:0;"><path d="M6 10h2v4H6zm10 0h2v4h-2zM8 10l3-3 2 2 3-3M8 14l3 3 2-2 3 3"/></svg>
+    </section>
+-->
+
+    <section class="panel" style="margin-top:.8rem;">
+      <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span>Séance du jour</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;gap:1rem;flex-wrap:wrap;">
+        <div>
+          <div id="homeTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span></div>
+          <div id="homeTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
+          <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
+            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Temps estimé<br><strong id="homeTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
+            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"/></svg> Niveau<br><strong id="homeTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
+          </div>
+        </div>
+        <div style="position:relative;width:104px;height:104px;flex-shrink:0;">
+          <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
+            <circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface2)" stroke-width="8"></circle>
+            <circle id="homeRingProgress" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.4" stroke-dashoffset="276.4"></circle>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <span style="color:var(--primary);"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" stroke="none"><circle cx="12" cy="5.5" r="3.3"/><path d="M9.5 8.5h5c1 0 1.8.8 1.8 1.8v2.2c2 .3 3.5 2 3.5 4.1 0 2.3-1.9 4.1-4.2 4.1H10c-2.3 0-4.2-1.8-4.2-4.1V13c0-2.3 1.6-4.2 3.7-4.5z"/></svg></span>
+            <span id="homeRingNumber" style="font-size:1.15rem;font-weight:800;">0</span>
+            <span style="font-size:.6rem;color:var(--muted);">au total</span>
+          </div>
+        </div>
+      </div>
+      <div id="homeTodaySummary" style="margin-top:.6rem;color:var(--text);font-size:.9rem;"></div>
+      <button id="homeStartSessionBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;display:flex;align-items:center;justify-content:center;gap:.4rem;">▶ COMMENCER LA SÉANCE</button>
+    </section>
+
+    <section class="panel" style="margin-top:.8rem;">
+      <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M3 17l5-5 4 4 8-8M15 8h5v5"/></svg></span><span>Progression du plan</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:.5rem;">
+        <span id="homeProgressWeekLabel" style="font-size:.95rem;font-weight:600;">Semaine 1 sur 8</span>
+        <span id="homeProgressPercent" style="font-weight:700;">0%</span>
+      </div>
+      <div id="homeProgressBar" style="display:flex;gap:.25rem;margin-top:.5rem;"></div>
+      <div id="homeProgressBadges" style="display:flex;gap:1rem;margin-top:.6rem;flex-wrap:wrap;font-size:.78rem;color:var(--muted);"></div>
+      <div id="homeProgressSummary" style="font-size:.85rem;color:var(--text);margin-top:.4rem;"></div>
+    </section>
+
+    <section class="panel" style="margin-top:.8rem;">
+      <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none" style="flex-shrink:0;"><path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c0-1-.5-1.5-.5-2.5 2 1 3.5 3 3.5 5.5a6 6 0 01-12 0c0-5 4-6 6-11z"/></svg></span><span>Cette semaine</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:.7rem;text-align:center;">
+        <div style="flex:1;">
+          <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></div>
+          <div id="homeWeekSessions" style="font-size:1.3rem;font-weight:800;">0/0</div>
+          <div style="font-size:.72rem;color:var(--muted);">séances complétées</div>
+        </div>
+        <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
+          <div><svg viewBox="0 0 24 24" width="22" height="22" fill="var(--primary)" stroke="none"><circle cx="12" cy="5.5" r="3.3"/><path d="M9.5 8.5h5c1 0 1.8.8 1.8 1.8v2.2c2 .3 3.5 2 3.5 4.1 0 2.3-1.9 4.1-4.2 4.1H10c-2.3 0-4.2-1.8-4.2-4.1V13c0-2.3 1.6-4.2 3.7-4.5z"/></svg></div>
+          <div id="homeWeekTotal" style="font-size:1.3rem;font-weight:800;">0</div>
+          <div style="font-size:.72rem;color:var(--muted);">pompes au total</div>
+        </div>
+        <div style="flex:1;">
+          <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M3 17l5-5 4 4 8-8M15 8h5v5"/></svg></div>
+          <div id="homeWeekProgress" style="font-size:1.3rem;font-weight:800;">–</div>
+          <div style="font-size:.72rem;color:var(--muted);">vs semaine dernière</div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div id="tab-training" class="tab-content hidden">
+  <section class="panel">
+    <div class="counter-wrap" style="flex-direction:column;gap:.3rem;">
+      <div style="width:100%;display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.75rem;">
+        <span>Set <strong id="setInfo" style="color:var(--text)">1</strong></span>
+        <span id="phase">Prêt</span>
+      </div>
+      <div style="text-align:center;width:100%;position:relative;">
+        <div class="section-title">Pompes du set</div>
+        <div style="position:relative;width:min(60vw,220px);aspect-ratio:1/1;margin:.4rem auto 0;">
+          <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
+            <circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface2)" stroke-width="6"></circle>
+            <circle id="setProgressRing" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="6" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5" style="transition:stroke-dashoffset .3s ease;"></circle>
+          </svg>
+          <div class="counter" id="count" style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">0</div>
+        </div>
+      </div>
+    </div>
+    <div class="camera-shell" style="aspect-ratio:auto;height:auto;background:transparent;">
+      <video id="video" autoplay muted playsinline webkit-playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
+      <canvas id="work" style="display:none;"></canvas>
+      <div class="camera-overlay" style="position:static;">
+        <div class="pill"><span class="dot" id="cameraDot"></span><span id="cameraStatus">Caméra inactive</span></div>
+        <div class="pill"><span id="movementLabel">Mode léger</span></div>
+      </div>
+    </div>
+    
+    
+    <div class="controls" style="margin-top:1rem;">
+      <button id="toggleSession" class="btn btn-primary" disabled style="grid-column:1/-1;">Démarrer la séance</button>
+      <button id="nextSet" class="btn" disabled>Set suivant</button>
+      <button id="finishWorkout" class="btn btn-danger" disabled>Fin entraînement</button>
+      <button id="resetCount" class="btn" style="grid-column:1/-1">Réinitialiser le set</button>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="restPanel" style="margin-top:1rem;text-align:center;">
+    <h2 style="margin-bottom:.6rem;">Minuteur de repos</h2>
+    <div class="section-title">Pause en cours</div><div class="rest-time" id="restDisplay">01:00</div><div id="restText">Reprenez votre souffle.</div>
+    <div class="controls" style="margin-top:1rem;grid-template-columns:1fr;"><button id="resumeAfterRest" class="btn btn-primary">Reprendre maintenant</button><button id="skipRest" class="btn hidden">Ignorer</button></div>
+  </section>
+
+  <section class="panel" style="margin-top:1rem;">
+    <div style="display:flex;justify-content:space-around;gap:.5rem;"><div class="metric" style="text-align:center;"><span>Total séance</span><strong id="totalCount" style="font-size:1.8rem;">0</strong></div><div class="metric" style="text-align:center;"><span>Durée</span><strong id="sessionDuration" style="font-size:1.8rem;">00:00</strong></div></div>
+  </section>
+
+  <section class="panel" style="margin-top:1rem;">
+    <label for="restSeconds">Repos (sec)</label><input id="restSeconds" type="number" min="10" max="900" value="60">
+    <input id="targetReps" type="hidden" value="10">
+    <div class="chips"><button class="chip" data-rest="30">30 sec</button><button class="chip active" data-rest="60">1 min</button><button class="chip" data-rest="90">1 min 30</button><button class="chip" data-rest="120">2 min</button></div>
+  </section>
+
+
+  <div id="validateModal" class="modal-overlay hidden">
+    <div class="modal-box">
+      <div class="section-title">Set terminé</div>
+      <div class="modal-count" id="validateCount">0</div>
+      <div class="modal-stepper">
+        <button id="decrementRep" class="icon-btn stepper-btn">−</button>
+        <span class="modal-count-label">pompes</span>
+        <button id="incrementRep" class="icon-btn stepper-btn">+</button>
+      </div>
+      <button id="confirmSet" class="btn btn-primary" style="width:100%;margin-top:1.2rem;">Valider et passer au repos</button>
+    </div>
+  </div>
+
+    
+  </div>
+
+  <div id="freeCountdownModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="section-title">Préparez-vous</div>
+    <div class="modal-count" id="freeCountdownValue">10</div>
+    <div style="color:var(--muted);font-size:.9rem">La séance libre démarre automatiquement.</div>
+  </div>
+</div>
+<div id="planCountdownModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="section-title">Préparez-vous</div>
+    <div class="modal-count" id="planCountdownValue">10</div>
+    <div style="color:var(--muted);font-size:.9rem">La séance plan démarre automatiquement.</div>
+  </div>
+</div>
+<div id="workoutDoneModal" class="modal-overlay hidden">
+    <div class="modal-box" style="text-align:center;position:relative;overflow:hidden;">
+      <div id="doneModalConfetti" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;"></div>
+      <div id="doneModalEmoji" style="font-size:2.2rem;transform:scale(0);transition:transform .4s cubic-bezier(.34,1.56,.64,1);">🎉</div>
+      <div class="section-title" style="margin-top:.4rem;">Séance terminée !</div>
+      <div style="display:flex;justify-content:space-around;gap:1rem;margin-top:1rem;">
+        <div>
+          <div style="color:var(--muted);font-size:.8rem;">Pompes totales</div>
+          <div id="doneModalTotal" style="font-size:2rem;font-weight:700;color:var(--primary);">0</div>
+        </div>
+        <div>
+          <div style="color:var(--muted);font-size:.8rem;">Durée</div>
+          <div id="doneModalDuration" style="font-size:2rem;font-weight:700;">00:00</div>
+        </div>
+      </div>
+      <div id="doneModalSets" style="margin-top:.8rem;color:var(--muted);font-size:.85rem;"></div>
+      <button id="closeDoneModal" class="btn btn-primary" style="width:100%;margin-top:1.3rem;">Fermer</button>
+    </div>
+  </div>
+
+  
+  <div id="tab-plan" class="tab-content hidden">
+    <div id="planOnboarding">
+      <section class="panel">
+        <h2>Créer mon plan d'entraînement</h2>
+        <label for="planMaxReps">Combien de pompes maximum pouvez-vous faire en une seule fois ?</label>
+        <input type="number" id="planMaxReps" min="1" max="200" placeholder="Ex: 15">
+      </section>
+      <section class="panel" style="margin-top:.6rem;">
+        <label>Quels jours voulez-vous vous entraîner ?</label>
+        <div class="chips" id="planDaysChips">
+          <button class="chip" data-day="1">Lun</button>
+          <button class="chip" data-day="2">Mar</button>
+          <button class="chip" data-day="3">Mer</button>
+          <button class="chip" data-day="4">Jeu</button>
+          <button class="chip" data-day="5">Ven</button>
+          <button class="chip" data-day="6">Sam</button>
+          <button class="chip" data-day="0">Dim</button>
+        </div>
+      </section>
+      <button id="createPlanBtn" class="btn btn-primary" style="width:100%;margin-top:.6rem;">Créer mon plan</button>
+    </div>
+
+    <div id="planActive" class="hidden">
+      <section class="panel">
+        <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+          <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span>Séance du jour</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;gap:1rem;flex-wrap:wrap;">
+          <div>
+            <div id="planTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span></div>
+            <div id="planTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
+            <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
+              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Temps estimé<br><strong id="planTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
+              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"/></svg> Niveau<br><strong id="planTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
+              
+            </div>
+          </div>
+          <div style="position:relative;width:104px;height:104px;flex-shrink:0;">
+            <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
+              <circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface2)" stroke-width="8"></circle>
+              <circle id="planHomeRingProgress" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.4" stroke-dashoffset="276.4"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <span style="color:var(--primary);"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" stroke="none"><circle cx="12" cy="5.5" r="3.3"/><path d="M9.5 8.5h5c1 0 1.8.8 1.8 1.8v2.2c2 .3 3.5 2 3.5 4.1 0 2.3-1.9 4.1-4.2 4.1H10c-2.3 0-4.2-1.8-4.2-4.1V13c0-2.3 1.6-4.2 3.7-4.5z"/></svg></span>
+              <span id="planHomeRingNumber" style="font-size:1.15rem;font-weight:800;">0</span>
+              <span style="font-size:.6rem;color:var(--muted);">au total</span>
+            </div>
+          </div>
+        </div>
+        <button id="planHomeStartBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;display:flex;align-items:center;justify-content:center;gap:.4rem;">▶ COMMENCER LA SÉANCE</button>
+      </section>
+      <section class="panel" style="text-align:center;">
+        <div id="planTodayTitle" class="hidden">—</div>
+        <div id="planSessionMetrics" class="hidden">
+        <div style="position:relative;width:min(60vw,220px);aspect-ratio:1/1;margin:1rem auto 0;">
+          <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
+            <circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface2)" stroke-width="6"></circle>
+            <circle id="planProgressRing" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="6" stroke-linecap="round" stroke-dasharray="276.5" stroke-dashoffset="276.5" style="transition:stroke-dashoffset .3s ease;"></circle>
+          </svg>
+          <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+            <div id="planCurrentRepValue" style="font-size:4rem;font-weight:700;line-height:1;cursor:pointer;user-select:none;">0</div>
+          </div>
+        </div>
+        <div id="planCurrentSetInfo" style="color:var(--muted);font-size:.85rem;margin-top:-.2rem;">Set 1 / 1</div>
+        <div id="planSetProgressInfo" style="color:var(--muted);font-size:.8rem;margin-top:.2rem;">0 / 0 pompes faites dans ce set</div>
+        <button id="stopPlanTrainingBtn" class="btn btn-danger hidden" style="width:100%;margin-top:.8rem;">Terminer l'entraînement</button>
+        <div id="planRestPanel" class="hidden" style="margin-top:1rem;text-align:center;padding:1rem;background:var(--surface2);border-radius:1rem;">
+          <div class="section-title">Pause en cours</div>
+          <div class="rest-time" id="planRestDisplay" style="font-size:2.4rem;font-weight:700;margin:.3rem 0;">01:00</div>
+          <div id="planRestText" style="color:var(--muted);font-size:.85rem;">Repos avant le prochain set.</div>
+          <button id="planSkipRest" class="btn btn-primary" style="width:100%;margin-top:.8rem;">Reprendre maintenant</button>
+        </div>
+        <div id="planSessionMetricsRow" style="display:flex;justify-content:space-around;gap:.5rem;margin-top:1rem;flex-shrink:0;">
+          <div class="metric" style="text-align:center;"><span>Pompes séance</span><strong id="planTotalCount" style="font-size:1.8rem;">0</strong></div>
+          <div class="metric" style="text-align:center;"><span>Durée</span><strong id="planSessionDuration" style="font-size:1.8rem;">00:00</strong></div>
+        </div>
+        </div>
+        <div id="planTodaySets" style="margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;text-align:left;"></div>
+      </section>
+      <section id="planFuturePanel" class="panel" style="margin-top:.6rem;">
+        <h2>7 prochains jours</h2>
+        <div id="planFutureSessions" style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;"></div>
+      </section>
+    </div>
+  </div>
+<div id="tab-profile" class="tab-content hidden">
+    <section class="panel" style="display:flex;justify-content:space-between;align-items:center;">
+      <h2 style="margin:0;">Apparence</h2>
+      <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
+    </section>
+    <section class="panel" style="margin-top:.6rem;">
+      <h2>Comment vous appeler ?</h2>
+      <label for="userNicknameInput">Prénom ou surnom</label>
+      <input id="userNicknameInput" type="text" maxlength="24" placeholder="Ex : Alex">
+      <button id="saveUserNicknameBtn" class="btn btn-primary" style="width:100%;margin-top:.6rem;">Enregistrer</button>
+    </section>
+    <div id="profileEmptyState" class="hidden">
+      <section class="panel" style="text-align:center;">
+        <h2>Aucun plan actif</h2>
+        <p style="color:var(--muted);font-size:.9rem;margin:.6rem 0 1rem;">Créez d'abord votre plan d'entraînement dans l'onglet Plan : c'est là que vous indiquez votre nombre de pompes maximum et vos jours d'entraînement.</p>
+        <button id="goToPlanFromProfileBtn" class="btn btn-primary" style="width:100%;">Aller à l'onglet Plan</button>
+      </section>
+    </div>
+    <div id="profileFormWrap">
+    <section class="panel">
+      <h2>Mon profil</h2>
+      <label style="margin-top:.6rem;">Jours d'entraînement</label>
+      <div class="chips" id="planDaysChipsEdit">
+        <button class="chip" data-day="1">Lun</button>
+        <button class="chip" data-day="2">Mar</button>
+        <button class="chip" data-day="3">Mer</button>
+        <button class="chip" data-day="4">Jeu</button>
+        <button class="chip" data-day="5">Ven</button>
+        <button class="chip" data-day="6">Sam</button>
+        <button class="chip" data-day="0">Dim</button>
+      </div>
+      <button id="savePlanSettingsBtn" class="btn btn-primary" style="width:100%;margin-top:.7rem;">Enregistrer les modifications</button>
+    </section>
+    <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
+    <section class="panel" style="margin-top:.6rem;">
+      <h2>Préférences</h2>
+      <div style="display:flex;justify-content:space-around;gap:.6rem;margin-top:.6rem;">
+        <button id="toggleSoundBtn" class="icon-btn" aria-label="Activer/désactiver le son" style="flex:1;font-size:1.4rem;padding:.7rem;">🔊</button>
+        <button id="toggleVibrationBtn" class="icon-btn" aria-label="Activer/désactiver le vibreur" style="flex:1;font-size:1.4rem;padding:.7rem;">📳</button>
+      </div>
+    </section>
+    </div>
+    <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v65</div>
+  </div>
+<div id="tab-calendar" class="tab-content hidden">
+    <section class="panel" id="weeklyStreakPanel" style="display:flex;align-items:center;gap:.9rem;">
+      <div id="streakFlame" style="width:2.4rem;height:2.4rem;color:var(--primary);filter:drop-shadow(0 0 6px color-mix(in srgb, var(--primary) 60%, transparent));">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:100%;height:100%;">
+          <path d="M12 2c1 3-2 4-2 7 0 1.5 1 2.5 2 2.5s2-1 2-2.2c1.2 1 2 2.6 2 4.2 0 3-2.2 5.5-6 5.5s-6.5-2.7-6.5-6.2c0-4 2.5-6.3 4.5-9C8.5 4.5 10 3 12 2z"/>
+        </svg>
+      </div>
+      <div>
+        <div style="font-size:1.6rem;font-weight:700;color:var(--primary);"><span id="streakCount">0</span> <span id="streakUnit">semaine</span></div>
+        <div style="color:var(--muted);font-size:.8rem;">Au moins une séance (libre ou plan) par semaine</div>
+      </div>
+    </section>
+    <section class="panel">
+      <div class="cal-nav">
+        <button id="calPrevMonth" class="icon-btn">‹</button>
+        <h2 id="calMonthLabel">Juillet 2026</h2>
+        <button id="calNextMonth" class="icon-btn">›</button>
+      </div>
+      <div class="cal-weekdays"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+      <div id="calGrid" class="cal-grid"></div>
+    </section>
+    <button id="resetCalendarBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le calendrier</button>
+    <div style="display:flex;gap:.5rem;margin-top:.5rem;">
+      <button id="exportDataBtn" class="btn" style="flex:1;">Exporter mes données</button>
+      <button id="importDataBtn" class="btn" style="flex:1;">Importer</button>
+    </div>
+    <input type="file" id="importFileInput" accept=".json" style="display:none;">
+  </div>
+  <div id="tab-stats" class="tab-content hidden">
+    <section class="panel" id="streakPanel" style="text-align:center;">
+      <div class="section-title">Série en cours</div>
+      <div style="font-size:2.2rem;font-weight:700;margin-top:.2rem;" id="streakValue">0 jour</div>
+      <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem;" id="streakBest">Meilleure série : 0 jour</div>
+    </section>
+
+    <section class="panel" style="margin-top:.6rem;">
+      <h2>Progression</h2>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:.3rem;">
+        <span style="font-size:.8rem;color:var(--muted);">Total de pompes par semaine</span>
+        <span id="statsChartRange" style="font-size:.75rem;color:var(--muted);"></span>
+      </div>
+      <svg id="statsProgressChart" viewBox="0 0 300 120" style="width:100%;height:120px;margin-top:.5rem;overflow:visible;"></svg>
+      <div id="statsChartEmpty" class="hidden" style="text-align:center;color:var(--muted);font-size:.85rem;padding:1rem 0;">Pas encore assez de données pour afficher une tendance.</div>
+    </section>
+
+    <section class="panel" style="margin-top:.6rem;">
+      <h2>Records personnels</h2>
+      <div style="display:flex;justify-content:space-around;gap:.5rem;margin-top:.5rem;">
+        <div style="text-align:center;">
+          <div class="counter-label">Meilleur set</div>
+          <strong style="font-size:1.5rem;" id="recordSet">0</strong>
+        </div>
+        <div style="text-align:center;">
+          <div class="counter-label">Meilleure séance</div>
+          <strong style="font-size:1.5rem;" id="recordSession">0</strong>
+        </div>
+        <div style="text-align:center;">
+          <div class="counter-label">Total cumulé</div>
+          <strong style="font-size:1.5rem;" id="totalCumulative">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:.6rem;">
+      <h2>Badges</h2>
+      <div id="badgesGrid" style="display:flex;gap:.6rem;margin-top:.6rem;overflow-x:auto;padding-bottom:.2rem;"></div>
+    </section>
+
+    <section class="panel" style="margin-top:.6rem;">
+      <h2>Évolution (30 derniers jours)</h2>
+      <canvas id="progressChart" width="400" height="180" style="width:100%;height:180px;margin-top:.5rem;"></canvas>
+    </section>
+
+    <section class="panel" style="margin-top:.6rem;">
+      <h2>Statistiques générales</h2>
+      <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;font-size:.85rem;">
+        <div style="display:flex;justify-content:space-between;"><span>Nombre de séances</span><strong id="statSessionCount">0</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span>Moyenne par séance</span><strong id="statAverage">0</strong></div>
+        <div style="display:flex;justify-content:space-between;"><span>Meilleur jour</span><strong id="statBestDay">—</strong></div>
+      </div>
+    </section>
+  </div>
+
+    <div id="calendarDetailModal" class="modal-overlay hidden">
+      <div class="modal-box" style="max-width:420px;text-align:left;">
+        <div class="counter-label" id="calendarDetailDate">Séance</div>
+        <div id="calendarDetailContent" style="margin-top:.8rem;font-size:.92rem;line-height:1.6;"></div>
+        <button id="closeCalendarDetail" class="btn" style="width:100%;margin-top:1.2rem;">Fermer</button>
+      </div>
+    </div>
+    <div id="customConfirmModal" class="modal-overlay hidden">
+      <div class="modal-box" style="max-width:360px;">
+        <div id="customConfirmMessage" style="font-size:.95rem;line-height:1.5;margin-bottom:1.2rem;"></div>
+        <div style="display:flex;gap:.6rem;">
+          <button id="customConfirmCancel" class="btn" style="flex:1;">Annuler</button>
+          <button id="customConfirmOk" class="btn btn-danger" style="flex:1;">Confirmer</button>
+        </div>
+      </div>
+    </div>
+    <div id="sessionFeedbackModal" class="modal-overlay hidden">
+      <div class="modal-box" style="max-width:380px;text-align:center;">
+        <h2 style="margin-top:0;">Comment s'est passée cette séance ?</h2>
+        <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.2rem;">Ça aide à ajuster vos prochaines séances.</p>
+        <button id="feedbackOkBtn" class="btn btn-primary" style="width:100%;margin-bottom:.6rem;">Bien passée</button>
+        <button id="feedbackHardBtn" class="btn" style="width:100%;">Difficile (pauses supplémentaires)</button>
+      </div>
+    </div>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.20.0/dist/tf-core.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@4.20.0/dist/tf-converter.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.20.0/dist/tf-backend-webgl.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js" crossorigin="anonymous"></script>
+<script>
+let audioCtx=null;
+let soundEnabled = localStorage.getItem('pref_sound')!=='off';
+let vibrationEnabled = localStorage.getItem('pref_vibration')!=='off';
+try{ if(navigator.audioSession) navigator.audioSession.type='playback'; }catch(e){}
+function triggerVibration(){
+  if(!vibrationEnabled) return;
+  try{ if(navigator.vibrate) navigator.vibrate(80); }catch(e){}
+}
+function beep(freq=880,duration=150){
+  triggerVibration();
+  if(!soundEnabled) return;
+  try{
+    if(!audioCtx || audioCtx.state==='closed') audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended' || audioCtx.state==='interrupted') audioCtx.resume().catch(()=>{});
+    const osc=audioCtx.createOscillator();
+    const gain=audioCtx.createGain();
+    osc.connect(gain);gain.connect(audioCtx.destination);
+    osc.frequency.value=freq;
+    osc.type='sine';
+    gain.gain.setValueAtTime(0.25,audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+duration/1000);
+    osc.start();
+    osc.stop(audioCtx.currentTime+duration/1000);
+  }catch(e){}
+}
+// Retourne la date au format YYYY-MM-DD selon le calendrier LOCAL de l'utilisateur
+// (contrairement à .toISOString() qui convertit en UTC et peut faire glisser
+// la date d'un jour pour les fuseaux horaires en avance sur UTC, ex: France).
+function toLocalDateStr(d){
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,'0');
+  const day=String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+// Remplace window.confirm(), qui peut être bloqué silencieusement dans certains
+// environnements en sandbox (webviews restreintes, aperçus intégrés sans dialogues natifs).
+function customConfirm(message){
+  return new Promise(resolve=>{
+    const modal=document.getElementById('customConfirmModal');
+    const msgEl=document.getElementById('customConfirmMessage');
+    const okBtn=document.getElementById('customConfirmOk');
+    const cancelBtn=document.getElementById('customConfirmCancel');
+    msgEl.textContent=message;
+    modal.classList.remove('hidden');
+    function cleanup(result){
+      modal.classList.add('hidden');
+      okBtn.removeEventListener('click',onOk);
+      cancelBtn.removeEventListener('click',onCancel);
+      resolve(result);
+    }
+    function onOk(){cleanup(true);}
+    function onCancel(){cleanup(false);}
+    okBtn.addEventListener('click',onOk);
+    cancelBtn.addEventListener('click',onCancel);
+  });
+}
+function askSessionFeedback(){
+  return new Promise(resolve=>{
+    const modal=document.getElementById('sessionFeedbackModal');
+    const okBtn=document.getElementById('feedbackOkBtn');
+    const hardBtn=document.getElementById('feedbackHardBtn');
+    modal.classList.remove('hidden');
+    function cleanup(result){
+      modal.classList.add('hidden');
+      okBtn.removeEventListener('click',onOk);
+      hardBtn.removeEventListener('click',onHard);
+      resolve(result);
+    }
+    function onOk(){cleanup('ok');}
+    function onHard(){cleanup('hard');}
+    okBtn.addEventListener('click',onOk);
+    hardBtn.addEventListener('click',onHard);
+  });
+}
+const html=document.documentElement,themeBtn=document.querySelector('[data-theme-toggle]');let theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';html.setAttribute('data-theme',theme);themeBtn.addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';html.setAttribute('data-theme',theme)});
+const $=id=>document.getElementById(id); const video=$('video'), work=$('work'), wctx=work.getContext('2d'), toastEl=$('toast');
+let toastTimer=null;
+function showToast(msg,duration=2600){
+  toastEl.textContent=msg; toastEl.style.opacity='1';
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{toastEl.style.opacity='0';},duration);
+  // Filet de sécurité : sur Safari iOS, un alert() aurait mis la vidéo en pause sans la relancer.
+  // On garde ce réflexe même sans alert(), au cas où le flux se coupe pour une autre raison.
+  if(video.paused&&stream) video.play().catch(()=>{});
+}
+const countEl=$('count'),totalCountEl=$('totalCount'),setInfoEl=$('setInfo'),phaseEl=$('phase'),cameraStatus=$('cameraStatus'),cameraDot=$('cameraDot'),movementLabel=$('movementLabel');
+const toggleSessionBtn=$('toggleSession'),nextSetBtn=$('nextSet'),finishWorkoutBtn=$('finishWorkout'),resetBtn=$('resetCount');
+const targetRepsInput=$('targetReps'),restSecondsInput=$('restSeconds'),restPanel=$('restPanel'),restDisplay=$('restDisplay'),restText=$('restText'),skipRestBtn=$('skipRest'),resumeAfterRestBtn=$('resumeAfterRest'),historyList=$('historyList');
+let detector=null,lastKeypoints=null,cameraReady=false,manualMode=false,sessionActive=false,restActive=false,calibrated=false,processing=false,rafId=null,stream=null,lastDetectAt=0;
+const DETECT_INTERVAL=300; // ms — bon compromis fluidité/fiabilité
+let setCount=0,totalCount=0,currentSet=1,completedSets=[],restTimer=null,restRemaining=0;
+let sessionStartTime=null,sessionTimerInterval=null;
+let baseline=null,state='up',downFrames=0,upFrames=0,lastRepAt=0,poseWasDetected=false,poseVisible=true,poseLostAt=0,pendingReps=0,trackingMode=null;
+let recentWidths=[],approachConfirmed=true;
+let lastDebugInfo={};
+const storageOk=typeof localStorage!=='undefined';const workouts=storageOk?JSON.parse(localStorage.getItem('pompes-workouts')||'[]'):[];
+function saveHistory(){if(storageOk)localStorage.setItem('pompes-workouts',JSON.stringify(workouts.slice(0,20)))}
+
+// Gestion des onglets
+
+const PLAN_KEY='pompes-plan-v1';
+function loadPlan(){ try{return storageOk?JSON.parse(localStorage.getItem(PLAN_KEY)||'null'):null;}catch(e){return null;} }
+function savePlan(plan){ if(storageOk) localStorage.setItem(PLAN_KEY,JSON.stringify(plan)); }
+let planProfile=loadPlan();
+let activeMode='plan';
+const AI_PLAN_API_URL = localStorage.getItem('AI_PLAN_API_URL') || 'https://pushup-plan-api.onrender.com/api/plan/generate';
+const AI_PLAN_MODEL = localStorage.getItem('AI_PLAN_MODEL') || 'gpt-4.1-mini';
+
+async function generatePlanWithAI(payload){
+  if(!AI_PLAN_API_URL) return buildFallbackAIPlan(payload.reason || 'regular');
+  const controller = new AbortController();
+  const timeoutId = setTimeout(()=>controller.abort(), 50000);
+  try{
+    const res = await fetch(AI_PLAN_API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload,model:AI_PLAN_MODEL}),signal:controller.signal});
+    if(!res.ok) throw new Error(`AI API ${res.status}`);
+    const data = await res.json();
+    return data;
+  }catch(e){
+    if(e.name==='AbortError') throw new Error('AI API timeout');
+    throw e;
+  }finally{
+    clearTimeout(timeoutId);
+  }
+}
+
+function buildPlanPromptContext(){
+  return {
+    profile: planProfile,
+    recent: getRecentPlanWorkouts(14),
+    skipped: workouts.filter(w=>w && w.source==='plan' && w.skipped===true),
+    recentHard: workouts.filter(w=>w && w.source==='plan' && w.difficulty==='hard'),
+    today: toLocalDateStr(new Date())
+  };
+}
+
+function normalizeAIPlan(ai){
+  if(!ai || !Array.isArray(ai.days)) return null;
+  const days = ai.days.map(d=>({
+    date: String(d.date||'').slice(0,10),
+    sets: Array.isArray(d.sets) ? d.sets.map(n=>Math.max(2,Math.round(Number(n)||0))).filter(Boolean) : [],
+    restSeconds: Math.max(30, Math.round(Number(d.restSeconds)||60)),
+    note: String(d.note||'')
+  })).filter(d=>d.date && d.sets.length);
+  return days.length ? {version:1, generatedAt:new Date().toISOString(), days} : null;
+}
+
+let planAIRegenInFlight = false;
+async function regeneratePlanFromAI(reason='regular'){
+  if(!planProfile) return null;
+  if(planAIRegenInFlight) return null;
+  planAIRegenInFlight = true;
+  const ctx = buildPlanPromptContext();
+  const payload = {
+    reason,
+    goal: 'push-ups',
+    instructions: 'Generate a safe adaptive training plan. Return JSON only with days[]. Each day has date, sets array, restSeconds, and note. If a day was skipped, adapt the next days slightly downward or redistribute volume, never overcompensate aggressively.',
+    context: ctx
+  };
+  const isColdCall = !!AI_PLAN_API_URL;
+  if(isColdCall) showToast('Génération du plan... (le serveur peut prendre jusqu\'à 1 min à démarrer)', 6000);
+  try{
+    const ai = await generatePlanWithAI(payload);
+    const plan = normalizeAIPlan(ai);
+    if(!plan) throw new Error('empty plan');
+    planProfile.aiPlan = plan;
+    savePlan(planProfile);
+    if(isColdCall) showToast('Plan mis à jour.', 2200);
+    return plan;
+  }catch(e){
+    console.error('AI plan generation failed', e && e.message ? e.message : String(e));
+    const fallback = buildFallbackAIPlan(reason);
+    if(fallback){
+      planProfile.aiPlan = fallback;
+      savePlan(planProfile);
+      if(isColdCall) showToast('Serveur indisponible, plan généré localement.', 3200);
+      return fallback;
+    }
+    return null;
+  }finally{
+    if(typeof renderPlanTab==='function') renderPlanTab();
+    if(typeof renderHomeTab==='function') renderHomeTab();
+    planAIRegenInFlight = false;
+  }
+}
+
+function getAIPlanForDate(dateIso){
+  return planProfile && planProfile.aiPlan && Array.isArray(planProfile.aiPlan.days)
+    ? planProfile.aiPlan.days.find(d=>d.date===dateIso) || null
+    : null;
+}
+
+function applyAIPlanForToday(baseSets, ratio, targetDateIso){
+  const isoDate=targetDateIso || toLocalDateStr(new Date());
+  const aiDay=getAIPlanForDate(isoDate);
+  if(aiDay && aiDay.sets.length) return {sets: aiDay.sets, restSeconds: aiDay.restSeconds || 60, note: aiDay.note || '', ai:true};
+  return {sets: baseSets, restSeconds: 60, note: '', ai:false};
+}
+
+function recordSkippedPlanDay(){
+  if(!planProfile) return;
+  const todayIso=toLocalDateStr(new Date());
+  const existing=workouts.find(w=>w && w.source==='plan' && w.skipped===true && w.isoDate===todayIso);
+  if(existing) return;
+  workouts.push({date:new Date().toLocaleDateString('fr-FR')+' '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate:todayIso,total:0,duration:'00:00',sets:[],source:'plan',skipped:true});
+  try{saveHistory();}catch(e){}
+}
+
+function buildFallbackAIPlan(reason='regular'){
+  if(!planProfile) return null;
+  const today=new Date();
+  const recent=getRecentPlanWorkouts(14);
+  const adjustment=computeDailyPlanAdjustment(reason);
+  const ratio=adjustment.ratio;
+  const maxReps=Number(planProfile.maxReps)||10;
+  const days=planProfile.days && planProfile.days.length ? planProfile.days : [1,3,5];
+  const rows=[];
+  for(let i=0;i<5;i++){
+    const d=new Date(today);
+    d.setDate(d.getDate()+i);
+    const intensity=(days.indexOf(d.getDay())+1) || 2;
+    let sets=generateDailyTarget(maxReps,intensity,ratio,reason);
+    if(reason==='skipped_day' && i===0) sets=sets.map(v=>Math.max(2,Math.round(v*0.92)));
+    const restSeconds = sets.length>=6 ? 75 : sets.length>=5 ? 60 : 90;
+    const note = reason==='skipped_day' && i===0 ? 'Volume réduit après jour sauté'
+      : reason==='was_hard' ? 'Volume réduit après une séance difficile'
+      : reason==='ahead_session' && i===0 ? 'Ajusté après une séance réalisée en avance'
+      : reason==='extra_reps' ? 'Ajusté suite à des pompes supplémentaires réalisées'
+      : 'Adaptation progressive';
+    rows.push({date:toLocalDateStr(d), sets, restSeconds, note});
+  }
+  return {version:1, generatedAt:new Date().toISOString(), days:rows};
+}
+
+function shouldMarkSkippedToday(){
+  const recent=getRecentPlanWorkouts(2);
+  if(!recent.length) return false;
+  const last=recent[0];
+  const todayIso=toLocalDateStr(new Date());
+  const lastIso=last.isoDate;
+  if(lastIso===todayIso) return false;
+  const diffDays=Math.round((Date.now()-new Date(lastIso).getTime())/86400000);
+  return diffDays>=2 && planProfile && planProfile.days.includes(new Date().getDay());
+}
+
+function generateDailyTarget(maxReps, trainingIntensity, recentPerformanceRatio, reason='regular'){
+  const rawBase=Math.max(3,Math.round(maxReps*(0.56 + trainingIntensity*0.06)*recentPerformanceRatio));
+  const setCount = recentPerformanceRatio < 0.82 ? 4 : (recentPerformanceRatio < 1.02 ? 5 : 6);
+  const multipliers = setCount===4 ? [0.95,1.0,0.95,0.85] : setCount===5 ? [0.9,1.0,0.95,0.9,0.8] : [0.85,0.95,1.0,0.95,0.9,0.8];
+  const perSetCap = Math.max(2, Math.round(maxReps*0.7));
+  const dailyTotalCap = (reason==='initial' || reason==='was_hard') ? Math.round(maxReps*2.0) : Math.round(maxReps*3.2);
+  let sets = multipliers.map(m=>Math.max(2,Math.min(perSetCap,Math.round(rawBase*m))));
+  const total = sets.reduce((a,b)=>a+b,0);
+  if(total>dailyTotalCap && total>0){
+    const factor = dailyTotalCap/total;
+    sets = sets.map(v=>Math.max(2,Math.min(perSetCap,Math.round(v*factor))));
+  }
+  if(reason==='was_hard') sets = sets.map(v=>Math.max(2,Math.min(perSetCap,Math.round(v*0.85))));
+  return sets;
+}
+
+function computeRecentPerformanceRatio(){
+  if(!planProfile) return 1;
+  const trainingDays=planProfile.days;
+  const last14=workouts.filter(w=>{
+    const diffDays=(Date.now()-new Date(w.isoDate))/86400000;
+    return diffDays<=14;
+  });
+  if(!last14.length) return 0.85;
+
+  const expectedSessions=Math.max(1,Math.round(trainingDays.length*2));
+  const completionRate=Math.min(last14.length/expectedSessions,1.3);
+
+  const avgTotal=last14.reduce((a,w)=>a+w.total,0)/last14.length;
+  const targetTotal=planProfile.maxReps*2.4;
+  const intensityRatio=Math.min(avgTotal/targetTotal,1.3);
+
+  let ratio=(completionRate*0.5 + intensityRatio*0.5);
+  ratio=Math.max(0.6,Math.min(ratio,1.25));
+  return ratio;
+}
+
+function getRecentPlanWorkouts(days=14){
+  const cutoff=Date.now()-days*86400000;
+  return workouts.filter(w=>w && w.isoDate && new Date(w.isoDate).getTime()>=cutoff).sort((a,b)=>new Date(b.isoDate)-new Date(a.isoDate));
+}
+
+function hasSkippedRecentPlanDay(){
+  return workouts.some(w=>w && w.source==='plan' && w.skipped===true && w.isoDate && (Date.now()-new Date(w.isoDate).getTime())<=7*86400000);
+}
+
+function hasRecentHardSession(){
+  return workouts.some(w=>w && w.source==='plan' && w.difficulty==='hard' && w.isoDate && (Date.now()-new Date(w.isoDate).getTime())<=7*86400000);
+}
+
+function hasCompletedAheadSession(){
+  // Vrai si l'utilisateur a réalisé aujourd'hui ET la séance de demain (faite en avance) :
+  // dans ce cas, l'IA doit réadapter la séance de J+1 pour tenir compte de ce double effort.
+  const todayIso=toLocalDateStr(new Date());
+  const tomorrowIso=toLocalDateStr(new Date(Date.now()+86400000));
+  const doneToday=workouts.some(w=>w && w.source==='plan' && w.isoDate===todayIso);
+  const doneAheadForTomorrow=workouts.some(w=>w && w.source==='plan' && w.targetDate===tomorrowIso);
+  return doneToday && doneAheadForTomorrow;
+}
+
+function computeDailyPlanAdjustment(reason='regular'){
+  if(!planProfile) return {ratio:1, daysPenalty:0, avgTotal:0, recentCount:0};
+  const recentAll=getRecentPlanWorkouts(14);
+  // On exclut les séances signalées comme difficiles : un total élevé obtenu
+  // avec des pauses supplémentaires n'est pas un signe qu'on peut en faire plus.
+  const recent=recentAll.filter(w=>w && w.difficulty!=='hard');
+  const scheduledDays=Math.max(1,planProfile.days.length);
+  const expectedSessions=Math.max(1,Math.round(scheduledDays*2));
+  const completionRate=Math.min(recent.length/expectedSessions,1.25);
+  const avgTotal=recent.length ? recent.reduce((a,w)=>a+(Number(w.total)||0),0)/recent.length : planProfile.maxReps*2.0;
+  const targetTotal=Math.max(1,planProfile.maxReps*2.2);
+  const intensityRatio=Math.min(avgTotal/targetTotal,1.25);
+  const gapDays = recentAll.length>=2 ? Math.max(0, Math.round((new Date(recentAll[0].isoDate)-new Date(recentAll[1].isoDate))/86400000)-1) : 0;
+  const skippedPenalty = hasSkippedRecentPlanDay() ? 0.08 : 0;
+  const daysPenalty = Math.min(gapDays*0.03 + skippedPenalty, 0.15);
+  let ratio=(completionRate*0.45 + intensityRatio*0.55) - daysPenalty;
+  ratio=Math.max(0.62,Math.min(ratio,1.18));
+  if(reason==='was_hard') ratio=Math.min(ratio,1.0);
+  return {ratio, daysPenalty, avgTotal, recentCount:recent.length};
+}
+
+
+const PLAN_CYCLE_WEEKS=4;
+function getPlanCycleInfo(){
+  const weekNumber=getPlanWeekNumber();
+  const cycleNumber=Math.ceil(weekNumber/PLAN_CYCLE_WEEKS);
+  const weekInCycle=((weekNumber-1)%PLAN_CYCLE_WEEKS)+1;
+  return {weekNumber,cycleNumber,weekInCycle,isCycleEnd: weekInCycle===PLAN_CYCLE_WEEKS};
+}
+async function maybePromptMaxTest(){
+  if(!planProfile) return;
+  const info=getPlanCycleInfo();
+  if(!info.isCycleEnd) return;
+  const lastPrompted=Number(localStorage.getItem('last_maxtest_cycle')||0);
+  if(lastPrompted>=info.cycleNumber) return;
+  localStorage.setItem('last_maxtest_cycle', String(info.cycleNumber));
+  window.pendingMaxTestCycle=info.cycleNumber;
+  const accepted=await customConfirm(`Vous avez terminé ${PLAN_CYCLE_WEEKS} semaines de plan ! Faites un maximum de pompes en une série pour recalibrer votre niveau et générer un nouveau plan adapté.`);
+  if(accepted){
+    goToTab('training');
+    showToast('Faites votre maximum de pompes en une série. Le résultat mettra automatiquement à jour votre plan.', 5000);
+  }
+}
+function applyMaxTestResult(maxRepsAchieved){
+  if(!planProfile || !maxRepsAchieved || maxRepsAchieved<1) return;
+  const previous=planProfile.maxReps;
+  planProfile.maxReps=Math.round(maxRepsAchieved);
+  savePlan(planProfile);
+  showToast(`Niveau mis à jour : ${previous} → ${planProfile.maxReps} pompes max. Génération du nouveau plan...`, 4000);
+  regeneratePlanFromAI('recalibration').catch(()=>{});
+  window.pendingMaxTestCycle=null;
+}
+function getPlanWeekNumber(){
+  if(!planProfile||!planProfile.startDate) return 1;
+  const diffDays=(Date.now()-new Date(planProfile.startDate))/86400000;
+  return Math.max(1,Math.floor(diffDays/7)+1);
+}
+
+function renderProfileTab(){
+  const emptyState=document.getElementById('profileEmptyState');
+  const formWrap=document.getElementById('profileFormWrap');
+  if(!planProfile){
+    emptyState.classList.remove('hidden');
+    formWrap.classList.add('hidden');
+    return;
+  }
+  emptyState.classList.add('hidden');
+  formWrap.classList.remove('hidden');
+  document.querySelectorAll('#planDaysChipsEdit .chip').forEach(ch=>{
+    ch.classList.toggle('active', planProfile.days.includes(Number(ch.dataset.day)));
+  });
+}
+function renderPlanTab(){
+  const onboarding=document.getElementById('planOnboarding');
+  const active=document.getElementById('planActive');
+  if(!planProfile){
+    onboarding.classList.remove('hidden');
+    active.classList.add('hidden');
+    return;
+  }
+  if(shouldMarkSkippedToday()) recordSkippedPlanDay();
+  if(!planProfile.aiPlan || hasSkippedRecentPlanDay() || hasRecentHardSession() || hasCompletedAheadSession()){
+    const regenReason = hasSkippedRecentPlanDay() ? 'skipped_day' : (hasRecentHardSession() ? 'was_hard' : (hasCompletedAheadSession() ? 'ahead_session' : 'initial'));
+    regeneratePlanFromAI(regenReason).catch(()=>{});
+  }
+  onboarding.classList.add('hidden');
+  active.classList.remove('hidden');
+  renderProfileTab();
+  syncPlanUI();
+
+  const todayDow=new Date().getDay();
+  const isTrainingDay=planProfile.days.includes(todayDow);
+  const weekNumber=getPlanWeekNumber();
+  const adjustment=computeDailyPlanAdjustment();
+  const ratio=adjustment.ratio;
+
+  const planWeekNumberEl=document.getElementById('planWeekNumber');
+  if(planWeekNumberEl) planWeekNumberEl.textContent=weekNumber;
+  const planAdaptStatusEl=document.getElementById('planAdaptStatus');
+  if(planAdaptStatusEl) planAdaptStatusEl.textContent=
+    (planProfile.aiPlan ? 'Plan IA actif · ' : '') + (
+    ratio>1.05?'Rythme accéléré · plus de volume aujourd\'hui':
+    ratio<0.82?'Rythme allégé · reprise en douceur':'Rythme stable · volume habituel');
+  maybePromptMaxTest();
+
+  const titleEl=document.getElementById('planTodayTitle');
+  const setsEl=document.getElementById('planTodaySets');
+  setsEl.innerHTML='';
+  document.querySelectorAll('.plan-dynamic-card').forEach(el=>el.remove());
+
+  let displayTotal=0;
+  let todayCompleted=false;
+  if(!isTrainingDay){
+    titleEl.textContent='Jour de repos';
+    setsEl.innerHTML='<div style="color:var(--muted);font-size:.85rem;">Aucune séance planifiée aujourd\'hui. Profitez du repos, ou faites une séance libre si vous en avez envie.</div>';
+    window.lastTodayPlanSnapshot=null;
+  }else{
+    const intensity=planProfile.days.indexOf(todayDow)+1;
+    const baseSets=generateDailyTarget(planProfile.maxReps,intensity,ratio);
+    const aiToday=applyAIPlanForToday(baseSets, ratio);
+    const sets=aiToday.sets;
+    const todayIsoStr=toLocalDateStr(new Date());
+    const todayWorkout=[...workouts].reverse().find(w=>w && w.source==='plan' && w.isoDate===todayIsoStr);
+    todayCompleted=!!todayWorkout;
+    // Une fois la séance faite, on affiche ce qui a réellement été réalisé,
+    // pas une nouvelle suggestion générée après coup (ex. après un retour "difficile").
+    const displaySets = todayCompleted
+      ? (Array.isArray(todayWorkout.sets) ? todayWorkout.sets.map(s=>s.reps) : [])
+      : sets;
+    displayTotal = todayCompleted ? (todayWorkout.total || displaySets.reduce((a,b)=>a+b,0)) : displaySets.reduce((a,b)=>a+b,0);
+    window.lastTodayPlanSnapshot = {sets:displaySets.slice(), total:displayTotal, completed:todayCompleted};
+    titleEl.innerHTML = todayCompleted
+      ? `<span style="color:var(--primary);">✓ Séance effectuée</span> · ${displaySets.length} sets · ${displayTotal} pompes au total`
+      : `${displaySets.length} sets · ${displayTotal} pompes au total`;
+    const restSecForToday = (aiToday && aiToday.restSeconds) || 60;
+    displaySets.forEach((reps,i)=>{
+      const row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;gap:.7rem;padding:.7rem .8rem;background:var(--surface2);border:1px solid var(--border);border-radius:1rem;';
+      row.innerHTML=`
+        <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--primary);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;">${i+1}</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.85rem;letter-spacing:.02em;text-transform:uppercase;">Série ${i+1}</div>
+          <div style="color:var(--muted);font-size:.78rem;">${reps} pompes</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:800;font-size:1rem;">0/${reps}</div>
+          <div style="color:var(--muted);font-size:.7rem;">pompes</div>
+        </div>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0;"><path d="M9 6l6 6-6 6"/></svg>`;
+      setsEl.appendChild(row);
+    });
+    const restCard=document.createElement('section');
+    restCard.className='panel plan-dynamic-card';
+    restCard.style.marginTop='.6rem';
+    const nSets=displaySets.length;
+    const nRests=Math.max(0,nSets-1);
+    const totalRestSec=nRests*restSecForToday;
+    const estimatedTotalSec=Math.max(2,Math.round(nSets*1.4))*60;
+    const secPerSet=nSets>0?Math.round(Math.max(estimatedTotalSec-totalRestSec,nSets*8)/nSets):20;
+    const cappedSecPerSet=Math.max(8,secPerSet);
+    const grandTotal=(cappedSecPerSet*nSets)+totalRestSec;
+    const circumferenceRest=264;
+    const segLens=[];
+    for(let s=0;s<nSets;s++){
+      segLens.push({len:cappedSecPerSet, color:'#22c55e'});
+      if(s<nSets-1) segLens.push({len:restSecForToday, color:'var(--primary)'});
+    }
+    let offsetAcc=0;
+    const segHtml=segLens.map(seg=>{
+      const segLen=grandTotal>0?(seg.len/grandTotal)*circumferenceRest:0;
+      const dashArray=`${segLen} ${circumferenceRest-segLen}`;
+      const dashOffset=-offsetAcc;
+      offsetAcc+=segLen;
+      return `<circle cx="50" cy="50" r="42" fill="none" stroke="${seg.color}" stroke-width="10" stroke-dasharray="${dashArray}" stroke-dashoffset="${dashOffset}" transform="rotate(-90 50 50)"></circle>`;
+    }).join('');
+    restCard.innerHTML=`
+      <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Temps de repos</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;">
+        <div>
+          <div style="font-size:2.2rem;font-weight:800;line-height:1;">${restSecForToday}</div>
+          <div style="color:var(--muted);font-size:.8rem;">secondes</div>
+        </div>
+        <div style="position:relative;width:64px;height:64px;">
+          <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="var(--surface2)" stroke-width="10"></circle>
+            ${segHtml}
+          </svg>
+        </div>
+      </div>
+`;
+    setsEl.parentElement.insertBefore(restCard, setsEl.nextSibling);
+
+    const histCard=document.createElement('section');
+    histCard.className='panel plan-dynamic-card';
+    histCard.style.marginTop='.6rem';
+    const days=[];
+    for(let d=6;d>=0;d--){
+      const dt=new Date(); dt.setDate(dt.getDate()-d);
+      const iso=toLocalDateStr(dt);
+      const dayTotal=workouts.filter(w=>w.isoDate===iso).reduce((a,w)=>a+(w.total||0),0);
+      days.push({iso,label:`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`,total:dayTotal});
+    }
+    const maxVal=Math.max(1,...days.map(d=>d.total));
+    const todayIso2=toLocalDateStr(new Date());
+    const barsHtml=days.map(d=>{
+      const h=d.total>0?Math.max(8,Math.round((d.total/maxVal)*64)):4;
+      const isToday=d.iso===todayIso2;
+      return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:108px;">
+        <div style="font-size:.72rem;font-weight:700;color:${d.total>0?'var(--text)':'var(--muted)'};min-height:1em;">${d.total>0?d.total:''}</div>
+        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
+          <div style="width:100%;height:${h}px;border-radius:.4rem;background:${isToday?'var(--primary)':'var(--surface2)'};"></div>
+        </div>
+        <div style="font-size:.68rem;color:var(--muted);min-height:1em;">${d.label}</div>
+      </div>`;
+    }).join('');
+    histCard.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:center;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+        <span>Historique récent</span><span style="color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;">pompes</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;gap:.3rem;margin-top:.8rem;">${barsHtml}</div>`;
+    setsEl.parentElement.insertBefore(histCard, restCard.nextSibling);
+  }
+  {
+    const bigNumEl=document.getElementById('planTodayBigNumber');
+    const setsLabelEl=document.getElementById('planTodaySetsLabel');
+    const durationEl=document.getElementById('planTodayDuration');
+    const levelEl=document.getElementById('planTodayLevel');
+    const restEl=document.getElementById('planTodayRest');
+    const ringProgress=document.getElementById('planHomeRingProgress');
+    const ringNumber=document.getElementById('planHomeRingNumber');
+    const startBtn=document.getElementById('planHomeStartBtn');
+    const setCount = isTrainingDay ? (window.lastTodayPlanSnapshot ? window.lastTodayPlanSnapshot.sets.length : 0) : 0;
+    const total = isTrainingDay ? displayTotal : 0;
+    if(bigNumEl) bigNumEl.innerHTML=`${total}<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span>`;
+    if(setsLabelEl) setsLabelEl.textContent = isTrainingDay ? `${setCount} série${setCount>1?'s':''}` : 'Jour de repos';
+    if(durationEl) durationEl.textContent = setCount ? `${Math.max(2,Math.round(setCount*1.4))} min` : '–';
+    if(levelEl){
+      const mx=planProfile.maxReps||0;
+      levelEl.textContent = mx<12?'Débutant':(mx<25?'Novice':(mx<45?'Intermédiaire':(mx<70?'Avancé':(mx<110?'Confirmé':'Élite'))));
+    }
+    if(restEl){
+      const aiDay=getAIPlanForDate(toLocalDateStr(new Date()));
+      restEl.textContent = isTrainingDay ? `${(aiDay && aiDay.restSeconds) || 60}s` : '–';
+    }
+    if(ringProgress && ringNumber){
+      const circumference=276.4;
+      const cumulativeTotal=workouts.reduce((a,w)=>a+(w.total||0),0);
+      ringProgress.setAttribute('stroke-dashoffset', String(circumference-(total>0?circumference:0)));
+      ringNumber.textContent=cumulativeTotal;
+    }
+    if(startBtn){
+      startBtn.style.display = isTrainingDay ? 'flex' : 'none';
+      startBtn.onclick=()=>{ startPlanSession(); };
+    }
+  }
+  const future=document.getElementById('planFutureSessions');
+  if(future){
+    future.innerHTML='';
+    const nextDates=getNextCalendarDates(7);
+    const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    let nextAdvanceUnlocked=false;
+    const svgCal='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>';
+    const svgCheck='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--inv)" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>';
+    const svgChevron='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>';
+    nextDates.forEach((d,idx)=>{
+      const isToday = idx===0;
+      const isTrainingDayRow = planProfile.days.includes(d.getDay());
+      const label = isToday ? `Aujourd'hui` : `${dayNames[d.getDay()]} ${d.getDate()} ${monthNamesShort[d.getMonth()]}`;
+      const row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;gap:.7rem;padding:.75rem .8rem;background:var(--surface2);border:1px solid var(--border);border-radius:1rem;';
+      if(!isTrainingDayRow){
+        row.innerHTML=`
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;">${svgCal}</div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:.9rem;">${label}</div>
+            <div style="color:var(--muted);font-size:.78rem;">Jour de repos</div>
+          </div>`;
+        future.appendChild(row);
+        return;
+      }
+      let total, setCountRow;
+      if(isToday && todayCompleted){
+        total = displayTotal;
+        setCountRow = window.lastTodayPlanSnapshot ? window.lastTodayPlanSnapshot.sets.length : 0;
+      }else{
+        const aiDay=getAIPlanForDate(toLocalDateStr(d));
+        const dIntensity = planProfile.days.indexOf(d.getDay()) + 1;
+        const daySets=aiDay && aiDay.sets && aiDay.sets.length ? aiDay.sets : generateDailyTarget(planProfile.maxReps, dIntensity, ratio);
+        total=daySets.reduce((a,b)=>a+b,0);
+        setCountRow=daySets.length;
+      }
+      const isoStr=toLocalDateStr(d);
+      const alreadyDone = (isToday && todayCompleted) || workouts.some(w=>w.source==='plan' && (w.targetDate===isoStr || (!w.targetDate && w.isoDate===isoStr)));
+      row.innerHTML=`
+        <div style="width:32px;height:32px;border-radius:50%;background:${alreadyDone?'var(--primary)':'var(--surface)'};color:${alreadyDone?'var(--inv)':'var(--muted)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${alreadyDone?svgCheck:svgCal}</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.9rem;${isToday?'color:var(--primary);':''}">${label}</div>
+          <div style="color:var(--muted);font-size:.78rem;">${setCountRow} série${setCountRow>1?'s':''}</div>
+        </div>
+        <strong style="color:var(--primary);font-size:.95rem;">${total} pompes</strong>
+        ${svgChevron}`;
+      row.style.cursor='pointer';
+      const isNextUnlockableTrainingDay = isTrainingDayRow && !alreadyDone && !nextAdvanceUnlocked && todayCompleted;
+      if(isTrainingDayRow && !isToday) nextAdvanceUnlocked=true;
+      row.addEventListener('click',()=>{
+        if(isToday && !todayCompleted){ startPlanSession(); }
+        else if(isNextUnlockableTrainingDay || (!isToday && alreadyDone)){ startPlanSession(isoStr); }
+      });
+      future.appendChild(row);
+    });
+  }
+
+  if(isTrainingDay){
+    const startBtn=document.createElement('button');
+    startBtn.className = todayCompleted ? 'btn' : 'btn btn-primary';
+    startBtn.style.cssText='width:100%;margin-top:.8rem;';
+    startBtn.textContent = todayCompleted ? 'Refaire cette séance' : 'Commencer cette séance';
+    startBtn.addEventListener('click',()=>{
+      const todayIso=toLocalDateStr(new Date());
+      const intensity=planProfile.days.indexOf(new Date().getDay())+1;
+      const baseSets=generateDailyTarget(planProfile.maxReps,intensity,ratio);
+      const aiToday=applyAIPlanForToday(baseSets, ratio);
+      document.getElementById('targetReps').value=aiToday.sets[0];
+      startPlanSession(todayIso);
+    });
+    setsEl.appendChild(startBtn);
+  }
+}
+
+
+let planSessionActive=false;
+let planSessionSets=[];
+let planSessionIndex=0;
+let planSessionRepTarget=0;
+let planSessionRemaining=0;
+let planSessionCompleted=[];
+let planSessionRestSeconds=60;
+let planTotalCount=0;
+let planRestActive=false;
+let planRestBeepedSeconds=new Set();
+let planRestTimer=null;
+let planRestTargetTime=null;
+let planRestRemaining=0;
+let planSessionStartTime=null;
+let planSessionTimerInterval=null;
+
+const monthNamesShort=['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+function getNextTrainingDates(days, count){
+  const result=[];
+  if(!days || !days.length) return result;
+  let cursor=new Date();
+  cursor.setHours(0,0,0,0);
+  let guard=0;
+  while(result.length<count && guard<60){
+    if(days.includes(cursor.getDay())){
+      result.push(new Date(cursor));
+    }
+    cursor.setDate(cursor.getDate()+1);
+    guard++;
+  }
+  return result;
+}
+
+function getNextCalendarDates(count){
+  const result=[];
+  const cursor=new Date();
+  cursor.setHours(0,0,0,0);
+  for(let i=0;i<count;i++){
+    result.push(new Date(cursor));
+    cursor.setDate(cursor.getDate()+1);
+  }
+  return result;
+}
+
+function buildPlanFiveSessions(maxReps, weekNumber, ratio){
+  const sessions=[];
+  for(let i=0;i<5;i++){
+    const w=weekNumber+i;
+    const sets=generateDailyTarget(maxReps,w,ratio);
+    sessions.push({week:w, sets, total:sets.reduce((a,b)=>a+b,0)});
+  }
+  return sessions;
+}
+
+function preparePlanSession(){
+  if(!planProfile || !planProfile.maxReps) return false;
+  const weekNumber=Number.isFinite(getPlanWeekNumber()) ? getPlanWeekNumber() : 1;
+  const adjustment=computeDailyPlanAdjustment();
+  const ratio=Number.isFinite(adjustment.ratio) ? adjustment.ratio : 1;
+  const baseSets=generateDailyTarget(Number(planProfile.maxReps)||10, weekNumber, ratio).filter(n=>Number.isFinite(n)&&n>0);
+  const aiDay=applyAIPlanForToday(baseSets, ratio);
+  const safeSets=(aiDay.sets && aiDay.sets.length ? aiDay.sets : baseSets).filter(n=>Number.isFinite(n)&&n>0);
+  if(!safeSets.length) return false;
+  planSessionSets=[{week:weekNumber, sets:safeSets, total:safeSets.reduce((a,b)=>a+b,0)}];
+  planSessionIndex=0;
+  planSessionRepTarget=planSessionSets[0].sets[0];
+  planSessionRemaining=planSessionRepTarget;
+  planSessionCompleted=[];
+  return true;
+}
+
+function buildPlanFiveSessions(maxReps, weekNumber, ratio){
+  const sessions=[];
+  for(let i=0;i<5;i++){
+    const w=weekNumber+i;
+    const sets=generateDailyTarget(maxReps,w,ratio);
+    sessions.push({week:w, sets, total:sets.reduce((a,b)=>a+b,0)});
+  }
+  return sessions;
+}
+
+function updatePlanSessionUI(){
+  const title=document.getElementById('planTodayTitle');
+  const repEl=document.getElementById('planCurrentRepValue');
+  const setInfo=document.getElementById('planCurrentSetInfo');
+  const setsEl=document.getElementById('planTodaySets');
+  if(!planSessionActive || !planSessionSets.length){
+    if(repEl) repEl.textContent='0';
+    if(setInfo) setInfo.textContent='Set 1 / 1';
+    const ring=document.getElementById('planProgressRing');
+    if(ring) ring.style.strokeDashoffset='276.5';
+    return;
+  }
+  if(title) title.textContent=`Séance plan · ${Number.isFinite(planSessionSets.reduce((a,b)=>a+(Number.isFinite(b.total)?b.total:0),0)) ? planSessionSets.reduce((a,b)=>a+(Number.isFinite(b.total)?b.total:0),0) : 0} pompes`;
+  if(repEl) repEl.textContent=Number.isFinite(planSessionRemaining) ? planSessionRemaining : 0;
+  if(setInfo) setInfo.textContent=`Set ${planSessionIndex+1} / ${((planSessionSets[0]&&planSessionSets[0].sets)||[]).length || 1}`;
+  const setProgressEl=document.getElementById('planSetProgressInfo');
+  if(setProgressEl){
+    const target=planSessionRepTarget||0;
+    const done=Math.max(0, target-(Number.isFinite(planSessionRemaining)?planSessionRemaining:target));
+    setProgressEl.textContent=`${done} / ${target} pompes faites dans ce set`;
+  }
+  updatePlanProgressRing();
+  if(setsEl && planSessionSets[0]){
+    setsEl.innerHTML='';
+    planSessionSets[0].sets.forEach((reps,i)=>{
+      const row=document.createElement('div');
+      row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:var(--surface2);border-radius:.8rem;';
+      const done = i < planSessionIndex;
+      const active = i === planSessionIndex;
+      row.innerHTML=`<span>Set ${i+1}</span><strong style="color:${done?'#22c55e':active?'var(--primary)':'var(--text)'};">${reps} pompes</strong>`;
+      setsEl.appendChild(row);
+    });
+  }
+}
+
+
+async function startPlanSession(dateIso){
+  if(!planProfile || !planProfile.maxReps) return;
+  // La caméra doit être activée dans le geste de clic lui-même, sinon les navigateurs
+  // mobiles bloquent silencieusement getUserMedia après le délai du compte à rebours.
+  if(!cameraReady){
+    showToast('Activation de la caméra...',2000);
+    await startCamera();
+  }
+  if(!cameraReady){
+    showToast('Impossible d\'activer la caméra. Autorisez l\'accès puis réessayez.',4000);
+    return;
+  }
+  runPlanCountdown(()=>{ startPlanSessionInner(dateIso); });
+}
+
+let planSessionTargetDate=null;
+async function startPlanSessionInner(targetDateIso){
+  if(!planProfile || !planProfile.maxReps) return;
+  const isoDate = targetDateIso || toLocalDateStr(new Date());
+  planSessionTargetDate = isoDate;
+  const targetDate = new Date(isoDate+'T00:00:00');
+  const dow = targetDate.getDay();
+  // Même formule d'intensité que celle utilisée pour afficher "27 pompes" dans la liste
+  // des 7 prochains jours : basée sur la position du jour dans le planning, pas sur un
+  // numéro de semaine qui donnait un total différent de celui annoncé à l'utilisateur.
+  const intensity = Math.max(1, planProfile.days.indexOf(dow)+1);
+  const adjustment=computeDailyPlanAdjustment();
+  const ratio=Number.isFinite(adjustment.ratio) ? adjustment.ratio : 1;
+  const baseSets=generateDailyTarget(Number(planProfile.maxReps)||10, intensity, ratio).filter(n=>Number.isFinite(n)&&n>0);
+  const aiDay=applyAIPlanForToday(baseSets, ratio, isoDate);
+  const safeSets=(aiDay.sets && aiDay.sets.length ? aiDay.sets : baseSets).filter(n=>Number.isFinite(n)&&n>0);
+  if(!safeSets.length) return;
+  if(!cameraReady){
+    showToast('Impossible d\'activer la caméra. Autorisez l\'accès puis réessayez.',4000);
+    return;
+  }
+  if(!autoCalibrate()){
+    showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.',3000);
+    return;
+  }
+  planSessionSets=[{week:intensity, sets:safeSets, total:safeSets.reduce((a,b)=>a+b,0)}];
+  planSessionRestSeconds = Math.max(10, Math.round(Number(aiDay.restSeconds)||60));
+  planSessionIndex=0;
+  planSessionRepTarget=planSessionSets[0].sets[0];
+  planSessionRemaining=planSessionRepTarget;
+  planSessionCompleted=[];
+  planSessionActive=true;
+  planTotalCount=0;
+  activeMode='plan';
+  resetTracking();
+  resetPlanSessionTimer();
+  startPlanSessionTimer();
+  const totalEl=document.getElementById('planTotalCount');
+  if(totalEl) totalEl.textContent='0';
+  updatePlanSessionUI();
+  syncPlanUI();
+  showToast(`Séance plan lancée : ${planSessionRepTarget} pompes pour le set 1.`,3000);
+  updatePlanScreenState();
+}
+
+function finishPlanRep(){
+  if(!planSessionActive) return false;
+  if(!Number.isFinite(planSessionRemaining)) planSessionRemaining = planSessionRepTarget || 0;
+  if(planSessionRemaining<=0) return false;
+  planSessionRemaining = Math.max(0, planSessionRemaining - 1);
+  planTotalCount++;
+  const totalEl=document.getElementById('planTotalCount');
+  if(totalEl) totalEl.textContent = planTotalCount;
+  const repEl=document.getElementById('planCurrentRepValue');
+  if(repEl) repEl.textContent = planSessionRemaining;
+  if(planSessionRemaining===0){
+    planSessionCompleted.push(planSessionRepTarget);
+    const sets = planSessionSets[0].sets;
+    const isLastSet = (planSessionIndex+1) >= sets.length;
+    if(!isLastSet){
+      const restSeconds = planSessionRestSeconds;
+      const nextReps = sets[planSessionIndex+1];
+      planSessionIndex++;
+      planSessionRepTarget = nextReps;
+      planSessionRemaining = nextReps;
+      startPlanRest(restSeconds, `Repos avant le set ${planSessionIndex+1} · ${nextReps} pompes`);
+    } else {
+      finishPlanTraining(true);
+    }
+  }
+  updatePlanSessionUI();
+  return true;
+}
+
+function advancePlanSetAfterRest(){
+  if(!planSessionActive) return;
+  planSessionIndex++;
+  const sets = planSessionSets[0].sets;
+  if(planSessionIndex >= sets.length){
+    planSessionActive=false;
+    showToast('Séance plan terminée.',3000);
+    return;
+  }
+  planSessionRepTarget = sets[planSessionIndex];
+  planSessionRemaining = planSessionRepTarget;
+  document.getElementById('planCurrentRepValue').textContent = planSessionRemaining;
+  document.getElementById('planCurrentSetInfo').textContent = `Set ${planSessionIndex+1} / ${sets.length}`;
+  updatePlanSessionUI();
+}
+
+document.querySelectorAll('#planDaysChips .chip').forEach(ch=>{
+  ch.addEventListener('click',()=>ch.classList.toggle('active'));
+});
+
+document.getElementById('createPlanBtn').addEventListener('click',()=>{
+  const maxReps=Number(document.getElementById('planMaxReps').value);
+  const selectedDays=[...document.querySelectorAll('#planDaysChips .chip.active')].map(ch=>Number(ch.dataset.day));
+  if(!maxReps||maxReps<1){ showToast('Indiquez votre nombre maximum de pompes.'); return; }
+  if(!selectedDays.length){ showToast('Sélectionnez au moins un jour d\'entraînement.'); return; }
+  planProfile={maxReps,days:selectedDays,startDate:new Date().toISOString()};
+  savePlan(planProfile);
+  renderPlanTab();
+  showToast('Plan créé avec succès !');
+});
+
+
+document.querySelectorAll('#planDaysChipsEdit .chip').forEach(ch=>{
+  ch.addEventListener('click',()=>ch.classList.toggle('active'));
+});
+document.getElementById('savePlanSettingsBtn').addEventListener('click',()=>{
+  if(!planProfile){ showToast('Créez d\'abord votre plan dans l\'onglet Plan.'); return; }
+  const newDays=[...document.querySelectorAll('#planDaysChipsEdit .chip.active')].map(ch=>Number(ch.dataset.day));
+  if(!newDays.length){ showToast('Sélectionnez au moins un jour d\'entraînement.'); return; }
+  planProfile.days=newDays;
+  savePlan(planProfile);
+  renderPlanTab();
+  showToast('Jours d\'entraînement mis à jour.');
+});
+const goToPlanFromProfileBtn=document.getElementById('goToPlanFromProfileBtn');
+if(goToPlanFromProfileBtn) goToPlanFromProfileBtn.addEventListener('click',()=>{
+  document.querySelector('.tab-btn[data-tab="plan"]').click();
+});
+document.getElementById('resetPlanBtn').addEventListener('click',async()=>{
+  if(!await customConfirm('Réinitialiser votre plan et recommencer le questionnaire ?')) return;
+  planProfile=null;
+  savePlan(null);
+  renderPlanTab();
+});
+function getUserNickname(){
+  return localStorage.getItem('user_nickname') || '';
+}
+function initUserNicknameField(){
+  const input=document.getElementById('userNicknameInput');
+  if(input) input.value = getUserNickname();
+}
+initUserNicknameField();
+const saveUserNicknameBtn=document.getElementById('saveUserNicknameBtn');
+if(saveUserNicknameBtn){
+  saveUserNicknameBtn.addEventListener('click',()=>{
+    const input=document.getElementById('userNicknameInput');
+    const val=(input && input.value || '').trim().slice(0,24);
+    localStorage.setItem('user_nickname', val);
+    showToast(val ? `Enregistré, à bientôt ${val} !` : 'Surnom effacé.', 2200);
+    renderHomeTab();
+  });
+}
+function updateSoundBtnUI(){
+  const btn=document.getElementById('toggleSoundBtn');
+  if(!btn) return;
+  btn.textContent = soundEnabled ? '🔊' : '🔇';
+  btn.style.opacity = soundEnabled ? '1' : '.5';
+}
+function updateVibrationBtnUI(){
+  const btn=document.getElementById('toggleVibrationBtn');
+  if(!btn) return;
+  btn.textContent = vibrationEnabled ? '📳' : '🚫';
+  btn.style.opacity = vibrationEnabled ? '1' : '.5';
+}
+const toggleSoundBtn=document.getElementById('toggleSoundBtn');
+if(toggleSoundBtn){
+  updateSoundBtnUI();
+  toggleSoundBtn.addEventListener('click',()=>{
+    soundEnabled=!soundEnabled;
+    localStorage.setItem('pref_sound', soundEnabled?'on':'off');
+    updateSoundBtnUI();
+    if(soundEnabled) beep();
+  });
+}
+const toggleVibrationBtn=document.getElementById('toggleVibrationBtn');
+if(toggleVibrationBtn){
+  updateVibrationBtnUI();
+  toggleVibrationBtn.addEventListener('click',()=>{
+    vibrationEnabled=!vibrationEnabled;
+    localStorage.setItem('pref_vibration', vibrationEnabled?'on':'off');
+    updateVibrationBtnUI();
+    if(vibrationEnabled) triggerVibration();
+  });
+}
+
+function updateAppNavActiveState(tabName){
+  document.querySelectorAll('.app-nav-grid .home-nav-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.getAttribute('data-tab')===tabName);
+  });
+}
+document.querySelectorAll('.app-nav-grid .home-nav-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(planSessionActive || sessionActive){
+      showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+      return;
+    }
+    goToTab(btn.getAttribute('data-tab'));
+  });
+});
+
+function goToTab(tabName){
+  const targetBtn=document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+  const targetContent=document.getElementById('tab-'+tabName);
+  if(!targetContent) return;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.add('hidden'));
+  if(targetBtn) targetBtn.classList.add('active');
+  targetContent.classList.remove('hidden');
+  document.body.classList.toggle('home-active', tabName==='home');
+  if(tabName==='home') renderHomeTab();
+  if(tabName==='calendar') renderCalendar();
+  if(tabName==='training'){activeMode='free';}
+  if(tabName==='plan'){activeMode='plan';}
+  if(tabName==='stats') renderStats();
+  if(tabName==='profile') renderProfileTab();
+  if(tabName==='plan') renderPlanTab();
+  updateAppNavActiveState(tabName);
+}
+const STREAK_BADGE_LEVELS=[
+  {days:3, icon:'🔥', label:'3 jours de suite'},
+  {days:7, icon:'⚡', label:'1 semaine de suite'},
+  {days:14, icon:'🌟', label:'2 semaines de suite'},
+  {days:30, icon:'🏆', label:'1 mois de suite'},
+  {days:60, icon:'💎', label:'2 mois de suite'},
+  {days:100, icon:'👑', label:'100 jours de suite'}
+];
+function renderStreakBadge(){
+  const section=document.getElementById('homeStreakBadgeSection');
+  if(!section) return;
+  const streak=computeStreak();
+  const eligible=STREAK_BADGE_LEVELS.filter(l=>streak.current>=l.days);
+  if(!eligible.length){ section.style.display='none'; return; }
+  const current=eligible[eligible.length-1];
+  document.getElementById('homeStreakBadgeIcon').textContent=current.icon;
+  document.getElementById('homeStreakBadgeLabel').textContent=current.label;
+  document.getElementById('homeStreakBadgeSub').textContent=`Série actuelle : ${streak.current} jour${streak.current>1?'s':''}`;
+  section.style.display='';
+}
+const MOTIVATION_QUOTES=[
+"Les petites victoires répétées deviennent de grands résultats.",
+"Chaque répétition vous rapproche de la meilleure version de vous-même.",
+"La discipline d'aujourd'hui est la force de demain.",
+"Le corps accomplit ce que l'esprit croit possible.",
+"Un jour à la fois, un push-up à la fois.",
+"La régularité bat l'intensité sur le long terme.",
+"Vous n'avez pas besoin d'être extrême, juste constant.",
+"La motivation vous lance, l'habitude vous fait tenir.",
+"Le seul mauvais entraînement est celui que vous n'avez pas fait.",
+"Votre seule limite, c'est celle que vous acceptez.",
+"Progresser, même lentement, c'est déjà gagner.",
+"La force ne vient pas de ce que vous pouvez faire, mais de ce que vous pensiez ne pas pouvoir faire.",
+"Chaque série compte, même les jours difficiles.",
+"Le succès est la somme de petits efforts répétés jour après jour.",
+"Ne comptez pas les jours, faites que les jours comptent."
+];
+function getWeeklyMotivationQuote(){
+  const weekStart=getWeekStart(new Date());
+  const seed=Math.floor(weekStart.getTime()/86400000);
+  const idx=Math.abs(seed) % MOTIVATION_QUOTES.length;
+  return MOTIVATION_QUOTES[idx];
+}
+function renderHomeGreeting(){
+  const greetingEl=document.getElementById('homeGreeting');
+  const dateEl=document.getElementById('homeTodayDate');
+  const flameEl=document.getElementById('homeGreetingFlame');
+  const streakCountEl=document.getElementById('homeGreetingStreakCount');
+  if(greetingEl){
+    const nickname=getUserNickname();
+    greetingEl.textContent = nickname ? `Bonjour ${nickname}` : 'Bonjour';
+  }
+  if(dateEl){
+    const todayLabel=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+    dateEl.textContent = todayLabel.charAt(0).toUpperCase()+todayLabel.slice(1);
+  }
+  if(flameEl && streakCountEl){
+    const streak=computeStreak();
+    if(streak.current>0){
+      flameEl.style.display='';
+      streakCountEl.textContent = `${streak.current} jour${streak.current>1?'s':''}`;
+    } else {
+      flameEl.style.display='none';
+      streakCountEl.textContent='';
+    }
+  }
+}
+function renderHomeTab(){
+  renderHomeGreeting();
+  renderStreakBadge();
+  const quoteEl=document.getElementById('homeMotivationQuote');
+  if(quoteEl) quoteEl.textContent=getWeeklyMotivationQuote();
+  const summaryEl=document.getElementById('homeTodaySummary');
+  const bigNumEl=document.getElementById('homeTodayBigNumber');
+  const setsLabelEl=document.getElementById('homeTodaySetsLabel');
+  const durationEl=document.getElementById('homeTodayDuration');
+  const levelEl=document.getElementById('homeTodayLevel');
+  const ringProgress=document.getElementById('homeRingProgress');
+  const ringNumber=document.getElementById('homeRingNumber');
+  const startBtn=document.getElementById('homeStartSessionBtn');
+  let todayTotal=0, isRestDay=false, setCount=0;
+  if(planProfile){
+    renderPlanTab();
+    const titleEl=document.getElementById('planTodayTitle');
+    isRestDay=titleEl && titleEl.textContent.trim()==='Jour de repos';
+    const snap=window.lastTodayPlanSnapshot;
+    if(isRestDay || !snap || !snap.sets || !snap.sets.length){
+      if(summaryEl) summaryEl.innerHTML=titleEl?titleEl.innerHTML:'Aucune séance planifiée aujourd\'hui.';
+      if(bigNumEl) bigNumEl.innerHTML='0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span>';
+      if(setsLabelEl) setsLabelEl.textContent='';
+    } else {
+      setCount=snap.sets.length;
+      todayTotal=snap.total;
+      if(summaryEl) summaryEl.textContent='';
+      if(bigNumEl) bigNumEl.innerHTML=`${todayTotal}<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span>`;
+      if(setsLabelEl) setsLabelEl.textContent=`${setCount} série${setCount>1?'s':''}`;
+    }
+    if(durationEl) durationEl.textContent = setCount ? `${Math.max(2,Math.round(setCount*1.4))} min` : '–';
+    if(levelEl){
+      const mx=planProfile.maxReps||0;
+      levelEl.textContent = mx<12?'Débutant':(mx<25?'Novice':(mx<45?'Intermédiaire':(mx<70?'Avancé':(mx<110?'Confirmé':'Élite'))));
+    }
+    if(startBtn){
+      startBtn.style.display = isRestDay ? 'none' : 'flex';
+      startBtn.onclick=()=>{ goToTab('plan'); startPlanSession(); };
+    }
+  } else {
+    if(summaryEl) summaryEl.textContent='Aucun plan actif pour le moment. Créez votre plan dans l\'onglet Plan.';
+    if(bigNumEl) bigNumEl.innerHTML='0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span>';
+    if(setsLabelEl) setsLabelEl.textContent='';
+    if(durationEl) durationEl.textContent='–';
+    if(levelEl) levelEl.textContent='–';
+    if(startBtn){ startBtn.style.display='flex'; startBtn.onclick=()=>goToTab('plan'); }
+  }
+  if(ringProgress && ringNumber){
+    const circumference=276.4;
+    const cumulativeTotal=workouts.reduce((a,w)=>a+(w.total||0),0);
+    const ringTarget=todayTotal>0?todayTotal:1;
+    const pct=todayTotal>0?1:0;
+    ringProgress.setAttribute('stroke-dashoffset', String(circumference-(circumference*pct)));
+    ringNumber.textContent=cumulativeTotal;
+  }
+  const weekEl=document.getElementById('planWeekNumber');
+  const statusEl=document.getElementById('planAdaptStatus');
+  const weekLabelEl=document.getElementById('homeProgressWeekLabel');
+  const percentEl=document.getElementById('homeProgressPercent');
+  const barEl=document.getElementById('homeProgressBar');
+  const badgesEl=document.getElementById('homeProgressBadges');
+  const progressEl=document.getElementById('homeProgressSummary');
+  const totalPlanWeeks=PLAN_CYCLE_WEEKS;
+  if(planProfile && weekEl){
+    const cycleInfo=getPlanCycleInfo();
+    const weekNum=cycleInfo.weekInCycle;
+    const statusTxt=statusEl?statusEl.textContent:'Ajusté selon vos séances';
+    if(weekLabelEl) weekLabelEl.textContent=`Semaine ${weekNum} sur ${totalPlanWeeks} (cycle ${cycleInfo.cycleNumber})`;
+    const pct=Math.round((weekNum/totalPlanWeeks)*100);
+    if(percentEl) percentEl.textContent=`${pct}%`;
+    if(barEl){
+      barEl.innerHTML='';
+      for(let s=0;s<totalPlanWeeks;s++){
+        const seg=document.createElement('div');
+        seg.style.cssText=`flex:1;height:6px;border-radius:3px;background:${s<weekNum?'var(--primary)':'var(--surface2)'};`;
+        barEl.appendChild(seg);
+      }
+    }
+    if(badgesEl){
+      badgesEl.innerHTML='';
+      const items=[];
+      if(planProfile.aiPlan) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V4M9 4h6"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg> Plan IA actif`);
+      if(statusTxt.includes('allégé')) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h4l2-3 3 6 2-3h5"/></svg> Rythme allégé`);
+      else if(statusTxt.includes('accéléré')) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg> Rythme accéléré`);
+      else items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h16"/></svg> Rythme stable`);
+      items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M5 20c0-8 6-14 14-14 0 8-6 14-14 14zM5 20c2-4 5-7 9-9"/></svg> Reprise en douceur`);
+      items.forEach(txt=>{
+        const span=document.createElement('span');
+        span.innerHTML=txt;
+        badgesEl.appendChild(span);
+      });
+    }
+    if(progressEl) progressEl.textContent='';
+  } else {
+    if(weekLabelEl) weekLabelEl.textContent='Aucun plan actif';
+    if(percentEl) percentEl.textContent='0%';
+    if(barEl) barEl.innerHTML='';
+    if(badgesEl) badgesEl.innerHTML='';
+    if(progressEl) progressEl.textContent='Créez votre plan pour suivre votre progression.';
+  }
+
+  const weekSessionsEl=document.getElementById('homeWeekSessions');
+  const weekTotalEl=document.getElementById('homeWeekTotal');
+  const weekProgressEl=document.getElementById('homeWeekProgress');
+  const curWeekStart=getWeekStart(new Date());
+  const prevWeekStart=new Date(curWeekStart); prevWeekStart.setDate(prevWeekStart.getDate()-7);
+  const curWeekEnd=new Date(curWeekStart); curWeekEnd.setDate(curWeekEnd.getDate()+7);
+  const curWorkouts=workouts.filter(w=>{
+    if(!w.isoDate) return false;
+    const d=new Date(w.isoDate+'T00:00:00');
+    return d>=curWeekStart && d<curWeekEnd;
+  });
+  const prevWorkouts=workouts.filter(w=>{
+    if(!w.isoDate) return false;
+    const d=new Date(w.isoDate+'T00:00:00');
+    return d>=prevWeekStart && d<curWeekStart;
+  });
+  const curWeekTotal=curWorkouts.reduce((a,w)=>a+(w.total||0),0);
+  const prevWeekTotal=prevWorkouts.reduce((a,w)=>a+(w.total||0),0);
+  const weeklyGoal=planProfile ? (planProfile.days||[]).length : 0;
+  if(weekSessionsEl) weekSessionsEl.textContent=`${curWorkouts.length}/${weeklyGoal||curWorkouts.length}`;
+  if(weekTotalEl) weekTotalEl.textContent=curWeekTotal;
+  if(weekProgressEl){
+    if(prevWeekTotal>0){
+      const diffPct=Math.round(((curWeekTotal-prevWeekTotal)/prevWeekTotal)*100);
+      weekProgressEl.textContent=`${diffPct>=0?'+':''}${diffPct}%`;
+    } else {
+      weekProgressEl.textContent=curWeekTotal>0?'+100%':'–';
+    }
+  }
+}
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(planSessionActive && btn.dataset.tab!=='plan'){
+      showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+      return;
+    }
+    if(sessionActive && btn.dataset.tab!=='training'){
+      showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+      return;
+    }
+    goToTab(btn.dataset.tab);
+  });
+});
+document.querySelectorAll('.home-nav-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{ goToTab(btn.dataset.tab); });
+});
+goToTab('home');
+
+let calViewYear=new Date().getFullYear();
+let calViewMonth=new Date().getMonth();
+const calMonthNames=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+function workoutsForDate(iso){
+  return workouts.map((w,i)=>({...w,idx:i})).filter(w=>w.isoDate===iso);
+}
+
+function getWeekStart(date){
+  const d=new Date(date);
+  d.setHours(0,0,0,0);
+  const day=d.getDay();
+  const diff=(day===0?-6:1-day); // semaine démarrant le lundi
+  d.setDate(d.getDate()+diff);
+  return d;
+}
+function computeWeeklyStreak(){
+  const weeksWithActivity=new Set();
+  workouts.forEach(w=>{
+    if(!w || !w.isoDate) return;
+    const d=new Date(w.isoDate+'T00:00:00');
+    if(isNaN(d.getTime())) return;
+    weeksWithActivity.add(toLocalDateStr(getWeekStart(d)));
+  });
+  let streak=0;
+  const cursor=getWeekStart(new Date());
+  // Si la semaine en cours n'a pas encore de séance, ça ne casse pas la série
+  // (la semaine n'est pas terminée) : on commence le comptage à la semaine précédente.
+  if(!weeksWithActivity.has(toLocalDateStr(cursor))){
+    cursor.setDate(cursor.getDate()-7);
+  }
+  while(weeksWithActivity.has(toLocalDateStr(cursor))){
+    streak++;
+    cursor.setDate(cursor.getDate()-7);
+  }
+  return streak;
+}
+function updateStreakDisplay(){
+  const countEl=document.getElementById('streakCount');
+  const unitEl=document.getElementById('streakUnit');
+  if(!countEl) return;
+  const streak=computeWeeklyStreak();
+  countEl.textContent=streak;
+  if(unitEl) unitEl.textContent = streak>1 ? 'semaines' : 'semaine';
+  const flame=document.getElementById('streakFlame');
+  if(flame) flame.style.opacity = streak>0 ? '1' : '.35';
+}
+function renderCalendar(){
+  const grid=document.getElementById('calGrid');
+  const label=document.getElementById('calMonthLabel');
+  if(!grid||!label) return;
+  updateStreakDisplay();
+  label.textContent=calMonthNames[calViewMonth]+' '+calViewYear;
+  grid.innerHTML='';
+  const firstDay=new Date(calViewYear,calViewMonth,1);
+  let startOffset=firstDay.getDay()-1; if(startOffset<0) startOffset=6;
+  const daysInMonth=new Date(calViewYear,calViewMonth+1,0).getDate();
+  const todayIso=toLocalDateStr(new Date());
+  for(let i=0;i<startOffset;i++){
+    const empty=document.createElement('div');
+    empty.className='cal-day empty';
+    grid.appendChild(empty);
+  }
+  for(let d=1;d<=daysInMonth;d++){
+    const iso=`${calViewYear}-${String(calViewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayWorkouts=workoutsForDate(iso);
+    const cell=document.createElement('div');
+    cell.className='cal-day'+(dayWorkouts.length?' has-workout':'')+(iso===todayIso?' today':'');
+    cell.innerHTML=`<span>${d}</span>`;
+    if(dayWorkouts.length){
+      if(dayWorkouts.length>1){
+        cell.innerHTML+=`<span class="cal-count-badge">${dayWorkouts.length}</span>`;
+      }
+      cell.innerHTML+='<span class="cal-dot"></span>';
+      cell.addEventListener('click',()=>openCalendarDetail(iso));
+    }
+    grid.appendChild(cell);
+  }
+}
+
+document.getElementById('calPrevMonth').addEventListener('click',()=>{
+  calViewMonth--; if(calViewMonth<0){calViewMonth=11;calViewYear--;}
+  renderCalendar();
+});
+document.getElementById('calNextMonth').addEventListener('click',()=>{
+  calViewMonth++; if(calViewMonth>11){calViewMonth=0;calViewYear++;}
+  renderCalendar();
+});
+
+function openCalendarDetail(iso){
+  const dayWorkouts=workoutsForDate(iso);
+  if(!dayWorkouts.length) return;
+  const dateLabel=new Date(iso+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('calendarDetailDate').textContent=dateLabel.charAt(0).toUpperCase()+dateLabel.slice(1);
+  let html='';
+  dayWorkouts.forEach((w,wi)=>{
+    const maxReps=Math.max(...w.sets.map(s=>s.reps),1);
+    const bars=w.sets.map((s,si)=>`<div class="bar-item">
+        <div class="bar-value"><input type="number" min="0" data-workout-idx="${w.idx}" data-set-idx="${si}" class="edit-rep-input" value="${s.reps}" style="width:2.4rem;text-align:center;background:transparent;border:none;color:inherit;font-size:.75rem;font-weight:700;"></div>
+        <div class="bar-fill" style="height:${Math.max((s.reps/maxReps)*100,6)}%;"></div>
+        <div class="bar-label">S${s.set}</div>
+      </div>`).join('');
+    html+=`<div style="margin-bottom:1rem;${wi>0?'padding-top:.8rem;border-top:1px solid var(--border);':''}">
+      <div style="display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:.8rem;">
+        <span>${w.date}${w.duration?' · '+w.duration:''}</span>
+        <strong style="color:var(--primary);" id="workoutTotal-${w.idx}">${w.total} pompes</strong>
+      </div>
+      <div class="bar-chart">${bars}</div>
+      <div style="display:flex;gap:.5rem;margin-top:.6rem;">
+        <button class="btn saveWorkoutEditBtn" data-workout-idx="${w.idx}" style="flex:1;font-size:.75rem;padding:.5rem;">Enregistrer</button>
+        <button class="btn btn-danger deleteWorkoutBtn" data-workout-idx="${w.idx}" style="flex:1;font-size:.75rem;padding:.5rem;">Supprimer</button>
+      </div>
+    </div>`;
+  });
+  document.getElementById('calendarDetailContent').innerHTML=html;
+  document.getElementById('calendarDetailModal').classList.remove('hidden');
+
+  document.querySelectorAll('.saveWorkoutEditBtn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const wIdx=Number(btn.dataset.workoutIdx);
+      const inputs=document.querySelectorAll(`.edit-rep-input[data-workout-idx="${wIdx}"]`);
+      let newTotal=0;
+      inputs.forEach(inp=>{
+        const sIdx=Number(inp.dataset.setIdx);
+        const val=Math.max(0,parseInt(inp.value)||0);
+        workouts[wIdx].sets[sIdx].reps=val;
+        newTotal+=val;
+      });
+      workouts[wIdx].total=newTotal;
+      saveHistory();
+      renderCalendar();
+      showToast('Séance mise à jour.');
+      openCalendarDetail(iso);
+    });
+  });
+  document.querySelectorAll('.deleteWorkoutBtn').forEach(btn=>{
+    btn.addEventListener('click',async()=>{
+      const wIdx=Number(btn.dataset.workoutIdx);
+      if(!await customConfirm('Supprimer définitivement cette séance ?')) return;
+      workouts.splice(wIdx,1);
+      saveHistory();
+      renderCalendar();
+      renderStats();
+      showToast('Séance supprimée.');
+      const remaining=workoutsForDate(iso);
+      if(remaining.length){
+        openCalendarDetail(iso);
+      } else {
+        document.getElementById('calendarDetailModal').classList.add('hidden');
+      }
+    });
+  });
+}
+document.getElementById('closeCalendarDetail').addEventListener('click',()=>{
+  document.getElementById('calendarDetailModal').classList.add('hidden');
+});
+
+function computeStreak(){
+  const isoDates=[...new Set(workouts.filter(w=>w.isoDate).map(w=>w.isoDate))].sort();
+  if(!isoDates.length) return {current:0,best:0};
+  const dateSet=new Set(isoDates);
+  let best=0,current=0,run=0;
+  let prevDate=null;
+  isoDates.forEach(d=>{
+    if(prevDate){
+      const diff=(new Date(d)-new Date(prevDate))/86400000;
+      run = diff===1 ? run+1 : 1;
+    } else run=1;
+    if(run>best) best=run;
+    prevDate=d;
+  });
+  const todayIso=toLocalDateStr(new Date());
+  const yestIso=toLocalDateStr(new Date(Date.now()-86400000));
+  let checkDate = dateSet.has(todayIso)?todayIso:(dateSet.has(yestIso)?yestIso:null);
+  if(checkDate){
+    current=1;
+    let d=new Date(checkDate);
+    while(true){
+      d.setDate(d.getDate()-1);
+      const iso=toLocalDateStr(d);
+      if(dateSet.has(iso)) current++; else break;
+    }
+  }
+  return {current,best};
+}
+
+const BADGE_LEVELS=[100,500,1000,2500,5000,10000];
+function computeStats(){
+  const totalCumulative=workouts.reduce((a,w)=>a+(w.total||0),0);
+  const recordSession=workouts.length?Math.max(...workouts.map(w=>w.total||0)):0;
+  let recordSet=0;
+  workouts.forEach(w=>(w.sets||[]).forEach(s=>{if(s.reps>recordSet) recordSet=s.reps;}));
+  const sessionCount=workouts.length;
+  const average=sessionCount?Math.round(totalCumulative/sessionCount):0;
+  let bestDay={iso:null,total:0};
+  const byDay={};
+  workouts.forEach(w=>{ if(!w.isoDate) return; byDay[w.isoDate]=(byDay[w.isoDate]||0)+(w.total||0); });
+  Object.entries(byDay).forEach(([iso,total])=>{if(total>bestDay.total) bestDay={iso,total};});
+  return {totalCumulative,recordSession,recordSet,sessionCount,average,bestDay,byDay};
+}
+
+function renderWeeklyProgressChart(){
+  const svg=document.getElementById('statsProgressChart');
+  const emptyEl=document.getElementById('statsChartEmpty');
+  const rangeEl=document.getElementById('statsChartRange');
+  if(!svg) return;
+  const weeksToShow=8;
+  const now=new Date();
+  const weekStart=getWeekStart(now);
+  const buckets=[];
+  for(let i=weeksToShow-1;i>=0;i--){
+    const start=new Date(weekStart);
+    start.setDate(start.getDate()-i*7);
+    const end=new Date(start);
+    end.setDate(end.getDate()+6);
+    buckets.push({start, end, total:0});
+  }
+  workouts.forEach(w=>{
+    if(!w || !w.isoDate) return;
+    const d=new Date(w.isoDate+'T00:00:00');
+    for(const b of buckets){
+      if(d>=b.start && d<=b.end){ b.total += Number(w.total)||0; break; }
+    }
+  });
+  const hasData = buckets.some(b=>b.total>0);
+  if(!hasData){
+    svg.innerHTML='';
+    if(emptyEl) emptyEl.classList.remove('hidden');
+    if(rangeEl) rangeEl.textContent='';
+    return;
+  }
+  if(emptyEl) emptyEl.classList.add('hidden');
+  const maxVal=Math.max(...buckets.map(b=>b.total),1);
+  const w=300,h=120,padX=8,padY=14;
+  const stepX=(w-padX*2)/(buckets.length-1||1);
+  const pts=buckets.map((b,i)=>{
+    const x=padX+i*stepX;
+    const y=h-padY-((b.total/maxVal)*(h-padY*2));
+    return {x,y,total:b.total};
+  });
+  const linePath=pts.map((p,i)=>(i===0?'M':'L')+p.x.toFixed(1)+','+p.y.toFixed(1)).join(' ');
+  const areaPath=linePath+` L${pts[pts.length-1].x.toFixed(1)},${h-padY} L${pts[0].x.toFixed(1)},${h-padY} Z`;
+  const dots=pts.map((p,i)=>{
+    const isLast=i===pts.length-1;
+    return `<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${isLast?4:2.5}" fill="${isLast?'var(--primary)':'var(--primary)'}" opacity="${isLast?1:0.7}"></circle>`
+      + (isLast?`<text x="${p.x.toFixed(1)}" y="${(p.y-8).toFixed(1)}" font-size="9" text-anchor="middle" fill="var(--text)" font-weight="700">${p.total}</text>`:'');
+  }).join('');
+  svg.innerHTML = `
+    <defs>
+      <linearGradient id="progressGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.28"/>
+        <stop offset="100%" stop-color="var(--primary)" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <path d="${areaPath}" fill="url(#progressGrad)" stroke="none"></path>
+    <path d="${linePath}" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    ${dots}
+  `;
+  if(rangeEl){
+    const firstLabel=buckets[0].start.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+    const lastLabel=buckets[buckets.length-1].start.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+    rangeEl.textContent=`${firstLabel} → ${lastLabel}`;
+  }
+}
+function renderStats(){
+  try{
+  const streak=computeStreak();
+  document.getElementById('streakValue').textContent=`${streak.current} jour${streak.current>1?'s':''}`;
+  document.getElementById('streakBest').textContent=`Meilleure série : ${streak.best} jour${streak.best>1?'s':''}`;
+
+  renderWeeklyProgressChart();
+  const stats=computeStats();
+  document.getElementById('recordSet').textContent=stats.recordSet;
+  document.getElementById('recordSession').textContent=stats.recordSession;
+  document.getElementById('totalCumulative').textContent=stats.totalCumulative;
+  document.getElementById('statSessionCount').textContent=stats.sessionCount;
+  document.getElementById('statAverage').textContent=stats.average;
+  document.getElementById('statBestDay').textContent=stats.bestDay.iso?`${new Date(stats.bestDay.iso+'T00:00:00').toLocaleDateString('fr-FR')} (${stats.bestDay.total})`:'—';
+
+  const badgesGrid=document.getElementById('badgesGrid');
+  badgesGrid.innerHTML='';
+  BADGE_LEVELS.forEach(level=>{
+    const unlocked=stats.totalCumulative>=level;
+    const badge=document.createElement('div');
+    badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.35};`;
+    badge.innerHTML=`<div style="width:48px;height:48px;border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">${unlocked?'🏆':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">${level}</div>`;
+    badgesGrid.appendChild(badge);
+  });
+
+  renderProgressChart(stats.byDay);
+  }catch(e){
+    console.error('renderStats error:', e && e.message ? e.message : String(e));
+    showToast('Erreur affichage stats : '+e.message,4000);
+  }
+}
+
+function renderProgressChart(byDay){
+  const canvas=document.getElementById('progressChart');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const w=canvas.clientWidth,h=canvas.clientHeight;
+  canvas.width=w*dpr;canvas.height=h*dpr;ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
+
+  const days=[];
+  for(let i=29;i>=0;i--){
+    const d=new Date(Date.now()-i*86400000);
+    days.push({iso:toLocalDateStr(d),total:byDay[toLocalDateStr(d)]||0});
+  }
+  const maxVal=Math.max(...days.map(d=>d.total),1);
+  const padding=8;
+  const stepX=(w-padding*2)/(days.length-1);
+
+  let primaryColor='#1c6e6e';try{primaryColor=window.getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()||primaryColor;}catch(e){}
+  ctx.strokeStyle=primaryColor;
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  days.forEach((d,i)=>{
+    const x=padding+i*stepX;
+    const y=h-padding-((d.total/maxVal)*(h-padding*2));
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+
+  ctx.fillStyle=ctx.strokeStyle;
+  days.forEach((d,i)=>{
+    if(d.total>0){
+      const x=padding+i*stepX;
+      const y=h-padding-((d.total/maxVal)*(h-padding*2));
+      ctx.beginPath();ctx.arc(x,y,2.2,0,Math.PI*2);ctx.fill();
+    }
+  });
+}
+document.getElementById('resetCalendarBtn').addEventListener('click',async()=>{
+  if(!await customConfirm('Réinitialiser tout le calendrier ? Cette action supprime toutes les séances enregistrées.')) return;
+  workouts.length=0;
+  saveHistory();
+  renderCalendar();renderStats();
+  document.getElementById('calendarDetailModal').classList.add('hidden');
+  showToast('Calendrier réinitialisé.');
+});
+document.getElementById('exportDataBtn').addEventListener('click',()=>{
+  const dataStr=JSON.stringify({workouts,restSeconds:document.getElementById('restSeconds').value,exportedAt:new Date().toISOString()},null,2);
+  const blob=new Blob([dataStr],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`pushup-backup-${toLocalDateStr(new Date())}.json`;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1200);
+  showToast('Données exportées.');
+});
+document.getElementById('importDataBtn').addEventListener('click',()=>{
+  document.getElementById('importFileInput').click();
+});
+document.getElementById('importFileInput').addEventListener('change',(e)=>{
+  const file=e.target.files[0];
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onload=async(ev)=>{
+    try{
+      const data=JSON.parse(ev.target.result);
+      if(!Array.isArray(data.workouts)) throw new Error('format invalide');
+      if(!await customConfirm(`Importer ${data.workouts.length} séance(s) ? Cela remplacera vos données actuelles.`)) return;
+      workouts.length=0;
+      data.workouts.forEach(w=>workouts.push(w));
+      saveHistory();
+      renderCalendar();
+      renderHistory();renderStats();
+      showToast('Données importées avec succès.');
+    }catch(err){
+      showToast('Fichier invalide, import annulé.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value='';
+});
+
+
+
+function renderHistory(){historyList.innerHTML='';if(!workouts.length){historyList.innerHTML='<div class="history-item"><span>Aucune séance enregistrée</span><span>—</span></div>';return;}workouts.slice().reverse().forEach(w=>{const item=document.createElement('div');item.className='history-item';item.innerHTML=`<span>${w.date}</span><strong>${w.total} pompes · ${w.sets.length} sets</strong>`;historyList.appendChild(item);});}
+function refreshHeader(){setInfoEl.textContent=currentSet;countEl.textContent=setCount;totalCountEl.textContent=totalCount;updateProgressRing();}
+function updateProgressRing(){
+  const ring=document.getElementById('setProgressRing');
+  if(!ring) return;
+  const target=Number(document.getElementById('targetReps').value)||10;
+  const circumference=276.5;
+  const pct=Math.min(setCount/target,1);
+  ring.style.strokeDashoffset=String(circumference*(1-pct));
+}
+function updatePlanProgressRing(){
+  const ring=document.getElementById('planProgressRing');
+  if(!ring) return;
+  const circumference=276.5;
+  const target=planSessionRepTarget||1;
+  const done=Math.max(0, target-planSessionRemaining);
+  const pct=Math.min(done/target,1);
+  ring.style.strokeDashoffset=String(circumference*(1-pct));
+}
+function setChipsActive(v){document.querySelectorAll('.chip[data-rest]').forEach(ch=>ch.classList.toggle('active',Number(ch.dataset.rest)===Number(v)))} refreshHeader(); setChipsActive(restSecondsInput.value);
+document.querySelectorAll('.chip[data-rest]').forEach(ch=>ch.addEventListener('click',()=>{restSecondsInput.value=ch.dataset.rest;setChipsActive(ch.dataset.rest)})); restSecondsInput.addEventListener('input',()=>setChipsActive(restSecondsInput.value));
+function angle(a,b,c){const ab=[a.x-b.x,a.y-b.y],cb=[c.x-b.x,c.y-b.y];const dot=ab[0]*cb[0]+ab[1]*cb[1];const mag1=Math.hypot(...ab),mag2=Math.hypot(...cb);if(!mag1||!mag2)return null;return Math.acos(Math.max(-1,Math.min(1,dot/(mag1*mag2))))*180/Math.PI;}
+function kp(list,name){const p=list.find(k=>k.name===name);return (p&&p.score>=0.35)?{x:p.x/video.videoWidth,y:p.y/video.videoHeight,visibility:p.score}:null;}
+function getPoseMetrics(keypoints){
+  const ls=kp(keypoints,'left_shoulder'),rs=kp(keypoints,'right_shoulder'),le=kp(keypoints,'left_elbow'),re=kp(keypoints,'right_elbow'),lw=kp(keypoints,'left_wrist'),rw=kp(keypoints,'right_wrist');
+  const nose=kp(keypoints,'nose');
+  const shoulderWidth = (ls&&rs) ? Math.hypot(ls.x-rs.x, ls.y-rs.y) : null;
+  // Mode angle : au moins UN bras entièrement visible (épaule+coude+poignet).
+  // On ne réclame plus les hanches, inutiles pour l'angle du coude et souvent hors cadre.
+  const leftAngle=(ls&&le&&lw)?angle(ls,le,lw):null;
+  const rightAngle=(rs&&re&&rw)?angle(rs,re,rw):null;
+  if(leftAngle||rightAngle){
+    const elbowAngle=(leftAngle&&rightAngle)?(leftAngle+rightAngle)/2:(leftAngle||rightAngle);
+    const shoulderY = ls&&rs ? (ls.y+rs.y)/2 : (ls?ls.y:rs.y);
+    const qualityParts=[ls,rs,le,re,lw,rw].filter(Boolean).map(p=>p.visibility);
+    const quality=qualityParts.length?Math.round((qualityParts.reduce((a,b)=>a+b,0)/qualityParts.length)*100):0;
+    return {mode:'full',shoulderY,elbowAngle,shoulderWidth,quality};
+  }
+  // Mode simplifié : trop proche pour voir les bras, on suit juste visage + épaules
+  if(nose && ls && rs){
+    const shoulderY=(ls.y+rs.y)/2;
+    return {mode:'simple',shoulderY,elbowAngle:null,shoulderWidth,quality:Math.round(((nose.visibility+ls.visibility+rs.visibility)/3)*100)};
+  }
+  // Mode minimal : seulement le visage visible (très proche de la caméra)
+  if(nose){
+    return {mode:'face',shoulderY:nose.y,elbowAngle:null,shoulderWidth:null,quality:Math.round(nose.visibility*100)};
+  }
+  return null;
+}
+
+function autoCalibrate(){
+  calibrated=true;
+  poseWasDetected=false;
+  movementLabel.textContent='Calibré';
+  return true;
+}
+
+function processRep(metrics){
+  const now=performance.now();
+  const active=sessionActive || planSessionActive;
+  if(!active) return;
+
+  // Cette configuration est volontairement prévue pour un téléphone au sol :
+  // haut = pose visible, bas = visage/corps souvent hors champ, haut = retour.
+  if(!metrics){
+    if(poseVisible){
+      poseVisible=false;
+      poseLostAt=now;
+      downFrames=1;
+      upFrames=0;
+      phaseEl.textContent='Bas';
+    } else if(downFrames>0){
+      downFrames++;
+    }
+    return;
+  }
+
+  const returned=!poseVisible;
+  poseVisible=true;
+  poseWasDetected=true;
+
+  // Première pose de séance : calibration uniquement.
+  if(!calibrated){
+    calibrated=true;
+    state='up';
+    downFrames=0;
+    upFrames=0;
+    lastRepAt=now;
+    phaseEl.textContent='Prêt';
+    return;
+  }
+
+  if(returned){
+    const outOfView=now-poseLostAt;
+    // Une pompe a un aller-retour bref. Une sortie prolongée du champ est ignorée.
+    const validDescent=downFrames>=2 && outOfView>=350 && outOfView<=2200;
+    if(validDescent && now-lastRepAt>=350){
+      lastRepAt=now;
+      state='up';
+      downFrames=0;
+      upFrames=0;
+      phaseEl.textContent='Haut';
+
+      if(sessionActive){
+        setCount++;
+        totalCount++;
+        refreshHeader();
+        if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint';
+      }
+      if(planSessionActive) finishPlanRep();
+      beep();
+      lastDebugInfo={info:'pompe validée : disparition puis retour',outOfView};
+      return;
+    }
+
+    // Retour après une absence trop courte ou trop longue : aucune répétition.
+    state='up';
+    downFrames=0;
+    upFrames=0;
+    phaseEl.textContent='Prêt';
+    lastDebugInfo={info:'retour ignoré',outOfView};
+    return;
+  }
+
+  // Pose stable en haut : aucune action. Cette version ne dépend pas des angles.
+  phaseEl.textContent='Haut';
+  lastDebugInfo={mode:metrics.mode,state:'up',info:'pose détectée'};
+}
+function renderDebug(keypoints, detected){
+  const inSession = sessionActive || planSessionActive;
+  if(!keypoints || !detected){
+    if(!inSession && !calibrated) movementLabel.textContent='Placez-vous dans le cadre';
+    else if(!inSession && calibrated) movementLabel.textContent='Calibré';
+    else if(inSession) movementLabel.textContent='Aucune pose détectée';
+    return;
+  }
+  if(!inSession && calibrated){
+    movementLabel.textContent='Calibré';
+  } else if(!inSession && detected){
+    movementLabel.textContent='Appuyez sur Démarrer';
+  } else if(inSession){
+    movementLabel.textContent='Pose détectée';
+  }
+}
+
+async function detectLoop(ts){
+  if(!cameraReady){rafId=null;return;}
+  rafId=requestAnimationFrame(detectLoop);
+  if(document.hidden||processing) return; // on saute une frame plutôt que de saturer le device
+  if(ts-lastDetectAt<DETECT_INTERVAL) return;
+  lastDetectAt=ts;
+  if(!detector||!video.videoWidth) return;
+  processing=true;
+  try{
+    const poses=await detector.estimatePoses(video,{flipHorizontal:false});
+    if(poses&&poses[0]){
+      lastKeypoints=poses[0].keypoints;
+      const m=getPoseMetrics(lastKeypoints);
+      if((sessionActive||planSessionActive)&&!restActive&&!planRestActive&&calibrated){
+        processRep(m);
+      }
+      renderDebug(lastKeypoints, !!m);
+    } else {
+      lastKeypoints=null;
+      if((sessionActive||planSessionActive)&&!restActive&&!planRestActive&&calibrated){
+        processRep(null);
+      }
+      renderDebug(null, false);
+    }
+  }catch(e){ /* frame ratée : on l'ignore au lieu de laisser planter l'app */ }
+  finally{ processing=false; }
+}
+
+function stopCameraResources(){
+  cameraReady=false;
+  if(rafId){cancelAnimationFrame(rafId);rafId=null;}
+  if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
+}
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden){
+    if(stream) stream.getTracks().forEach(t=>t.enabled=false);
+  } else {
+    if(stream) stream.getTracks().forEach(t=>t.enabled=true);
+    try{
+      if(audioCtx && (audioCtx.state==='suspended' || audioCtx.state==='interrupted')){
+        audioCtx.resume().catch(()=>{});
+      }
+    }catch(e){}
+  }
+});
+window.addEventListener('pagehide',stopCameraResources);
+async function startCamera(){
+  if(stream) return;
+  try{
+    cameraStatus.textContent='Chargement du modèle…';
+    await tf.setBackend('webgl');
+    await tf.ready();
+    if(!detector) detector=await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet,{modelType:poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING});
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
+    video.setAttribute('playsinline',true); video.setAttribute('webkit-playsinline',true); video.srcObject=stream; await video.play();
+    cameraReady=true; localStorage.setItem('cameraGranted','1'); cameraStatus.textContent='Caméra active'; cameraDot.className='dot live'; movementLabel.textContent='Appuyez sur Démarrer'; const _eb=document.getElementById('enableCameraBtn'); if(_eb) _eb.classList.add('hidden');
+    toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent='Prêt';
+    if(!rafId) rafId=requestAnimationFrame(detectLoop);
+  }catch(e){
+    cameraStatus.textContent='Accès refusé';cameraDot.className='dot warn';
+    stopCameraResources();
+    manualMode=true;
+    toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent='Prêt';
+    movementLabel.textContent='Mode manuel (sans caméra)';
+    showToast('Caméra indisponible : passage en mode manuel. Utilisez les boutons +/- pour compter vos pompes.',4500);
+  }
+}
+function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;phaseEl.textContent='Prêt';}
+function formatRest(s){const m=String(Math.floor(s/60)).padStart(2,'0');const sec=String(s%60).padStart(2,'0');return `${m}:${sec}`;}
+
+
+function playCountdownBeep(secondsLeft){
+  if(secondsLeft>0) beep();
+  else { for(let i=0;i<10;i++){ setTimeout(()=>beep(), i*180); } }
+}
+
+let restTargetTime=null;let restBeepedSeconds=new Set();
+function startRest(){
+  restActive=true;sessionActive=false;toggleSessionBtn.textContent='Démarrer';
+  restRemaining=Number(restSecondsInput.value||60);
+  restTargetTime=Date.now()+restRemaining*1000;
+  restBeepedSeconds=new Set();
+  restDisplay.textContent=formatRest(restRemaining);
+  restText.textContent=`Repos avant le set ${currentSet+1}`;
+  restPanel.classList.remove('hidden');
+  clearInterval(restTimer);
+  restTimer=setInterval(restTick,250);
+}
+function restTick(){
+  if(!restTargetTime) return;
+  const remainingMs=restTargetTime-Date.now();
+  const remainingSec=Math.max(0,Math.ceil(remainingMs/1000));
+  if(remainingSec!==restRemaining){
+    restRemaining=remainingSec;
+    restDisplay.textContent=formatRest(restRemaining);
+    if(restRemaining<=3 && restRemaining>=0 && !restBeepedSeconds.has(restRemaining)){
+      restBeepedSeconds.add(restRemaining);
+      playCountdownBeep(restRemaining);
+      if(navigator.vibrate) navigator.vibrate(restRemaining===0?[120,80,120,80,120,80,200]:100);
+    }
+  }
+  if(remainingMs<=0){
+    clearInterval(restTimer);
+    restTargetTime=null;
+    restText.textContent='Pause terminée';
+    autoResumeAfterRest();
+  }
+}
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden && restActive && restTargetTime){
+    restTick();
+  }
+  if(!document.hidden && sessionActive && sessionStartTime){
+    updateSessionDurationDisplay();
+  }
+});
+function autoResumeAfterRest(){
+  setTimeout(()=>{
+    stopRest();
+    resetTracking();
+    if(autoCalibrate()){
+      sessionActive=true;
+      toggleSessionBtn.textContent='Pause';
+      phaseEl.textContent='En cours';
+    } else {
+      phaseEl.textContent='Prêt';
+    }
+  },600);
+}
+
+function stopRest(){restActive=false;clearInterval(restTimer);restPanel.classList.add('hidden');}
+let validateModalMode='nextSet';
+function openValidateModal(mode='nextSet'){
+  validateModalMode=mode;
+  pendingReps = setCount;
+  document.getElementById('validateCount').textContent = pendingReps;
+  document.getElementById('confirmSet').textContent = mode==='finish' ? "Valider et terminer l'entraînement" : 'Valider et passer au repos';
+  document.getElementById('validateModal').classList.remove('hidden');
+}
+function closeValidateModal(){
+  document.getElementById('validateModal').classList.add('hidden');
+}
+function nextSet(){
+  openValidateModal('nextSet');
+}
+function confirmNextSet(){
+  if(validateModalMode==='finish'){
+    closeValidateModal();
+    finalizeWorkout(pendingReps);
+    return;
+  }
+  completedSets.push({set:currentSet,reps:pendingReps});
+  totalCount = totalCount - setCount + pendingReps;
+  currentSet++;
+  setCount=0;
+  refreshHeader();
+  resetTracking();
+  closeValidateModal();
+  startRest();
+}
+
+
+async function startPlanTraining(){
+  activeMode='plan';
+  if(!preparePlanSession()) return;
+  planSessionActive=true;
+  sessionActive=false;
+  syncPlanUI();
+  applyPlanModeUI();
+  updatePlanScreenState();
+  updatePlanSessionUI();
+  showToast(`Séance plan lancée : ${planSessionRepTarget} pompes pour le set 1.`,3000); updatePlanScreenState();
+}
+
+async function finishPlanTraining(completed){
+  planSessionActive=false;
+  stopRest();
+  stopPlanRest();
+  stopPlanSessionTimer();
+  if(planTotalCount>0){
+    const now=new Date();
+    // Le calendrier reflète toujours le jour réel où la séance a été effectuée.
+    // targetDate garde une trace du jour planifié que cette séance a satisfait
+    // (utile pour débloquer le jour suivant), même si ce n'est pas le même jour.
+    const isoDate=toLocalDateStr(now);
+    const targetDateForPlan=planSessionTargetDate || isoDate;
+    const durationMs=planSessionStartTime?(Date.now()-planSessionStartTime):0;
+    const doneSets=(planSessionSets[0]&&planSessionSets[0].sets ? planSessionSets[0].sets.slice(0,planSessionIndex+(completed?1:0)) : []).map((reps,i)=>({set:i+1,reps}));
+    const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,targetDate:targetDateForPlan,total:planTotalCount,duration:formatDuration(durationMs),sets:doneSets,source:'plan'};
+    workouts.push(workout);
+    try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
+    try{renderHistory();}catch(e){console.error('renderHistory error', e && e.message ? e.message : String(e));}
+    try{renderCalendar();}catch(e){console.error('renderCalendar error', e && e.message ? e.message : String(e));}
+    try{renderStats();}catch(e){console.error('renderStats error', e && e.message ? e.message : String(e));}
+    const difficulty=await askSessionFeedback();
+    workout.difficulty=difficulty;
+    try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
+    regeneratePlanFromAI(difficulty==='hard' ? 'was_hard' : 'extra_reps').catch(()=>{});
+  }
+  syncPlanUI();
+  applyPlanModeUI();
+  updatePlanScreenState();
+  updatePlanSessionUI();
+  if(typeof renderPlanTab==='function') renderPlanTab();
+  showToast(completed ? `Plan terminé : ${planTotalCount} pompes enregistrées !` : `Séance arrêtée : ${planTotalCount} pompes enregistrées.`);
+  planTotalCount=0;
+  planSessionTargetDate=null;
+  const totalEl=document.getElementById('planTotalCount');
+  if(totalEl) totalEl.textContent='0';
+  resetPlanSessionTimer();
+}
+
+
+function syncPlanUI(){
+  const stopBtn=document.getElementById('stopPlanTrainingBtn');
+  if(stopBtn) stopBtn.classList.toggle('hidden', !planSessionActive);
+  const metricsBlock=document.getElementById('planSessionMetrics');
+  if(metricsBlock) metricsBlock.classList.toggle('hidden', !planSessionActive);
+  // Pendant une séance active, on masque tout ce qui n'est pas le compteur en cours :
+  // titre de la séance du jour, détail des sets prévus, progression du plan, jours à venir.
+  const hideDuringSession=['planTodayTitle','planProgressPanel','planFuturePanel'];
+  hideDuringSession.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.toggle('hidden', planSessionActive);
+  });
+  // Active un mode compact via CSS pour garantir que tout tienne sur un seul écran,
+  // quel que soit le nombre de sets ou la taille de l'écran.
+  document.body.classList.toggle('plan-session-active', !!planSessionActive);
+}
+
+
+function applyPlanModeUI(){
+  const planActive = planSessionActive;
+  document.querySelectorAll('#tab-plan .controls button, #tab-plan .metric, #tab-plan .help').forEach(el=>{
+    if(!el) return;
+    if(planActive) el.classList.add('plan-only-show');
+    else el.classList.remove('plan-only-show');
+  });
+  const freeButtons=['nextSetBtn','finishWorkoutBtn','resetCount'];
+  freeButtons.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.toggle('plan-only-hidden', planActive); });
+}
+
+
+function updatePlanScreenState(){
+  const planActive = planSessionActive;
+  ['nextSet','finishWorkout','resetCount'].forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.toggle('plan-session-only', planActive); });
+  const controls=document.querySelectorAll('#tab-plan .controls button, #tab-plan .controls .btn');
+  controls.forEach(el=>{
+    if(el.id==='toggleSession' || el.id==='startCamera') return;
+    if(planActive) el.classList.add('plan-session-only');
+    else el.classList.remove('plan-session-only');
+  });
+}
+
+function pad(n){return String(n).padStart(2,'0')} function toICSDate(d){return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;}
+function downloadCalendarEvent(workout){const start=new Date(),end=new Date(start.getTime()+30*60000);const desc=`Total: ${workout.total} pompes\\nSets: ${workout.sets.map(s=>`Set ${s.set}: ${s.reps}`).join(' | ')}`;const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pompes//FR//EN','BEGIN:VEVENT',`UID:pompes-${Date.now()}@webapp`,`DTSTAMP:${toICSDate(new Date())}`,`DTSTART:${toICSDate(start)}`,`DTEND:${toICSDate(end)}`,`SUMMARY:Séance Pompes - ${workout.total} pompes`,`DESCRIPTION:${desc}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pompes-seance.ics';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200);}
+window.addEventListener('load',async()=>{
+  // Verrouillage natif si le navigateur le supporte (iOS Safari ne le supporte pas ;
+  // le blocage visuel CSS #landscapeBlock reste la protection réelle sur iPhone).
+  try{ if(screen.orientation && screen.orientation.lock) await screen.orientation.lock('portrait'); }catch(e){}
+  // Le Plan est l'onglet actif par défaut, mais son contenu est construit
+  // dynamiquement en JS : on le peuple ici, une fois tout le script chargé.
+  renderPlanTab();
+  try{
+    await Promise.race([
+      startCamera(),
+      new Promise(resolve=>setTimeout(resolve,15000))
+    ]);
+  }catch(e){
+    console.error('startCamera error on boot', e && e.message ? e.message : String(e));
+  }
+  const splash=document.getElementById('splashScreen');
+  const appRoot=document.getElementById('appRoot');
+  appRoot.style.display='';
+  if(splash){
+    splash.classList.add('hidden');
+    setTimeout(()=>{splash.remove();},450);
+  }
+});
+
+
+function formatDuration(ms){
+  const totalSec=Math.floor(ms/1000);
+  const m=Math.floor(totalSec/60);
+  const s=totalSec%60;
+  return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function updateSessionDurationDisplay(){
+  const el=document.getElementById('sessionDuration');
+  if(el && sessionStartTime) el.textContent=formatDuration(Date.now()-sessionStartTime);
+}
+function startSessionTimer(){
+  if(sessionStartTime) return;
+  sessionStartTime=Date.now();
+  sessionTimerInterval=setInterval(updateSessionDurationDisplay,1000);
+}
+function stopSessionTimer(){
+  if(sessionTimerInterval){clearInterval(sessionTimerInterval);sessionTimerInterval=null;}
+}
+function resetSessionTimer(){
+  stopSessionTimer();
+  sessionStartTime=null;
+  const el=document.getElementById('sessionDuration');
+  if(el) el.textContent='00:00';
+}
+
+function updatePlanDurationDisplay(){
+  const el=document.getElementById('planSessionDuration');
+  if(el && planSessionStartTime) el.textContent=formatDuration(Date.now()-planSessionStartTime);
+}
+function startPlanSessionTimer(){
+  if(planSessionStartTime) return;
+  planSessionStartTime=Date.now();
+  planSessionTimerInterval=setInterval(updatePlanDurationDisplay,1000);
+}
+function stopPlanSessionTimer(){
+  if(planSessionTimerInterval){clearInterval(planSessionTimerInterval);planSessionTimerInterval=null;}
+}
+function resetPlanSessionTimer(){
+  stopPlanSessionTimer();
+  planSessionStartTime=null;
+  const el=document.getElementById('planSessionDuration');
+  if(el) el.textContent='00:00';
+}
+function formatPlanRest(sec){
+  const m=Math.floor(sec/60), s=sec%60;
+  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function startPlanRest(seconds, nextLabel){
+  planRestActive=true;
+  planRestRemaining=seconds;
+  planRestTargetTime=Date.now()+seconds*1000;
+  planRestBeepedSeconds=new Set();
+  const panel=document.getElementById('planRestPanel');
+  const display=document.getElementById('planRestDisplay');
+  const text=document.getElementById('planRestText');
+  if(panel) panel.classList.remove('hidden');
+  if(display) display.textContent=formatPlanRest(seconds);
+  if(text) text.textContent=nextLabel || 'Repos avant le prochain set.';
+  clearInterval(planRestTimer);
+  planRestTimer=setInterval(planRestTick,250);
+}
+function planRestTick(){
+  if(!planRestTargetTime) return;
+  const remainingMs=planRestTargetTime-Date.now();
+  const remainingSec=Math.max(0,Math.ceil(remainingMs/1000));
+  if(remainingSec!==planRestRemaining){
+    planRestRemaining=remainingSec;
+    const display=document.getElementById('planRestDisplay');
+    if(display) display.textContent=formatPlanRest(planRestRemaining);
+    if(planRestRemaining<=3 && planRestRemaining>=0 && !planRestBeepedSeconds.has(planRestRemaining)){
+      planRestBeepedSeconds.add(planRestRemaining);
+      playCountdownBeep(planRestRemaining);
+      if(navigator.vibrate) navigator.vibrate(planRestRemaining===0?[120,80,120,80,120,80,200]:100);
+    }
+  }
+  if(remainingMs<=0){
+    stopPlanRest();
+  }
+}
+function stopPlanRest(){
+  clearInterval(planRestTimer);
+  planRestTimer=null;
+  planRestTargetTime=null;
+  planRestActive=false;
+  const panel=document.getElementById('planRestPanel');
+  if(panel) panel.classList.add('hidden');
+}
+const planSkipRestBtn=document.getElementById('planSkipRest');
+if(planSkipRestBtn) planSkipRestBtn.addEventListener('click',()=>{ stopPlanRest(); });
+const stopPlanTrainingBtn=document.getElementById('stopPlanTrainingBtn');
+if(stopPlanTrainingBtn) stopPlanTrainingBtn.addEventListener('click',async()=>{
+  if(!planSessionActive) return;
+  if(await customConfirm(`Arrêter l'entraînement maintenant ? ${planTotalCount} pompes seront enregistrées.`)){
+    finishPlanTraining(false);
+  }
+});
+
+let freeCountdownTimer=null;
+function runFreeCountdown(onComplete){
+  const modal=document.getElementById('freeCountdownModal');
+  const valueEl=document.getElementById('freeCountdownValue');
+  if(!modal||!valueEl){ onComplete(); return; }
+  clearInterval(freeCountdownTimer);
+  let remaining=10;
+  valueEl.textContent=remaining;
+  modal.classList.remove('hidden');
+  try{beep();}catch(_){}
+  freeCountdownTimer=setInterval(()=>{
+    remaining--;
+    valueEl.textContent=remaining;
+    if(remaining>0){ try{beep();}catch(_){} return; }
+    clearInterval(freeCountdownTimer);
+    freeCountdownTimer=null;
+    modal.classList.add('hidden');
+    try{beep();}catch(_){}
+    onComplete();
+  },1000);
+}
+
+let planCountdownTimer=null;
+function runPlanCountdown(onComplete){
+  const modal=document.getElementById('planCountdownModal');
+  const valueEl=document.getElementById('planCountdownValue');
+  if(!modal||!valueEl){ onComplete(); return; }
+  clearInterval(planCountdownTimer);
+  let remaining=10;
+  valueEl.textContent=remaining;
+  modal.classList.remove('hidden');
+  try{beep();}catch(_){}
+  planCountdownTimer=setInterval(()=>{
+    remaining--;
+    valueEl.textContent=remaining;
+    if(remaining>0){ try{beep();}catch(_){} return; }
+    clearInterval(planCountdownTimer);
+    planCountdownTimer=null;
+    modal.classList.add('hidden');
+    try{beep();}catch(_){}
+    onComplete();
+  },1000);
+}
+
+toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(toggleSessionBtn.dataset.countdownDone!=='1'){runFreeCountdown(()=>{toggleSessionBtn.dataset.countdownDone='1';toggleSessionBtn.click();});return;}delete toggleSessionBtn.dataset.countdownDone;if(cameraReady&&!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
+nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
+document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
+document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
+document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent='Prêt';}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{phaseEl.textContent='Prêt';movementLabel.textContent='Repositionnez-vous';}});
+resetBtn.addEventListener('click',()=>{setCount=0;refreshHeader();resetTracking();});
+finishWorkoutBtn.addEventListener('click',()=>{
+  if(totalCount===0 && setCount===0){
+    sessionActive=false;
+    toggleSessionBtn.textContent='Démarrer';
+    phaseEl.textContent='Prêt';
+    showToast('Aucune pompe enregistrée. Appuyez sur Démarrer pour reprendre.',3000);
+    return;
+  }
+  openValidateModal('finish');
+});
+function finalizeWorkout(finalSetReps){
+  if(finalSetReps>0)completedSets.push({set:currentSet,reps:finalSetReps});
+  totalCount = totalCount - setCount + finalSetReps;
+  if(totalCount<=0){
+    completedSets=[];sessionActive=false;
+    toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Prêt';
+    showToast('Aucune pompe enregistrée. Appuyez sur Démarrer pour reprendre.',3000);
+    return;
+  }
+  stopRest();sessionActive=false;
+  const now=new Date();
+  const isoDate=toLocalDateStr(now);
+  const durationMs=sessionStartTime?(Date.now()-sessionStartTime):0;
+  const finalTotal=totalCount;
+  const finalSetsCount=completedSets.length;
+  const finalDurationText=formatDuration(durationMs);
+  const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,total:finalTotal,duration:finalDurationText,sets:[...completedSets]};
+
+  setCount=0;totalCount=0;currentSet=1;completedSets=[];
+  refreshHeader();
+  resetTracking();
+  resetSessionTimer();
+  calibrated=false;
+  toggleSessionBtn.textContent='Démarrer';
+  movementLabel.textContent='Appuyez sur Démarrer';
+  phaseEl.textContent='Terminé';
+
+  animateModalCount('doneModalTotal', finalTotal);
+  document.getElementById('doneModalDuration').textContent=finalDurationText;
+  document.getElementById('doneModalSets').textContent=`${finalSetsCount} set(s) réalisé(s)`;
+  document.getElementById('workoutDoneModal').classList.remove('hidden');
+  const emojiEl=document.getElementById('doneModalEmoji');
+  if(emojiEl){ emojiEl.style.transform='scale(0)'; requestAnimationFrame(()=>{ emojiEl.style.transform='scale(1)'; }); }
+  launchConfetti();
+  triggerVibration();
+
+  workouts.push(workout);
+  if(window.pendingMaxTestCycle){
+    const bestSetReps=workout.sets && workout.sets.length ? Math.max(...workout.sets.map(s=>s.reps||0)) : finalTotal;
+    applyMaxTestResult(bestSetReps);
+  } else if(planProfile) {
+    regeneratePlanFromAI('extra_reps').catch(()=>{});
+  }
+  try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
+  try{renderHistory();}catch(e){console.error('renderHistory error', e && e.message ? e.message : String(e));}
+  try{renderCalendar();}catch(e){console.error('renderCalendar error', e && e.message ? e.message : String(e));}
+  try{renderStats();}catch(e){console.error('renderStats error', e && e.message ? e.message : String(e));}
+  try{setTimeout(()=>{downloadCalendarEvent(workout);},300);}catch(e){console.error('downloadCalendarEvent error', e && e.message ? e.message : String(e));}
+}
+function animateModalCount(elId, target){
+  const el=document.getElementById(elId);
+  if(!el) return;
+  const duration=700;
+  const start=performance.now();
+  const from=0;
+  function step(now){
+    const progress=Math.min(1,(now-start)/duration);
+    const eased=1-Math.pow(1-progress,3);
+    el.textContent=Math.round(from+(target-from)*eased);
+    if(progress<1) requestAnimationFrame(step);
+    else el.textContent=target;
+  }
+  requestAnimationFrame(step);
+}
+function launchConfetti(){
+  const container=document.getElementById('doneModalConfetti');
+  if(!container) return;
+  container.innerHTML='';
+  const colors=['#01696f','#4f98a3','#f2c94c','#eb5757','#6fcf97'];
+  const count=24;
+  for(let i=0;i<count;i++){
+    const piece=document.createElement('div');
+    const color=colors[i%colors.length];
+    const left=Math.random()*100;
+    const delay=Math.random()*0.3;
+    const duration=0.9+Math.random()*0.6;
+    const rotate=Math.random()*360;
+    const size=5+Math.random()*4;
+    piece.style.cssText=`position:absolute;top:-10px;left:${left}%;width:${size}px;height:${size*1.6}px;background:${color};opacity:.9;border-radius:1px;transform:rotate(${rotate}deg);animation:confettiFall ${duration}s ${delay}s ease-in forwards;`;
+    container.appendChild(piece);
+  }
+  setTimeout(()=>{ container.innerHTML=''; }, 2000);
+}
+document.getElementById('closeDoneModal').addEventListener('click',()=>{document.getElementById('workoutDoneModal').classList.add('hidden');});
+
+// Empêche l'écran de se verrouiller pendant une séance active (caméra ou mode manuel).
+// Safari iOS supporte l'API Wake Lock depuis la version 16.4.
+let wakeLockRef = null;
+async function requestWakeLock() {
+  if (wakeLockRef) return;
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLockRef = await navigator.wakeLock.request('screen');
+      wakeLockRef.addEventListener('release', () => { wakeLockRef = null; });
+    }
+  } catch (e) { console.warn('Wake Lock indisponible', e && e.message ? e.message : String(e)); }
+}
+function releaseWakeLock() {
+  if (wakeLockRef) { wakeLockRef.release().catch(()=>{}); wakeLockRef = null; }
+}
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'visible' && (sessionActive || planSessionActive) && !wakeLockRef) {
+    await requestWakeLock();
+  }
+});
+// Surveille l'état de la séance toutes les secondes et gère le verrou en conséquence,
+// sans dépendre de chaque endroit du code qui bascule sessionActive/planSessionActive
+// (évite les oublis : c'est ce qui causait les trous de couverture ci-dessus).
+let wakeLockWasActive = false;
+setInterval(() => {
+  const shouldHold = sessionActive || planSessionActive;
+  if (shouldHold && !wakeLockWasActive) requestWakeLock();
+  else if (!shouldHold && wakeLockWasActive) releaseWakeLock();
+  wakeLockWasActive = shouldHold;
+}, 1000);
+
+function warmUpBackend() {
+  try {
+    const healthUrl = AI_PLAN_API_URL.replace('/api/plan/generate', '/api/health');
+    fetch(healthUrl, { method: 'GET', cache: 'no-store' }).catch(()=>{});
+  } catch (_) {}
+}
+window.addEventListener('load', warmUpBackend);
+</script>
+
+</body>
+</html>

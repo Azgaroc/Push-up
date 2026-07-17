@@ -15,16 +15,33 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
+
+      - name: Create www folder
+        run: |
+          rm -rf www
+          mkdir www
+          cp index.html www/
+          cp logo.jpg www/
+
+          if [ -f app.js ]; then cp app.js www/; fi
+          if [ -f style.css ]; then cp style.css www/; fi
+          if [ -f manifest.json ]; then cp manifest.json www/; fi
+          if [ -f service-worker.js ]; then cp service-worker.js www/; fi
+
+
       - name: Install dependencies
         run: npm install
 
+
       - name: Sync Capacitor
         run: npx cap sync android
+
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -32,11 +49,13 @@ jobs:
           distribution: temurin
           java-version: 21
 
+
       - name: Build APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
+
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
