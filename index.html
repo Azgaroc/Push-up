@@ -1,4 +1,4 @@
-<!-- v133 -->
+<!-- v140 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -22,8 +22,10 @@
     .logo svg{width:24px;height:24px}.topbar{margin-bottom:1rem}.brand h1{margin:0;font-size:1.35rem}.brand p{margin:.15rem 0 0;font-size:.82rem;color:var(--muted)}
     .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem}.counter-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)} .counter{font-size:clamp(4rem,18vw,7rem);font-weight:700;line-height:.92}
     .section-title{font-size:1.4rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--text);margin-bottom:.4rem;}
-    .home-quick-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:.4rem;margin-top:.6rem;}
-    .home-quick-grid .home-nav-btn{background:transparent;color:var(--text);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;padding:.5rem .2rem;min-height:60px;font-size:.72rem;}
+    .home-quick-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.35rem;margin-top:.6rem;}
+    .home-quick-grid .home-nav-btn{background:transparent;color:var(--text);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;padding:.4rem .1rem;min-height:56px;font-size:.62rem;}
+.home-quick-grid .home-nav-btn svg{width:17px;height:17px;}
+.home-quick-grid .home-nav-btn.active{border-color:var(--primary);}
     .camera-shell{position:relative;overflow:hidden;border-radius:1rem;background:#0f1113;aspect-ratio:3/4;margin-top:1rem}.camera-shell video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.camera-shell canvas{display:none}
     .camera-overlay{position:absolute;left:.8rem;right:.8rem;bottom:.8rem;z-index:2}.pill{display:inline-flex;align-items:center;gap:.45rem;border-radius:var(--pill);padding:.45rem .75rem;background:rgba(17,20,24,.62);backdrop-filter:blur(10px);color:#fff;font-size:.78rem}.dot{width:.55rem;height:.55rem;border-radius:50%;background:#9ca3af}.dot.live{background:#22c55e}.dot.warn{background:#f59e0b}
     .grid,.controls{display:grid;gap:.75rem}.controls,.grid,.two-col{grid-template-columns:1fr 1fr}.btn,.chip,.icon-btn,input{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--pill)} .btn{min-height:52px;padding:.9rem 1rem;font-weight:700}.btn-primary{background:var(--primary);color:var(--inv);border:none}.btn-danger{background:var(--text);color:var(--inv);border:none}.icon-btn{width:48px;height:48px}
@@ -38,10 +40,10 @@
     .stepper-btn{font-size:1.6rem;font-weight:700;width:56px;height:56px;}
     .modal-count-label{font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
     .tabs-bar{display:flex;gap:.5rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--pill);padding:.3rem;margin-bottom:1rem;}
-    .tab-btn{flex:1;border:none;background:transparent;color:var(--muted);padding:.7rem 1rem;border-radius:var(--pill);font-weight:700;font-size:.88rem;}
+    .tab-btn{flex:1;border:none;background:transparent;color:var(--muted);padding:.6rem .3rem;border-radius:var(--pill);font-weight:700;font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .tab-btn.active{background:var(--primary);color:var(--inv);}
     .tab-content.hidden{display:none;}
-    body.home-active #tabsBar{display:none;}
+    
     .calendar-item{padding:.85rem 1rem;border-radius:1rem;background:var(--surface2);display:flex;justify-content:space-between;align-items:center;gap:1rem;font-size:.92rem;cursor:pointer;}
     .calendar-item:active{opacity:.7;}
     .calendar-item .cal-date{font-weight:700;}
@@ -146,18 +148,18 @@
 </div>
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
-  <header class="topbar">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v133</p></div></div>
-    <button id="homeShortcutBtn" aria-label="Accueil" style="background:var(--primary);color:#fff;border:none;border-radius:var(--pill);padding:.5rem 1rem;font-weight:700;font-size:.85rem;">Accueil</button>
-    <button class="icon-btn" data-theme-toggle aria-label="Changer de thème" style="margin-left:.4rem;">◐</button>
+  <header class="topbar" style="flex-direction:column;align-items:stretch;">
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v143</p></div></div>
+    <div class="home-quick-grid app-nav-grid" id="globalNavGrid" style="margin-top:.5rem;">
+      <button class="btn home-nav-btn" data-tab="home" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span style="color:var(--text);">Accueil</span></button>
+      <button class="btn home-nav-btn" data-tab="plan" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span style="color:var(--text);">Plan</span></button>
+      <button class="btn home-nav-btn" data-tab="training" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg><span style="color:var(--text);">Libre</span></button>
+      <button class="btn home-nav-btn" data-tab="calendar" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span style="color:var(--text);">Calendrier</span></button>
+      <button class="btn home-nav-btn" data-tab="stats" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span style="color:var(--text);">Stats</span></button>
+      <button class="btn home-nav-btn" data-tab="profile" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg><span style="color:var(--text);">Profil</span></button>
+    </div>
   </header>
-  <div class="tabs-bar" id="tabsBar">
-    <button class="tab-btn active" data-tab="plan">Plan</button>
-    <button class="tab-btn" data-tab="training">Libre</button>
-    <button class="tab-btn" data-tab="calendar">Calendrier</button>
-    <button class="tab-btn" data-tab="stats">Stats</button>
-    <button class="tab-btn" data-tab="profile">Profil</button>
-  </div>
+  
 
   <div id="tab-home" class="tab-content">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.8rem;flex-wrap:wrap;gap:.3rem;">
@@ -166,8 +168,8 @@
           <div id="homeGreeting" style="font-size:1.3rem;font-weight:700;">Bonjour</div>
         </div>
         <div style="display:flex;align-items:center;gap:.35rem;margin-top:.15rem;">
-          <span id="homeGreetingFlame" style="display:none;"><svg viewBox="0 0 24 24" width="15" height="15" fill="var(--primary)" stroke="none"><path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c0-1-.5-1.5-.5-2.5 2 1 3.5 3 3.5 5.5a6 6 0 01-12 0c0-5 4-6 6-11z"/></svg></span>
-          <span id="homeGreetingStreakCount" style="font-size:.9rem;font-weight:600;color:var(--muted);"></span>
+          <span id="homeGreetingFlame" style="display:none;"><svg viewBox="0 0 24 24" width="19" height="19" fill="var(--primary)" stroke="none"><path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c0-1-.5-1.5-.5-2.5 2 1 3.5 3 3.5 5.5a6 6 0 01-12 0c0-5 4-6 6-11z"/></svg></span>
+          <span id="homeGreetingStreakCount" style="font-size:1.05rem;font-weight:700;color:var(--text);"></span>
         </div>
       </div>
       <span id="homeTodayDate" style="color:var(--muted);font-size:.85rem;white-space:nowrap;padding-top:.2rem;"></span>
@@ -200,7 +202,7 @@
             <circle id="homeRingProgress" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.4" stroke-dashoffset="276.4"></circle>
           </svg>
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-            <span style="color:var(--primary);"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="3.5" cy="12" r="2.8" fill="currentColor" stroke="none"/><circle cx="20.5" cy="12" r="2.8" fill="currentColor" stroke="none"/><path d="M6.3 12h11.4M3.5 8.5v7M20.5 8.5v7"/></svg></span>
+            <span style="color:var(--primary);"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" stroke="none"><circle cx="12" cy="5.5" r="3.3"/><path d="M9.5 8.5h5c1 0 1.8.8 1.8 1.8v2.2c2 .3 3.5 2 3.5 4.1 0 2.3-1.9 4.1-4.2 4.1H10c-2.3 0-4.2-1.8-4.2-4.1V13c0-2.3 1.6-4.2 3.7-4.5z"/></svg></span>
             <span id="homeRingNumber" style="font-size:1.15rem;font-weight:800;">0</span>
             <span style="font-size:.6rem;color:var(--muted);">au total</span>
           </div>
@@ -234,7 +236,7 @@
           <div style="font-size:.72rem;color:var(--muted);">séances complétées</div>
         </div>
         <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
-          <div><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--primary)" stroke-width="2.2" stroke-linecap="round"><circle cx="3.5" cy="12" r="2.8" fill="var(--primary)" stroke="none"/><circle cx="20.5" cy="12" r="2.8" fill="var(--primary)" stroke="none"/><path d="M6.3 12h11.4M3.5 8.5v7M20.5 8.5v7"/></svg></div>
+          <div><svg viewBox="0 0 24 24" width="22" height="22" fill="var(--primary)" stroke="none"><circle cx="12" cy="5.5" r="3.3"/><path d="M9.5 8.5h5c1 0 1.8.8 1.8 1.8v2.2c2 .3 3.5 2 3.5 4.1 0 2.3-1.9 4.1-4.2 4.1H10c-2.3 0-4.2-1.8-4.2-4.1V13c0-2.3 1.6-4.2 3.7-4.5z"/></svg></div>
           <div id="homeWeekTotal" style="font-size:1.3rem;font-weight:800;">0</div>
           <div style="font-size:.72rem;color:var(--muted);">pompes au total</div>
         </div>
@@ -246,14 +248,6 @@
       </div>
     </section>
 
-    <div style="margin-top:1rem;color:var(--muted);font-size:.78rem;letter-spacing:.03em;text-transform:uppercase;font-weight:600;">Accès rapide</div>
-    <div class="home-quick-grid" style="margin-top:.5rem;">
-      <button class="btn home-nav-btn" data-tab="calendar" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span style="color:var(--text);">Calendrier</span></button>
-      <button class="btn home-nav-btn" data-tab="stats" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span style="color:var(--text);">Stats</span></button>
-      <button class="btn home-nav-btn" data-tab="plan" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span style="color:var(--text);">Plan</span></button>
-      <button class="btn home-nav-btn" data-tab="training" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg><span style="color:var(--text);">Libre</span></button>
-      <button class="btn home-nav-btn" data-tab="profile" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg><span style="color:var(--text);">Profil</span></button>
-    </div>
   </div>
 
   <div id="tab-training" class="tab-content hidden">
@@ -383,9 +377,36 @@
     </div>
 
     <div id="planActive" class="hidden">
+      <section class="panel">
+        <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+          <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span>Séance du jour</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;gap:1rem;flex-wrap:wrap;">
+          <div>
+            <div id="planTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span></div>
+            <div id="planTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
+            <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
+              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Temps estimé<br><strong id="planTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
+              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"/></svg> Niveau<br><strong id="planTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
+              
+            </div>
+          </div>
+          <div style="position:relative;width:104px;height:104px;flex-shrink:0;">
+            <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
+              <circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface2)" stroke-width="8"></circle>
+              <circle id="planHomeRingProgress" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.4" stroke-dashoffset="276.4"></circle>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+              <span style="color:var(--primary);"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" stroke="none"><circle cx="12" cy="5.5" r="3.3"/><path d="M9.5 8.5h5c1 0 1.8.8 1.8 1.8v2.2c2 .3 3.5 2 3.5 4.1 0 2.3-1.9 4.1-4.2 4.1H10c-2.3 0-4.2-1.8-4.2-4.1V13c0-2.3 1.6-4.2 3.7-4.5z"/></svg></span>
+              <span id="planHomeRingNumber" style="font-size:1.15rem;font-weight:800;">0</span>
+              <span style="font-size:.6rem;color:var(--muted);">au total</span>
+            </div>
+          </div>
+        </div>
+        <button id="planHomeStartBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;display:flex;align-items:center;justify-content:center;gap:.4rem;">▶ COMMENCER LA SÉANCE</button>
+      </section>
       <section class="panel" style="text-align:center;">
-        <div class="section-title">Séance du jour</div>
-        <div id="planTodayTitle" style="font-size:1.3rem;font-weight:700;margin-top:.3rem;">—</div>
+        <div id="planTodayTitle" class="hidden">—</div>
         <div id="planSessionMetrics" class="hidden">
         <div style="position:relative;width:min(60vw,220px);aspect-ratio:1/1;margin:1rem auto 0;">
           <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
@@ -423,7 +444,11 @@
     </div>
   </div>
 <div id="tab-profile" class="tab-content hidden">
-    <section class="panel">
+    <section class="panel" style="display:flex;justify-content:space-between;align-items:center;">
+      <h2 style="margin:0;">Apparence</h2>
+      <button class="icon-btn" data-theme-toggle aria-label="Changer de thème">◐</button>
+    </section>
+    <section class="panel" style="margin-top:.6rem;">
       <h2>Comment vous appeler ?</h2>
       <label for="userNicknameInput">Prénom ou surnom</label>
       <input id="userNicknameInput" type="text" maxlength="24" placeholder="Ex : Alex">
@@ -650,13 +675,6 @@ function askSessionFeedback(){
   });
 }
 const html=document.documentElement,themeBtn=document.querySelector('[data-theme-toggle]');let theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';html.setAttribute('data-theme',theme);themeBtn.addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';html.setAttribute('data-theme',theme)});
-document.getElementById('homeShortcutBtn').addEventListener('click',()=>{
-  if(planSessionActive || sessionActive){
-    showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
-    return;
-  }
-  goToTab('home');
-});
 const $=id=>document.getElementById(id); const video=$('video'), work=$('work'), wctx=work.getContext('2d'), toastEl=$('toast');
 let toastTimer=null;
 function showToast(msg,duration=2600){
@@ -992,6 +1010,7 @@ function renderPlanTab(){
   const titleEl=document.getElementById('planTodayTitle');
   const setsEl=document.getElementById('planTodaySets');
   setsEl.innerHTML='';
+  document.querySelectorAll('.plan-dynamic-card').forEach(el=>el.remove());
 
   let displayTotal=0;
   let todayCompleted=false;
@@ -1017,12 +1036,106 @@ function renderPlanTab(){
     titleEl.innerHTML = todayCompleted
       ? `<span style="color:var(--primary);">✓ Séance effectuée</span> · ${displaySets.length} sets · ${displayTotal} pompes au total`
       : `${displaySets.length} sets · ${displayTotal} pompes au total`;
+    const restSecForToday = (aiToday && aiToday.restSeconds) || 60;
     displaySets.forEach((reps,i)=>{
       const row=document.createElement('div');
-      row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:var(--surface2);border-radius:.8rem;';
-      row.innerHTML=`<span>Set ${i+1}</span><strong style="color:var(--primary);">${reps} pompes</strong>`;
+      row.style.cssText='display:flex;align-items:center;gap:.7rem;padding:.7rem .8rem;background:var(--surface2);border:1px solid var(--border);border-radius:1rem;';
+      row.innerHTML=`
+        <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--primary);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;">${i+1}</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.85rem;letter-spacing:.02em;text-transform:uppercase;">Série ${i+1}</div>
+          <div style="color:var(--muted);font-size:.78rem;">${reps} pompes</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:800;font-size:1rem;">0/${reps}</div>
+          <div style="color:var(--muted);font-size:.7rem;">pompes</div>
+        </div>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0;"><path d="M9 6l6 6-6 6"/></svg>`;
       setsEl.appendChild(row);
     });
+    const restCard=document.createElement('section');
+    restCard.className='panel plan-dynamic-card';
+    restCard.style.marginTop='.6rem';
+    restCard.innerHTML=`
+      <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Temps de repos</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;">
+        <div>
+          <div style="font-size:2.2rem;font-weight:800;line-height:1;">${restSecForToday}</div>
+          <div style="color:var(--muted);font-size:.8rem;">secondes</div>
+        </div>
+        <div style="position:relative;width:64px;height:64px;">
+          <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
+            <circle cx="50" cy="50" r="42" fill="none" stroke="var(--surface2)" stroke-width="10"></circle>
+            <circle cx="50" cy="50" r="42" fill="none" stroke="var(--primary)" stroke-width="10" stroke-linecap="round" stroke-dasharray="264" stroke-dashoffset="66"></circle>
+          </svg>
+        </div>
+      </div>`;
+    setsEl.parentElement.insertBefore(restCard, setsEl.nextSibling);
+
+    const histCard=document.createElement('section');
+    histCard.className='panel plan-dynamic-card';
+    histCard.style.marginTop='.6rem';
+    const days=[];
+    for(let d=6;d>=0;d--){
+      const dt=new Date(); dt.setDate(dt.getDate()-d);
+      const iso=toLocalDateStr(dt);
+      const dayTotal=workouts.filter(w=>w.isoDate===iso).reduce((a,w)=>a+(w.total||0),0);
+      days.push({iso,label:`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`,total:dayTotal});
+    }
+    const maxVal=Math.max(1,...days.map(d=>d.total));
+    const todayIso2=toLocalDateStr(new Date());
+    const barsHtml=days.map(d=>{
+      const h=d.total>0?Math.max(8,Math.round((d.total/maxVal)*64)):4;
+      const isToday=d.iso===todayIso2;
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:.3rem;flex:1;">
+        <div style="font-size:.72rem;font-weight:700;color:${d.total>0?'var(--text)':'var(--muted)'};">${d.total>0?d.total:''}</div>
+        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
+          <div style="width:100%;height:${h}px;border-radius:.4rem;background:${isToday?'var(--primary)':'var(--surface2)'};"></div>
+        </div>
+        <div style="font-size:.68rem;color:var(--muted);">${d.label}</div>
+      </div>`;
+    }).join('');
+    histCard.innerHTML=`
+      <div style="display:flex;justify-content:space-between;align-items:center;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+        <span>Historique récent</span><span style="color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;">pompes</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;gap:.3rem;margin-top:.8rem;">${barsHtml}</div>`;
+    setsEl.parentElement.insertBefore(histCard, restCard.nextSibling);
+  }
+  {
+    const bigNumEl=document.getElementById('planTodayBigNumber');
+    const setsLabelEl=document.getElementById('planTodaySetsLabel');
+    const durationEl=document.getElementById('planTodayDuration');
+    const levelEl=document.getElementById('planTodayLevel');
+    const restEl=document.getElementById('planTodayRest');
+    const ringProgress=document.getElementById('planHomeRingProgress');
+    const ringNumber=document.getElementById('planHomeRingNumber');
+    const startBtn=document.getElementById('planHomeStartBtn');
+    const setCount = isTrainingDay ? (window.lastTodayPlanSnapshot ? window.lastTodayPlanSnapshot.sets.length : 0) : 0;
+    const total = isTrainingDay ? displayTotal : 0;
+    if(bigNumEl) bigNumEl.innerHTML=`${total}<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span>`;
+    if(setsLabelEl) setsLabelEl.textContent = isTrainingDay ? `${setCount} série${setCount>1?'s':''}` : 'Jour de repos';
+    if(durationEl) durationEl.textContent = setCount ? `${Math.max(2,Math.round(setCount*1.4))} min` : '–';
+    if(levelEl){
+      const mx=planProfile.maxReps||0;
+      levelEl.textContent = mx<12?'Débutant':(mx<25?'Novice':(mx<45?'Intermédiaire':(mx<70?'Avancé':(mx<110?'Confirmé':'Élite'))));
+    }
+    if(restEl){
+      const aiDay=getAIPlanForDate(toLocalDateStr(new Date()));
+      restEl.textContent = isTrainingDay ? `${(aiDay && aiDay.restSeconds) || 60}s` : '–';
+    }
+    if(ringProgress && ringNumber){
+      const circumference=276.4;
+      const cumulativeTotal=workouts.reduce((a,w)=>a+(w.total||0),0);
+      ringProgress.setAttribute('stroke-dashoffset', String(circumference-(total>0?circumference:0)));
+      ringNumber.textContent=cumulativeTotal;
+    }
+    if(startBtn){
+      startBtn.style.display = isTrainingDay ? 'flex' : 'none';
+      startBtn.onclick=()=>{ startPlanSession(); };
+    }
   }
   const future=document.getElementById('planFutureSessions');
   if(future){
@@ -1030,63 +1143,57 @@ function renderPlanTab(){
     const nextDates=getNextCalendarDates(7);
     const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
     let nextAdvanceUnlocked=false;
+    const svgCal='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>';
+    const svgCheck='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--inv)" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>';
+    const svgChevron='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>';
     nextDates.forEach((d,idx)=>{
       const isToday = idx===0;
       const isTrainingDayRow = planProfile.days.includes(d.getDay());
-      const label = isToday ? (todayCompleted ? `✓ Aujourd'hui` : `Aujourd'hui`) : `${dayNames[d.getDay()]} ${d.getDate()} ${monthNamesShort[d.getMonth()]}`;
+      const label = isToday ? `Aujourd'hui` : `${dayNames[d.getDay()]} ${d.getDate()} ${monthNamesShort[d.getMonth()]}`;
       const row=document.createElement('div');
+      row.style.cssText='display:flex;align-items:center;gap:.7rem;padding:.75rem .8rem;background:var(--surface2);border:1px solid var(--border);border-radius:1rem;';
       if(!isTrainingDayRow){
-        row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:var(--surface2);border-radius:.8rem;opacity:.6;';
-        row.innerHTML=`<span>${label}</span><span style="color:var(--muted);font-style:italic;">Repos</span>`;
+        row.innerHTML=`
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;">${svgCal}</div>
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:.9rem;">${label}</div>
+            <div style="color:var(--muted);font-size:.78rem;">Jour de repos</div>
+          </div>`;
         future.appendChild(row);
         return;
       }
-      let total;
+      let total, setCountRow;
       if(isToday && todayCompleted){
         total = displayTotal;
+        setCountRow = window.lastTodayPlanSnapshot ? window.lastTodayPlanSnapshot.sets.length : 0;
       }else{
         const aiDay=getAIPlanForDate(toLocalDateStr(d));
         const dIntensity = planProfile.days.indexOf(d.getDay()) + 1;
         const daySets=aiDay && aiDay.sets && aiDay.sets.length ? aiDay.sets : generateDailyTarget(planProfile.maxReps, dIntensity, ratio);
         total=daySets.reduce((a,b)=>a+b,0);
+        setCountRow=daySets.length;
       }
-      const isDoneRow = isToday && todayCompleted;
-      row.style.cssText=`display:flex;flex-direction:column;gap:.4rem;padding:.6rem .8rem;background:${isDoneRow?'rgba(79,152,163,.18)':'var(--surface2)'};border-radius:.8rem;`;
       const isoStr=toLocalDateStr(d);
-      const alreadyDone = workouts.some(w=>w.source==='plan' && (w.targetDate===isoStr || (!w.targetDate && w.isoDate===isoStr)));
-      row.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;"><span${isDoneRow?' style="color:var(--primary);font-weight:600;"':''}>${label}</span><strong style="color:var(--primary);">${total} pompes</strong></div>`;
-      // Seul le tout prochain jour d'entraînement (pas encore réalisé) peut être avancé.
-      // On ne débloque le suivant qu'une fois celui-là fait, jamais plusieurs à la fois.
+      const alreadyDone = (isToday && todayCompleted) || workouts.some(w=>w.source==='plan' && (w.targetDate===isoStr || (!w.targetDate && w.isoDate===isoStr)));
+      row.innerHTML=`
+        <div style="width:32px;height:32px;border-radius:50%;background:${alreadyDone?'var(--primary)':'var(--surface)'};color:${alreadyDone?'var(--inv)':'var(--muted)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${alreadyDone?svgCheck:svgCal}</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.9rem;${isToday?'color:var(--primary);':''}">${label}</div>
+          <div style="color:var(--muted);font-size:.78rem;">${setCountRow} série${setCountRow>1?'s':''}</div>
+        </div>
+        <strong style="color:var(--primary);font-size:.95rem;">${total} pompes</strong>
+        ${svgChevron}`;
+      row.style.cursor='pointer';
       const isNextUnlockableTrainingDay = isTrainingDayRow && !alreadyDone && !nextAdvanceUnlocked && todayCompleted;
       if(isTrainingDayRow && !isToday) nextAdvanceUnlocked=true;
-      if(isNextUnlockableTrainingDay){
-        const advanceBtn=document.createElement('button');
-        advanceBtn.className='btn';
-        advanceBtn.style.cssText='width:100%;font-size:.8rem;padding:.55rem .6rem;';
-        advanceBtn.textContent='Faire cette séance en avance';
-        advanceBtn.addEventListener('click',(e)=>{
-          e.stopPropagation();
-          startPlanSession(isoStr);
-        });
-        row.appendChild(advanceBtn);
-      } else if(!isToday && alreadyDone){
-        const doneTag=document.createElement('div');
-        doneTag.style.cssText='color:var(--primary);font-size:.78rem;font-style:italic;';
-        doneTag.textContent='Déjà effectuée en avance';
-        row.appendChild(doneTag);
-        const redoBtn=document.createElement('button');
-        redoBtn.className='btn';
-        redoBtn.style.cssText='width:100%;font-size:.8rem;padding:.5rem .6rem;margin-top:.3rem;';
-        redoBtn.textContent='Refaire cette séance';
-        redoBtn.addEventListener('click',(e)=>{
-          e.stopPropagation();
-          startPlanSession(isoStr);
-        });
-        row.appendChild(redoBtn);
-      }
+      row.addEventListener('click',()=>{
+        if(isToday && !todayCompleted){ startPlanSession(); }
+        else if(isNextUnlockableTrainingDay || (!isToday && alreadyDone)){ startPlanSession(isoStr); }
+      });
       future.appendChild(row);
     });
   }
+
   if(isTrainingDay){
     const startBtn=document.createElement('button');
     startBtn.className = todayCompleted ? 'btn' : 'btn btn-primary';
@@ -1415,6 +1522,22 @@ if(toggleVibrationBtn){
     if(vibrationEnabled) triggerVibration();
   });
 }
+
+function updateAppNavActiveState(tabName){
+  document.querySelectorAll('.app-nav-grid .home-nav-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.getAttribute('data-tab')===tabName);
+  });
+}
+document.querySelectorAll('.app-nav-grid .home-nav-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    if(planSessionActive || sessionActive){
+      showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+      return;
+    }
+    goToTab(btn.getAttribute('data-tab'));
+  });
+});
+
 function goToTab(tabName){
   const targetBtn=document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
   const targetContent=document.getElementById('tab-'+tabName);
@@ -1431,6 +1554,7 @@ function goToTab(tabName){
   if(tabName==='stats') renderStats();
   if(tabName==='profile') renderProfileTab();
   if(tabName==='plan') renderPlanTab();
+  updateAppNavActiveState(tabName);
 }
 const STREAK_BADGE_LEVELS=[
   {days:3, icon:'🔥', label:'3 jours de suite'},
