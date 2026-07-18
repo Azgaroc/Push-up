@@ -1,5 +1,8 @@
 {
   "appId": "com.pushup.app",
   "appName": "Push-Up",
-  "webDir": "www"
+  "server": {
+    "url": "https://azgaroc.github.io/Push-up/",
+    "cleartext": true
+  }
 }
