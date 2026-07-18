@@ -2,6 +2,30 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+
+<script>
+(async function () {
+  const currentVersion = localStorage.getItem("pushup_version");
+
+  try {
+    const response = await fetch("version.json?nocache=" + Date.now());
+    const data = await response.json();
+
+    if (currentVersion && currentVersion !== data.version) {
+      localStorage.setItem("pushup_version", data.version);
+      window.location.reload(true);
+    }
+
+    if (!currentVersion) {
+      localStorage.setItem("pushup_version", data.version);
+    }
+
+  } catch (error) {
+    console.log("Version check skipped");
+  }
+})();
+</script>
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#01696f" />
