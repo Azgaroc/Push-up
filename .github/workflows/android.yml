@@ -15,6 +15,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Generate version file
+        run: |
+          echo "{\"version\":\"${{ github.run_number }}\"}" > version.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -28,6 +31,7 @@ jobs:
           mkdir www
           cp index.html www/
           cp logo.jpg www/
+          cp version.json www/
 
           if [ -f app.js ]; then cp app.js www/; fi
           if [ -f style.css ]; then cp style.css www/; fi
