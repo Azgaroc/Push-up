@@ -1,7 +1,23 @@
-<!-- v140 -->
+<!-- v141 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <script>
+(async function() {
+  const APP_VERSION = "v140";
+
+  try {
+    const response = await fetch("version.txt?nocache=" + Date.now());
+    const serverVersion = await response.text();
+
+    if (serverVersion.trim() !== APP_VERSION) {
+      window.location.reload(true);
+    }
+  } catch(e) {
+    console.log("Version check skipped");
+  }
+})();
+</script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
   <meta name="theme-color" content="#01696f" />
