@@ -167,7 +167,7 @@
 <div id="toast" style="position: fixed; left: 1rem; right: 1rem; bottom: max(env(safe-area-inset-bottom),1rem); z-index: 250; background: var(--text); color: var(--inv); padding: 0.9rem 1.1rem; border-radius: 1rem; font-size: 0.9rem; text-align: center; box-shadow: rgba(0, 0, 0, 0.25) 0px 8px 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s;">Caméra indisponible : passage en mode manuel. Utilisez les boutons +/- pour compter vos pompes.</div>
 <div class="app" id="appRoot" style="">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v162</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v164</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid" style="margin-top:.5rem;">
       <button class="btn home-nav-btn active" data-tab="home" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"></path><path d="M6 10v9h12v-9"></path></svg><span style="color:var(--text);">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h4"></path></svg><span style="color:var(--text);">Plan</span></button>
@@ -238,7 +238,7 @@
         <span id="homeProgressWeekLabel" style="font-size:.95rem;font-weight:600;">Semaine 1 sur 4 (cycle 1)</span>
         <span id="homeProgressPercent" style="font-weight:700;">0%</span>
       </div>
-      <div id="homeProgressBar" style="display:flex;gap:.25rem;margin-top:.5rem;"><div style="flex: 1 1 0%; height: 6px; border-radius: 3px; background: var(--primary);"></div><div style="flex: 1 1 0%; height: 6px; border-radius: 3px; background: var(--surface2);"></div><div style="flex: 1 1 0%; height: 6px; border-radius: 3px; background: var(--surface2);"></div><div style="flex: 1 1 0%; height: 6px; border-radius: 3px; background: var(--surface2);"></div></div>
+      <div id="homeProgressBar" style="height: 6px; border-radius: 3px; background: var(--surface2); overflow: hidden;"><div style="height:100%;border-radius:3px;background:var(--primary);width:0%;transition:width .3s ease;"></div></div>
       <div id="homeProgressBadges" style="display:flex;gap:1rem;margin-top:.6rem;flex-wrap:wrap;font-size:.78rem;color:var(--muted);"><span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><rect x="4" y="8" width="16" height="12" rx="2"></rect><path d="M12 8V4M9 4h6"></path><circle cx="9" cy="14" r="1"></circle><circle cx="15" cy="14" r="1"></circle></svg> Plan IA actif</span><span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h16"></path></svg> Rythme stable</span><span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M5 20c0-8 6-14 14-14 0 8-6 14-14 14zM5 20c2-4 5-7 9-9"></path></svg> Reprise en douceur</span></div>
       <div id="homeProgressSummary" style="font-size:.85rem;color:var(--text);margin-top:.4rem;"></div>
     </section>
@@ -882,10 +882,33 @@ function triggerVibration(){
   if(!vibrationEnabled) return;
   try{ if(navigator.vibrate) navigator.vibrate(80); }catch(e){}
 }
+let iosSilentSwitchUnlocked=false;
+function unlockIOSSilentSwitch(){
+  if(iosSilentSwitchUnlocked) return;
+  iosSilentSwitchUnlocked=true;
+  try{
+    if(navigator.audioSession) navigator.audioSession.type='playback';
+  }catch(e){}
+  try{
+    const silentAudioSrc='data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCA////////////////////////////////////////////////////////////////////8AAAA5TEFNRTMuMTAwAqUAAAAAAAAAABQgJAUHQQAB9AAAAnGuOfCngAAAAAAAAAAAAAAAAAAAAAA=';
+    const audioEl=document.createElement('audio');
+    audioEl.setAttribute('x-webkit-airplay','deny');
+    audioEl.preload='auto';
+    audioEl.loop=true;
+    audioEl.src=silentAudioSrc;
+    audioEl.volume=0.01;
+    audioEl.play().catch(()=>{});
+    window.__iosSilentAudioEl=audioEl;
+  }catch(e){}
+}
+['touchstart','mousedown','click'].forEach(evt=>{
+  document.addEventListener(evt, unlockIOSSilentSwitch, {once:true, passive:true});
+});
 function beep(freq=880,duration=150){
   triggerVibration();
   if(!soundEnabled) return;
   try{
+    unlockIOSSilentSwitch();
     if(!audioCtx || audioCtx.state==='closed') audioCtx=new (window.AudioContext||window.webkitAudioContext)();
     if(audioCtx.state==='suspended' || audioCtx.state==='interrupted') audioCtx.resume().catch(()=>{});
     const osc=audioCtx.createOscillator();
@@ -2032,12 +2055,8 @@ function renderHomeTab(){
     const pct=Math.min(100, Math.round((trainedDaysThisWeek.size/plannedDaysThisWeek)*100));
     if(percentEl) percentEl.textContent=`${pct}%`;
     if(barEl){
-      barEl.innerHTML='';
-      for(let s=0;s<totalPlanWeeks;s++){
-        const seg=document.createElement('div');
-        seg.style.cssText=`flex:1;height:6px;border-radius:3px;background:${s<weekNum?'var(--primary)':'var(--surface2)'};`;
-        barEl.appendChild(seg);
-      }
+      barEl.style.cssText='height:6px;border-radius:3px;background:var(--surface2);overflow:hidden;';
+      barEl.innerHTML=`<div style="height:100%;border-radius:3px;background:var(--primary);width:${pct}%;transition:width .3s ease;"></div>`;
     }
     if(badgesEl){
       badgesEl.innerHTML='';
