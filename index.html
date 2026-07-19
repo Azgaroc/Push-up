@@ -1,4 +1,4 @@
-<!-- v173 -->
+<!-- v168 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -57,17 +57,6 @@
     .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}.chip{padding:.65rem .9rem;font-weight:700}.chip.active{background:var(--primary);color:var(--inv);border-color:transparent}
     .theme-opt{padding:.55rem 1rem;font-weight:700;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:.82rem;}
     .theme-opt.active{background:var(--primary);color:var(--inv);border-color:transparent;}
-
-    @media (max-width: 480px) and (pointer: coarse){
-      .app{padding-top:max(env(safe-area-inset-top),1.35rem)}
-      .topbar{margin-top:.25rem}
-      .brand{padding-top:.35rem}
-    }
-    @supports (padding-top: env(safe-area-inset-top)){
-      @media (max-width: 480px) and (pointer: coarse){
-        .app{padding-top:max(env(safe-area-inset-top),1.6rem)}
-      }
-    }
     .switch{position:relative;width:48px;height:28px;flex-shrink:0;border-radius:999px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:background .2s ease;}
     .switch.on{background:var(--primary);border-color:transparent;}
     .switch .switch-knob{position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s ease;}
@@ -200,7 +189,7 @@
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v173</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v168</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid" style="margin-top:.5rem;">
       <button class="btn home-nav-btn" data-tab="home" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span style="color:var(--text);">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span style="color:var(--text);">Plan</span></button>
@@ -2783,48 +2772,22 @@ window.addEventListener('pagehide',stopCameraResources);
 async function startCamera(){
   if(stream) return;
   try{
-    if(!window.isSecureContext){
-      throw new Error('secure-context-required');
-    }
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
-      throw new Error('media-devices-unavailable');
-    }
     cameraStatus.textContent='Chargement du modèle…';
     await tf.setBackend('webgl');
     await tf.ready();
     if(!detector) detector=await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet,{modelType:poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING});
-    const isAndroid=/Android/i.test(navigator.userAgent||'');
-    const constraints=isAndroid
-      ? {video:{facingMode:{ideal:'user'},width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false}
-      : {video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false};
-    try{
-      stream=await navigator.mediaDevices.getUserMedia(constraints);
-    }catch(err){
-      try{
-        stream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});
-      }catch(err2){
-        throw err2;
-      }
-    }
-    video.autoplay=true; video.muted=true; video.playsInline=true; video.setAttribute('playsinline','true'); video.setAttribute('webkit-playsinline','true'); video.srcObject=stream;
-    await new Promise(resolve=>{
-      if(video.readyState>=2 || video.videoWidth>0) return resolve();
-      const done=()=>resolve();
-      video.addEventListener('loadedmetadata',done,{once:true});
-      video.addEventListener('canplay',done,{once:true});
-      setTimeout(done,1500);
-    });
-    try{ await video.play(); }catch(e){}
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
+    video.setAttribute('playsinline',true); video.setAttribute('webkit-playsinline',true); video.srcObject=stream; await video.play();
     cameraReady=true; localStorage.setItem('cameraGranted','1'); cameraStatus.textContent='Caméra active'; cameraDot.className='dot live'; movementLabel.textContent='Appuyez sur Démarrer'; const _eb=document.getElementById('enableCameraBtn'); if(_eb) _eb.classList.add('hidden');
     toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent='Prêt';
     if(!rafId) rafId=requestAnimationFrame(detectLoop);
   }catch(e){
-    cameraStatus.textContent='Accès caméra bloqué';cameraDot.className='dot warn';
+    cameraStatus.textContent='Accès refusé';cameraDot.className='dot warn';
     stopCameraResources();
     manualMode=true;
     toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent='Prêt';
     movementLabel.textContent='Mode manuel (sans caméra)';
-    showToast('Android bloque souvent la caméra si la page n'est pas en HTTPS ou si le navigateur n'accorde pas getUserMedia. Ouvrez l'app via HTTPS, autorisez la caméra dans les paramètres du navigateur, puis réessayez.',5500);
+    showToast('Caméra indisponible : passage en mode manuel. Utilisez les boutons +/- pour compter vos pompes.',4500);
   }
 }
 function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;phaseEl.textContent='Prêt';}
