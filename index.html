@@ -50,8 +50,21 @@
     .camera-shell{position:relative;overflow:hidden;border-radius:1rem;background:#0f1113;aspect-ratio:3/4;margin-top:1rem}.camera-shell video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.camera-shell canvas{display:none}
     .camera-overlay{position:absolute;left:.8rem;right:.8rem;bottom:.8rem;z-index:2}.pill{display:inline-flex;align-items:center;gap:.45rem;border-radius:var(--pill);padding:.45rem .75rem;background:rgba(17,20,24,.62);backdrop-filter:blur(10px);color:#fff;font-size:.78rem}.dot{width:.55rem;height:.55rem;border-radius:50%;background:#9ca3af}.dot.live{background:#22c55e}.dot.warn{background:#f59e0b}
     .grid,.controls{display:grid;gap:.75rem}.controls,.grid,.two-col{grid-template-columns:1fr 1fr}.btn,.chip,.icon-btn,input{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--pill)} .btn{min-height:52px;padding:.9rem 1rem;font-weight:700}.btn-primary{background:var(--primary);color:var(--inv);border:none}.btn-danger{background:var(--text);color:var(--inv);border:none}.icon-btn{width:48px;height:48px}
-    .metric span,label,h2{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.35rem}.metric strong{font-size:1.45rem} .metric{padding:1rem} input{width:100%;min-height:48px;padding:0 .9rem;background:var(--surface2)}
+    .metric span,label,h2{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.35rem;font-weight:700;}.metric strong{font-size:1.45rem} .metric{padding:1rem} input{width:100%;min-height:48px;padding:0 .9rem;background:var(--surface2)}
     .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}.chip{padding:.65rem .9rem;font-weight:700}.chip.active{background:var(--primary);color:var(--inv);border-color:transparent}
+    .theme-opt{padding:.55rem 1rem;font-weight:700;border-radius:999px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:.82rem;}
+    .theme-opt.active{background:var(--primary);color:var(--inv);border-color:transparent;}
+    .switch{position:relative;width:48px;height:28px;flex-shrink:0;border-radius:999px;background:var(--surface2);border:1px solid var(--border);cursor:pointer;transition:background .2s ease;}
+    .switch.on{background:var(--primary);border-color:transparent;}
+    .switch .switch-knob{position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);transition:transform .2s ease;}
+    .switch.on .switch-knob{transform:translateX(20px);}
+    .pref-row{display:flex;align-items:center;gap:.8rem;padding:.7rem 0;}
+    .pref-row+.pref-row{border-top:1px solid var(--border);}
+    .pref-icon{width:2.2rem;height:2.2rem;border-radius:50%;background:color-mix(in srgb, var(--primary) 14%, transparent);display:flex;align-items:center;justify-content:center;color:var(--primary);flex-shrink:0;}
+    .pref-text{flex:1;}
+    .pref-text .pref-title{font-weight:700;font-size:.92rem;}
+    .pref-text .pref-sub{color:var(--muted);font-size:.78rem;margin-top:.1rem;}
+
     .history-list{display:grid;gap:.6rem}.history-item{padding:.85rem 1rem;border-radius:1rem;background:var(--surface2);display:flex;justify-content:space-between;gap:1rem;font-size:.92rem}.hidden{display:none!important}.rest-time{font-size:clamp(2.8rem,12vw,4rem);font-weight:700}.help p,.help li{color:var(--muted);font-size:.92rem}
     .modal-overlay{position:fixed;inset:0;background:rgba(10,10,10,.6);display:flex;align-items:center;justify-content:center;z-index:100;padding:1.5rem;}
     @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(320px) rotate(540deg);opacity:0;}}
@@ -157,7 +170,7 @@
 }
 </style>
 </head>
-<body class="home-active">
+<body class="">
 
 <div id="landscapeBlock">
   <div style="font-size:3rem;">📱</div>
@@ -167,19 +180,19 @@
 <div id="toast" style="position: fixed; left: 1rem; right: 1rem; bottom: max(env(safe-area-inset-bottom),1rem); z-index: 250; background: var(--text); color: var(--inv); padding: 0.9rem 1.1rem; border-radius: 1rem; font-size: 0.9rem; text-align: center; box-shadow: rgba(0, 0, 0, 0.25) 0px 8px 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s;">Caméra indisponible : passage en mode manuel. Utilisez les boutons +/- pour compter vos pompes.</div>
 <div class="app" id="appRoot" style="">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v164</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v166</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid" style="margin-top:.5rem;">
-      <button class="btn home-nav-btn active" data-tab="home" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"></path><path d="M6 10v9h12v-9"></path></svg><span style="color:var(--text);">Accueil</span></button>
+      <button class="btn home-nav-btn" data-tab="home" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"></path><path d="M6 10v9h12v-9"></path></svg><span style="color:var(--text);">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h4"></path></svg><span style="color:var(--text);">Plan</span></button>
       <button class="btn home-nav-btn" data-tab="training" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6z"></path></svg><span style="color:var(--text);">Libre</span></button>
       <button class="btn home-nav-btn" data-tab="calendar" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg><span style="color:var(--text);">Calendrier</span></button>
       <button class="btn home-nav-btn" data-tab="stats" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"></path></svg><span style="color:var(--text);">Stats</span></button>
-      <button class="btn home-nav-btn" data-tab="profile" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path></svg><span style="color:var(--text);">Profil</span></button>
+      <button class="btn home-nav-btn active" data-tab="profile" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path></svg><span style="color:var(--text);">Profil</span></button>
     </div>
   </header>
   
 
-  <div id="tab-home" class="tab-content">
+  <div id="tab-home" class="tab-content hidden">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.8rem;flex-wrap:wrap;gap:.3rem;">
       <div>
         <div style="display:flex;align-items:center;gap:.4rem;">
@@ -662,28 +675,37 @@
       </section>
     </div>
   </div>
-<div id="tab-profile" class="tab-content hidden">
+<div id="tab-profile" class="tab-content">
     <section class="panel" style="display:flex;justify-content:space-between;align-items:center;">
       <h2 style="margin:0;">Apparence</h2>
-      <button class="icon-btn" data-theme-toggle="" aria-label="Changer de thème">◐</button>
+      <div style="display:flex;gap:.3rem;background:var(--surface2);border-radius:999px;padding:.25rem;">
+        <button class="theme-opt" data-mode="dark">Dark</button>
+        <button class="theme-opt active" data-mode="system">System</button>
+        <button class="theme-opt" data-mode="light">Light</button>
+      </div>
     </section>
+
     <section class="panel" style="margin-top:.6rem;">
-      <h2>Comment vous appeler ?</h2>
+      <h2>Profil</h2>
       <label for="userNicknameInput">Prénom ou surnom</label>
       <input id="userNicknameInput" type="text" maxlength="24" placeholder="Ex : Alex">
-      <button id="saveUserNicknameBtn" class="btn btn-primary" style="width:100%;margin-top:.6rem;">Enregistrer</button>
+      <div id="nicknameSavedHint" style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-size:.82rem;margin-top:.6rem;opacity:0;transition:opacity .3s ease;">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg>
+        <span>Enregistré automatiquement</span>
+      </div>
     </section>
+
     <div id="profileEmptyState" class="hidden">
-      <section class="panel" style="text-align:center;">
+      <section class="panel" style="text-align:center;margin-top:.6rem;">
         <h2>Aucun plan actif</h2>
         <p style="color:var(--muted);font-size:.9rem;margin:.6rem 0 1rem;">Créez d'abord votre plan d'entraînement dans l'onglet Plan : c'est là que vous indiquez votre nombre de pompes maximum et vos jours d'entraînement.</p>
         <button id="goToPlanFromProfileBtn" class="btn btn-primary" style="width:100%;">Aller à l'onglet Plan</button>
       </section>
     </div>
+
     <div id="profileFormWrap">
-    <section class="panel">
-      <h2>Mon profil</h2>
-      <label style="margin-top:.6rem;">Jours d'entraînement</label>
+    <section class="panel" style="margin-top:.6rem;">
+      <h2>Jours d'entraînement</h2>
       <div class="chips" id="planDaysChipsEdit">
         <button class="chip active" data-day="1">Lun</button>
         <button class="chip active" data-day="2">Mar</button>
@@ -693,34 +715,59 @@
         <button class="chip active" data-day="6">Sam</button>
         <button class="chip active" data-day="0">Dim</button>
       </div>
-      <button id="savePlanSettingsBtn" class="btn btn-primary" style="width:100%;margin-top:.7rem;">Enregistrer les modifications</button>
+      <div style="color:var(--muted);font-size:.78rem;margin-top:.5rem;">Utilisé pour planifier votre programme</div>
+      <button id="savePlanSettingsBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;">Enregistrer les modifications</button>
     </section>
-    <button id="resetPlanBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le plan</button>
+
     <section class="panel" style="margin-top:.6rem;">
       <h2>Préférences</h2>
-      <div style="display:flex;justify-content:space-around;gap:.6rem;margin-top:.6rem;">
-        <button id="toggleSoundBtn" class="icon-btn" aria-label="Activer/désactiver le son" style="flex: 1 1 0%; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; padding: 0.7rem; color: var(--primary); opacity: 1;">
-          <span id="toggleSoundIcon" style="width:22px;height:22px;display:inline-flex;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4V5z"></path><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"></path></svg></span>
-          <span style="font-size:.7rem;color:var(--text);">Son</span>
-        </button>
-        <button id="toggleVibrationBtn" class="icon-btn" aria-label="Activer/désactiver le vibreur" style="flex: 1 1 0%; display: flex; flex-direction: column; align-items: center; gap: 0.3rem; padding: 0.7rem; color: var(--primary); opacity: 1;">
-          <span id="toggleVibrationIcon" style="width:22px;height:22px;display:inline-flex;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="4" width="10" height="16" rx="2"></rect><path d="M3 9v6M21 9v6"></path></svg></span>
-          <span style="font-size:.7rem;color:var(--text);">Vibreur</span>
-        </button>
+      <div class="pref-row">
+        <div class="pref-icon"><span id="toggleSoundIcon" style="width:18px;height:18px;display:inline-flex;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4V5z"></path><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"></path></svg></span></div>
+        <div class="pref-text">
+          <div class="pref-title">Sons de séance</div>
+          <div class="pref-sub">Bips de début et fin</div>
+        </div>
+        <div id="toggleSoundBtn" class="switch on" role="switch" aria-label="Activer/désactiver le son"><div class="switch-knob"></div></div>
+      </div>
+      <div class="pref-row">
+        <div class="pref-icon"><span id="toggleVibrationIcon" style="width:18px;height:18px;display:inline-flex;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="4" width="10" height="16" rx="2"></rect><path d="M3 9v6M21 9v6"></path></svg></span></div>
+        <div class="pref-text">
+          <div class="pref-title">Vibrations</div>
+          <div class="pref-sub">Retour haptique pendant la séance</div>
+        </div>
+        <div id="toggleVibrationBtn" class="switch on" role="switch" aria-label="Activer/désactiver le vibreur"><div class="switch-knob"></div></div>
       </div>
     </section>
+
+    <section class="panel" style="margin-top:.6rem;">
+      <h2>Plan</h2>
+      <button id="resetPlanBtn" class="pref-row" style="width:100%;background:none;border:none;text-align:left;cursor:pointer;padding:.7rem 0;">
+        <div class="pref-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
+        <div class="pref-text">
+          <div class="pref-title">Réinitialiser le plan</div>
+          <div class="pref-sub">Supprime le programme actuel, conserve votre historique</div>
+        </div>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>
+      </button>
+    </section>
     </div>
+
     <section class="panel" style="margin-top:.6rem;border:1px solid color-mix(in srgb, #ef4444 40%, var(--border));">
-      <h2 style="color:#ef4444;">Zone de danger</h2>
-      <p style="color:var(--muted);font-size:.85rem;margin:.4rem 0 .8rem;">Cette action efface définitivement toutes vos données (plan, historique, séances, préférences) et remet l'application dans son état initial, comme si elle venait d'être installée.</p>
-      <button id="fullResetBtn" class="btn btn-danger" style="width:100%;">Réinitialisation complète</button>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:.8rem;flex-wrap:wrap;">
+        <div>
+          <h2 style="color:#ef4444;margin:0;">Zone de danger</h2>
+          <p style="color:var(--muted);font-size:.82rem;margin:.4rem 0 0;">Supprime définitivement vos séances, statistiques et préférences.</p>
+        </div>
+        <button id="fullResetBtn" class="btn btn-danger" style="white-space:nowrap;">Réinitialiser tout</button>
+      </div>
     </section>
     <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v65</div>
   </div>
+
 <div id="tab-calendar" class="tab-content hidden">
     <section class="panel" id="weeklyStreakPanel" style="display:flex;align-items:center;gap:.9rem;cursor:pointer;">
       <div style="width:2.6rem;height:2.6rem;border-radius:50%;background:color-mix(in srgb, var(--primary) 16%, transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <div id="streakFlame" style="width:1.4rem;height:1.4rem;color:var(--primary);">
+        <div id="streakFlame" style="width: 1.4rem; height: 1.4rem; color: var(--primary); opacity: 0.35;">
           <svg viewBox="0 0 24 24" fill="currentColor" style="width:100%;height:100%;">
             <path d="M12 2c1 3-2 4-2 7 0 1.5 1 2.5 2 2.5s2-1 2-2.2c1.2 1 2 2.6 2 4.2 0 3-2.2 5.5-6 5.5s-6.5-2.7-6.5-6.2c0-4 2.5-6.3 4.5-9C8.5 4.5 10 3 12 2z"></path>
           </svg>
@@ -735,11 +782,11 @@
     <section class="panel" style="margin-top:.6rem;">
       <div class="cal-nav">
         <button id="calPrevMonth" class="icon-btn">‹</button>
-        <h2 id="calMonthLabel" style="text-transform:uppercase;letter-spacing:.05em;">Juillet 2026</h2>
+        <h2 id="calMonthLabel" style="text-transform:uppercase;letter-spacing:.05em;">JUILLET 2026</h2>
         <button id="calNextMonth" class="icon-btn">›</button>
       </div>
       <div class="cal-weekdays"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-      <div id="calGrid" class="cal-grid"></div>
+      <div id="calGrid" class="cal-grid"><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day"><span>1</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>2</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>3</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>4</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>5</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>6</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>7</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>8</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>9</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>10</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>11</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>12</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>13</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>14</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>15</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>16</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>17</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>18</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day today selected"><span>19</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>20</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>21</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>22</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>23</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>24</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>25</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>26</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>27</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>28</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>29</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>30</span><span class="cal-dot cal-dot-empty"></span></div><div class="cal-day"><span>31</span><span class="cal-dot cal-dot-empty"></span></div></div>
     </section>
     <section class="panel" id="calDaySummaryPanel" style="margin-top:.6rem;display:flex;align-items:center;gap:.8rem;">
       <div style="width:2.4rem;height:2.4rem;border-radius:50%;background:color-mix(in srgb, var(--primary) 16%, transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--primary);">
@@ -747,11 +794,11 @@
       </div>
       <div style="flex:1;">
         <div id="calDaySummaryDate" style="font-weight:700;">Aujourd'hui</div>
-        <div id="calDaySummaryStatus" style="color:var(--primary);font-size:.85rem;font-weight:600;"></div>
-        <div id="calDaySummaryDetail" style="color:var(--muted);font-size:.82rem;margin-top:.1rem;"></div>
+        <div id="calDaySummaryStatus" style="color:var(--primary);font-size:.85rem;font-weight:600;">Séance planifiée</div>
+        <div id="calDaySummaryDetail" style="color:var(--muted);font-size:.82rem;margin-top:.1rem;">25 pompes · 3 séries</div>
       </div>
     </section>
-    <button id="calDaySummaryAction" class="btn btn-primary hidden" style="width:100%;margin-top:.6rem;">▶ Commencer la séance</button>
+    <button id="calDaySummaryAction" class="btn btn-primary" style="width:100%;margin-top:.6rem;">▶ Commencer la séance</button>
     <section class="panel" style="margin-top:.6rem;">
       <div style="font-weight:700;margin-bottom:.6rem;">Données et sauvegarde</div>
       <div style="display:flex;gap:.5rem;">
@@ -777,7 +824,7 @@
         </div>
         <div style="position:relative;">
           <button id="statsRangeBtn" class="chip active" style="border-radius:999px;display:flex;align-items:center;gap:.3rem;">
-            <span id="statsChartRange">4 sem.</span>
+            <span id="statsChartRange"></span>
             <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
           </button>
           <div id="statsRangeMenu" class="hidden" style="position:absolute;right:0;top:110%;background:var(--surface2);border:1px solid var(--border);border-radius:.6rem;overflow:hidden;z-index:5;min-width:90px;">
@@ -788,7 +835,7 @@
         </div>
       </div>
       <svg id="statsProgressChart" viewBox="0 0 300 150" style="width:100%;height:150px;margin-top:.4rem;overflow:visible;"></svg>
-      <div id="statsChartEmpty" class="hidden" style="text-align:center;color:var(--muted);font-size:.85rem;padding:1rem 0;">Pas encore assez de données pour afficher une tendance.</div>
+      <div id="statsChartEmpty" class="" style="text-align:center;color:var(--muted);font-size:.85rem;padding:1rem 0;">Pas encore assez de données pour afficher une tendance.</div>
     </section>
 
     <section class="panel" style="margin-top:.6rem;">
@@ -814,12 +861,12 @@
 
     <section class="panel hidden" style="margin-top:.6rem;">
       <h2>Badges</h2>
-      <div id="badgesGrid" style="display:flex;gap:.6rem;margin-top:.6rem;overflow-x:auto;padding-bottom:.2rem;"></div>
+      <div id="badgesGrid" style="display:flex;gap:.6rem;margin-top:.6rem;overflow-x:auto;padding-bottom:.2rem;"><div style="flex: 0 0 auto; width: 64px; text-align: center; opacity: 0.35;"><div style="width:48px;height:48px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">🔒</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">100</div></div><div style="flex: 0 0 auto; width: 64px; text-align: center; opacity: 0.35;"><div style="width:48px;height:48px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">🔒</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">500</div></div><div style="flex: 0 0 auto; width: 64px; text-align: center; opacity: 0.35;"><div style="width:48px;height:48px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">🔒</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">1000</div></div><div style="flex: 0 0 auto; width: 64px; text-align: center; opacity: 0.35;"><div style="width:48px;height:48px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">🔒</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">2500</div></div><div style="flex: 0 0 auto; width: 64px; text-align: center; opacity: 0.35;"><div style="width:48px;height:48px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">🔒</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">5000</div></div><div style="flex: 0 0 auto; width: 64px; text-align: center; opacity: 0.35;"><div style="width:48px;height:48px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">🔒</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">10000</div></div></div>
     </section>
 
     <section class="panel" style="margin-top:.6rem;">
       <div style="font-weight:800;font-size:1.05rem;margin-bottom:.4rem;">Évolution (30 derniers jours)</div>
-      <canvas id="progressChart" width="400" height="180" style="width:100%;height:180px;margin-top:.3rem;"></canvas>
+      <canvas id="progressChart" width="1029" height="540" style="width:100%;height:180px;margin-top:.3rem;"></canvas>
     </section>
 
     <section class="panel" style="margin-top:.6rem;">
@@ -971,7 +1018,30 @@ function askSessionFeedback(){
     hardBtn.addEventListener('click',onHard);
   });
 }
-const html=document.documentElement,themeBtn=document.querySelector('[data-theme-toggle]');let theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';html.setAttribute('data-theme',theme);themeBtn.addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';html.setAttribute('data-theme',theme)});
+const html=document.documentElement;
+const THEME_KEY='pref_theme_mode';
+function computeEffectiveTheme(mode){
+  if(mode==='system') return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+  return mode;
+}
+function applyThemeMode(mode){
+  html.setAttribute('data-theme', computeEffectiveTheme(mode));
+  document.querySelectorAll('.theme-opt').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.mode===mode);
+  });
+}
+let themeMode = localStorage.getItem(THEME_KEY) || 'system';
+applyThemeMode(themeMode);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{
+  if(themeMode==='system') applyThemeMode('system');
+});
+document.querySelectorAll('.theme-opt').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    themeMode = btn.dataset.mode;
+    localStorage.setItem(THEME_KEY, themeMode);
+    applyThemeMode(themeMode);
+  });
+});
 const $=id=>document.getElementById(id); const video=$('video'), work=$('work'), wctx=work.getContext('2d'), toastEl=$('toast');
 let toastTimer=null;
 function showToast(msg,duration=2600){
@@ -1832,29 +1902,37 @@ function initUserNicknameField(){
 })();
 
 initUserNicknameField();
-const saveUserNicknameBtn=document.getElementById('saveUserNicknameBtn');
-if(saveUserNicknameBtn){
-  saveUserNicknameBtn.addEventListener('click',()=>{
-    const input=document.getElementById('userNicknameInput');
-    const val=(input && input.value || '').trim().slice(0,24);
-    localStorage.setItem('user_nickname', val);
-    showToast(val ? `Enregistré, à bientôt ${val} !` : 'Surnom effacé.', 2200);
-    renderHomeTab();
+const nicknameInputEl=document.getElementById('userNicknameInput');
+if(nicknameInputEl){
+  let nicknameSaveTimer=null;
+  nicknameInputEl.addEventListener('input',()=>{
+    clearTimeout(nicknameSaveTimer);
+    nicknameSaveTimer=setTimeout(()=>{
+      const val=(nicknameInputEl.value||'').trim().slice(0,24);
+      localStorage.setItem('user_nickname', val);
+      renderHomeTab();
+      const hint=document.getElementById('nicknameSavedHint');
+      if(hint){
+        hint.style.opacity='1';
+        clearTimeout(hint._fadeTimer);
+        hint._fadeTimer=setTimeout(()=>{hint.style.opacity='0';},1800);
+      }
+    },500);
   });
 }
 function updateSoundBtnUI(){
   const btn=document.getElementById('toggleSoundBtn');
   const icon=document.getElementById('toggleSoundIcon');
   if(!btn||!icon) return;
-  icon.innerHTML = soundEnabled ? `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>` : `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M16 9l5 6M21 9l-5 6"/></svg>`;
-  btn.style.opacity = soundEnabled ? '1' : '.5';
+  icon.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"/></svg>`;
+  btn.classList.toggle('on', soundEnabled);
 }
 function updateVibrationBtnUI(){
   const btn=document.getElementById('toggleVibrationBtn');
   const icon=document.getElementById('toggleVibrationIcon');
   if(!btn||!icon) return;
-  icon.innerHTML = vibrationEnabled ? `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M3 9v6M21 9v6"/></svg>` : `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M3 9v6M21 9v6M5 5l14 14"/></svg>`;
-  btn.style.opacity = vibrationEnabled ? '1' : '.5';
+  icon.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M3 9v6M21 9v6"/></svg>`;
+  btn.classList.toggle('on', vibrationEnabled);
 }
 const toggleSoundBtn=document.getElementById('toggleSoundBtn');
 if(toggleSoundBtn){
