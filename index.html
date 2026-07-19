@@ -167,7 +167,7 @@
 <div id="toast" style="position: fixed; left: 1rem; right: 1rem; bottom: max(env(safe-area-inset-bottom),1rem); z-index: 250; background: var(--text); color: var(--inv); padding: 0.9rem 1.1rem; border-radius: 1rem; font-size: 0.9rem; text-align: center; box-shadow: rgba(0, 0, 0, 0.25) 0px 8px 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s;">Caméra indisponible : passage en mode manuel. Utilisez les boutons +/- pour compter vos pompes.</div>
 <div class="app" id="appRoot" style="">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v152</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v160</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid" style="margin-top:.5rem;">
       <button class="btn home-nav-btn active" data-tab="home" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"></path><path d="M6 10v9h12v-9"></path></svg><span style="color:var(--text);">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h4"></path></svg><span style="color:var(--text);">Plan</span></button>
@@ -190,7 +190,7 @@
           <span id="homeGreetingStreakCount" style="font-size:1.05rem;font-weight:700;color:var(--text);"></span>
         </div>
       </div>
-      <span id="homeTodayDate" style="color:var(--muted);font-size:.85rem;white-space:nowrap;padding-top:.2rem;">18 juillet 2026</span>
+      <span id="homeTodayDate" style="color:var(--muted);font-size:.85rem;white-space:nowrap;padding-top:.2rem;">19 juillet 2026</span>
     </div>
 
     <!-- Citation de motivation masquée temporairement pour gagner de la place :
@@ -207,17 +207,17 @@
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;gap:1rem;flex-wrap:wrap;">
         <div>
-          <div id="homeTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span></div>
-          <div id="homeTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
+          <div id="homeTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">25<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span></div>
+          <div id="homeTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;">3 séries</div>
           <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
-            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg> Temps estimé<br><strong id="homeTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
-            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"></path></svg> Niveau<br><strong id="homeTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
+            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg> Temps estimé<br><strong id="homeTodayDuration" style="color:var(--text);font-size:.9rem;">4 min</strong></div>
+            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"></path></svg> Niveau<br><strong id="homeTodayLevel" style="color:var(--text);font-size:.9rem;">Novice</strong></div>
           </div>
         </div>
         <div style="position:relative;width:104px;height:104px;flex-shrink:0;">
           <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
             <circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface2)" stroke-width="8"></circle>
-            <circle id="homeRingProgress" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.4" stroke-dashoffset="276.4"></circle>
+            <circle id="homeRingProgress" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.4" stroke-dashoffset="0"></circle>
           </svg>
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
             <span style="color:var(--primary);"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" stroke="none"><path d="M3 15c0-3 1-5 3-6.5C7.5 7 9 6.5 10.5 6c.6-1.6 2-2.8 3.7-3 1.1-.1 1.8.9 1.3 1.9-.4.8-.6 1.4-.5 2.1 1.6.4 3 1.5 3.7 3 .5 1.1-.6 2.1-1.6 1.5-.5-.3-1-.4-1.4-.2-.5.3-.6 1-.2 1.6.8 1.2 1.2 2.6 1 4-.2 1.5-1.6 2.4-3 2-1.1-.3-1.9-1.2-2.9-1.7-1.3-.7-2.8-.7-4.1 0-.9.5-1.8-.5-1.5-1.5.3-1.1 1-2 1.6-3-1.2.3-2.3 1-3 2-.6.8-1.8.3-1.6-.7z"></path></svg></span>
@@ -226,7 +226,7 @@
           </div>
         </div>
       </div>
-      <div id="homeTodaySummary" style="margin-top:.6rem;color:var(--text);font-size:.9rem;">Aucun plan actif pour le moment. Créez votre plan dans l'onglet Plan.</div>
+      <div id="homeTodaySummary" style="margin-top:.6rem;color:var(--text);font-size:.9rem;"></div>
       <button id="homeStartSessionBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;display:flex;align-items:center;justify-content:center;gap:.4rem;">▶ COMMENCER LA SÉANCE</button>
     </section>
 
@@ -235,12 +235,12 @@
         <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M3 17l5-5 4 4 8-8M15 8h5v5"></path></svg></span><span>Progression du plan</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:.5rem;">
-        <span id="homeProgressWeekLabel" style="font-size:.95rem;font-weight:600;">Aucun plan actif</span>
-        <span id="homeProgressPercent" style="font-weight:700;">0%</span>
+        <span id="homeProgressWeekLabel" style="font-size:.95rem;font-weight:600;">Semaine 1 sur 4 (cycle 1)</span>
+        <span id="homeProgressPercent" style="font-weight:700;">25%</span>
       </div>
-      <div id="homeProgressBar" style="display:flex;gap:.25rem;margin-top:.5rem;"></div>
-      <div id="homeProgressBadges" style="display:flex;gap:1rem;margin-top:.6rem;flex-wrap:wrap;font-size:.78rem;color:var(--muted);"></div>
-      <div id="homeProgressSummary" style="font-size:.85rem;color:var(--text);margin-top:.4rem;">Créez votre plan pour suivre votre progression.</div>
+      <div id="homeProgressBar" style="display:flex;gap:.25rem;margin-top:.5rem;"><div style="flex: 1 1 0%; height: 6px; border-radius: 3px; background: var(--primary);"></div><div style="flex: 1 1 0%; height: 6px; border-radius: 3px; background: var(--surface2);"></div><div style="flex: 1 1 0%; height: 6px; border-radius: 3px; background: var(--surface2);"></div><div style="flex: 1 1 0%; height: 6px; border-radius: 3px; background: var(--surface2);"></div></div>
+      <div id="homeProgressBadges" style="display:flex;gap:1rem;margin-top:.6rem;flex-wrap:wrap;font-size:.78rem;color:var(--muted);"><span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><rect x="4" y="8" width="16" height="12" rx="2"></rect><path d="M12 8V4M9 4h6"></path><circle cx="9" cy="14" r="1"></circle><circle cx="15" cy="14" r="1"></circle></svg> Plan IA actif</span><span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h16"></path></svg> Rythme stable</span><span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M5 20c0-8 6-14 14-14 0 8-6 14-14 14zM5 20c2-4 5-7 9-9"></path></svg> Reprise en douceur</span></div>
+      <div id="homeProgressSummary" style="font-size:.85rem;color:var(--text);margin-top:.4rem;"></div>
     </section>
 
     <section class="panel" style="margin-top:.8rem;">
@@ -250,7 +250,7 @@
       <div style="display:flex;justify-content:space-between;margin-top:.7rem;text-align:center;">
         <div style="flex:1;">
           <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg></div>
-          <div id="homeWeekSessions" style="font-size:1.3rem;font-weight:800;">0/0</div>
+          <div id="homeWeekSessions" style="font-size:1.3rem;font-weight:800;">0/7</div>
           <div style="font-size:.72rem;color:var(--muted);">séances complétées</div>
         </div>
         <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
@@ -278,7 +278,7 @@
       <div style="position:relative;width:min(64vw,240px);aspect-ratio:1/1;margin:0 auto;">
         <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
           <circle cx="50" cy="50" r="46" fill="none" stroke="var(--surface2)" stroke-width="5"></circle>
-          <circle id="setProgressRing" cx="50" cy="50" r="46" fill="none" stroke="var(--primary)" stroke-width="5" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="289" style="transition: stroke-dashoffset 0.3s; stroke-dashoffset: 276.5;"></circle>
+          <circle id="setProgressRing" cx="50" cy="50" r="46" fill="none" stroke="var(--primary)" stroke-width="5" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="289" style="transition: stroke-dashoffset 0.3s; stroke-dashoffset: 289;"></circle>
         </svg>
         <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
           <div class="counter" id="count" style="font-size:3.6rem;font-weight:800;line-height:1;">0</div>
@@ -296,9 +296,9 @@
     </div>
     <div class="controls" style="margin-top:1rem;">
       <button id="toggleSession" class="btn btn-primary" style="grid-column:1/-1;">▶ Démarrer la série</button>
-      <button id="nextSet" class="btn">Set suivant</button>
-      <button id="finishWorkout" class="btn btn-danger">Fin entraînement</button>
-      <button id="resetCount" class="btn" style="grid-column:1/-1">Réinitialiser le set</button>
+      <button id="nextSet" class="btn hidden">Set suivant</button>
+      <button id="finishWorkout" class="btn btn-danger hidden">Fin entraînement</button>
+      <button id="resetCount" class="btn hidden" style="grid-column:1/-1">Réinitialiser le set</button>
     </div>
   </section>
 
@@ -357,6 +357,44 @@
 
   </div>
 
+  
+  <div id="welcomeOnboardingModal" class="modal-overlay hidden">
+    <div class="modal-box" style="max-width:400px;text-align:left;">
+      <div id="welcomeStep1">
+        <div class="section-title">Bienvenue !</div>
+        <h2 style="margin-top:.3rem;">Comment souhaitez-vous être appelé ?</h2>
+        <input id="welcomeNicknameInput" type="text" maxlength="24" placeholder="Ex : Alex" style="margin-top:.8rem;">
+        <button id="welcomeStep1Next" class="btn btn-primary" style="width:100%;margin-top:1.2rem;">Continuer</button>
+      </div>
+      <div id="welcomeStep2" class="hidden">
+        <div class="section-title">Question 2 sur 3</div>
+        <h2 style="margin-top:.3rem;">Combien de pompes pouvez-vous faire en une seule fois ?</h2>
+        <input id="welcomeMaxRepsInput" type="number" min="1" max="200" placeholder="Ex : 15" style="margin-top:.8rem;">
+        <button id="welcomeStep2Next" class="btn btn-primary" style="width:100%;margin-top:1.2rem;">Continuer</button>
+      </div>
+      <div id="welcomeStep3" class="hidden">
+        <div class="section-title">Question 3 sur 3</div>
+        <h2 style="margin-top:.3rem;">Quels jours voulez-vous vous entraîner ?</h2>
+        <div class="chips" id="welcomeDaysChips" style="margin-top:.8rem;">
+          <button class="chip" data-day="1">Lun</button>
+          <button class="chip" data-day="2">Mar</button>
+          <button class="chip" data-day="3">Mer</button>
+          <button class="chip" data-day="4">Jeu</button>
+          <button class="chip" data-day="5">Ven</button>
+          <button class="chip" data-day="6">Sam</button>
+          <button class="chip" data-day="0">Dim</button>
+        </div>
+        <button id="welcomeStep3Next" class="btn btn-primary" style="width:100%;margin-top:1.2rem;">Continuer</button>
+      </div>
+      <div id="welcomeStep4" class="hidden" style="text-align:center;">
+        <div style="font-size:2.2rem;">👋</div>
+        <h2 id="welcomeDoneTitle" style="margin-top:.4rem;">Enchanté !</h2>
+        <p style="color:var(--muted);font-size:.9rem;margin-top:.4rem;">Toutes ces informations peuvent être modifiées à tout moment dans la page Profil.</p>
+        <button id="welcomeStep4Close" class="btn btn-primary" style="width:100%;margin-top:1.2rem;">C'est parti !</button>
+      </div>
+    </div>
+  </div>
+
   <div id="freeCountdownModal" class="modal-overlay hidden">
   <div class="modal-box">
     <div class="section-title">Préparez-vous</div>
@@ -393,7 +431,7 @@
 
   
   <div id="tab-plan" class="tab-content hidden">
-    <div id="planOnboarding">
+    <div id="planOnboarding" class="hidden">
       <section class="panel">
         <h2>Créer mon plan d'entraînement</h2>
         <label for="planMaxReps">Combien de pompes maximum pouvez-vous faire en une seule fois ?</label>
@@ -414,25 +452,25 @@
       <button id="createPlanBtn" class="btn btn-primary" style="width:100%;margin-top:.6rem;">Créer mon plan</button>
     </div>
 
-    <div id="planActive" class="hidden">
+    <div id="planActive" class="">
       <section class="panel">
         <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
           <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></span><span>Séance du jour</span>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;gap:1rem;flex-wrap:wrap;">
           <div>
-            <div id="planTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span></div>
-            <div id="planTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
+            <div id="planTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">25<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span></div>
+            <div id="planTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;">3 séries</div>
             <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
-              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg> Temps estimé<br><strong id="planTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
-              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"></path></svg> Niveau<br><strong id="planTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
+              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg> Temps estimé<br><strong id="planTodayDuration" style="color:var(--text);font-size:.9rem;">4 min</strong></div>
+              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"></path></svg> Niveau<br><strong id="planTodayLevel" style="color:var(--text);font-size:.9rem;">Novice</strong></div>
               
             </div>
           </div>
           <div style="position:relative;width:104px;height:104px;flex-shrink:0;">
             <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
               <circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface2)" stroke-width="8"></circle>
-              <circle id="planHomeRingProgress" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.4" stroke-dashoffset="276.4"></circle>
+              <circle id="planHomeRingProgress" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.4" stroke-dashoffset="0"></circle>
             </svg>
             <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
               <span style="color:var(--primary);"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" stroke="none"><path d="M3 15c0-3 1-5 3-6.5C7.5 7 9 6.5 10.5 6c.6-1.6 2-2.8 3.7-3 1.1-.1 1.8.9 1.3 1.9-.4.8-.6 1.4-.5 2.1 1.6.4 3 1.5 3.7 3 .5 1.1-.6 2.1-1.6 1.5-.5-.3-1-.4-1.4-.2-.5.3-.6 1-.2 1.6.8 1.2 1.2 2.6 1 4-.2 1.5-1.6 2.4-3 2-1.1-.3-1.9-1.2-2.9-1.7-1.3-.7-2.8-.7-4.1 0-.9.5-1.8-.5-1.5-1.5.3-1.1 1-2 1.6-3-1.2.3-2.3 1-3 2-.6.8-1.8.3-1.6-.7z"></path></svg></span>
@@ -444,7 +482,7 @@
         <button id="planHomeStartBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;display:flex;align-items:center;justify-content:center;gap:.4rem;">▶ COMMENCER LA SÉANCE</button>
       </section>
       <section class="panel" style="text-align:center;">
-        <div id="planTodayTitle" class="hidden">—</div>
+        <div id="planTodayTitle" class="">3 sets · 25 pompes au total</div>
         <div id="planSessionMetrics" class="hidden">
         <div style="position:relative;width:min(60vw,220px);aspect-ratio:1/1;margin:1rem auto 0;">
           <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
@@ -469,11 +507,158 @@
           <div class="metric" style="text-align:center;"><span>Durée</span><strong id="planSessionDuration" style="font-size:1.8rem;">00:00</strong></div>
         </div>
         </div>
-        <div id="planTodaySets" style="margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;text-align:left;"></div>
+        <div id="planTodaySets" style="margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;text-align:left;"><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem;">
+        <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--primary);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;">1</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.85rem;letter-spacing:.02em;text-transform:uppercase;">Série 1</div>
+          <div style="color:var(--muted);font-size:.78rem;">8 pompes</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:800;font-size:1rem;">0/8</div>
+          <div style="color:var(--muted);font-size:.7rem;">pompes</div>
+        </div>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0;"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem;">
+        <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--primary);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;">2</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.85rem;letter-spacing:.02em;text-transform:uppercase;">Série 2</div>
+          <div style="color:var(--muted);font-size:.78rem;">9 pompes</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:800;font-size:1rem;">0/9</div>
+          <div style="color:var(--muted);font-size:.7rem;">pompes</div>
+        </div>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0;"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem;">
+        <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--primary);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;">3</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.85rem;letter-spacing:.02em;text-transform:uppercase;">Série 3</div>
+          <div style="color:var(--muted);font-size:.78rem;">8 pompes</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-weight:800;font-size:1rem;">0/8</div>
+          <div style="color:var(--muted);font-size:.7rem;">pompes</div>
+        </div>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0;"><path d="M9 6l6 6-6 6"></path></svg></div></div><section class="panel plan-dynamic-card" style="margin-top: 0.6rem;">
+      <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg><span>Temps de repos</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-top:.6rem;">
+        <div>
+          <div style="font-size:2.2rem;font-weight:800;line-height:1;">60</div>
+          <div style="color:var(--muted);font-size:.8rem;">secondes</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+          <div style="position:relative;width:120px;height:66px;">
+            <svg viewBox="0 0 100 58" style="width:100%;height:100%;">
+              <path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="var(--surface2)" stroke-width="10" stroke-linecap="round"></path>
+              <path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="#22c55e" stroke-width="10" pathLength="100" stroke-dasharray="16.666666666666664 83.33333333333334" stroke-dashoffset="0" stroke-linecap="butt"></path><path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="var(--primary)" stroke-width="10" pathLength="100" stroke-dasharray="25 75" stroke-dashoffset="-16.666666666666664" stroke-linecap="butt"></path><path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="#22c55e" stroke-width="10" pathLength="100" stroke-dasharray="16.666666666666664 83.33333333333334" stroke-dashoffset="-41.666666666666664" stroke-linecap="butt"></path><path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="var(--primary)" stroke-width="10" pathLength="100" stroke-dasharray="25 75" stroke-dashoffset="-58.33333333333333" stroke-linecap="butt"></path><path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="#22c55e" stroke-width="10" pathLength="100" stroke-dasharray="16.666666666666664 83.33333333333334" stroke-dashoffset="-83.33333333333333" stroke-linecap="butt"></path>
+            </svg>
+          </div>
+          <div style="display:flex;gap:.8rem;margin-top:.3rem;align-items:center;font-size:.68rem;color:var(--muted);">
+            <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:.25rem;"></span>Séries</span>
+            <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--primary);margin-right:.25rem;"></span>Pause</span>
+          </div>
+        </div>
+      </div>
+</section><section class="panel plan-dynamic-card" style="margin-top: 0.6rem;">
+      <div style="display:flex;justify-content:space-between;align-items:center;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+        <span>Historique récent</span><span style="color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;">pompes</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;gap:.3rem;margin-top:.8rem;"><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
+        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
+          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--surface2);"></div>
+        </div>
+        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">13/07</div>
+      </div><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
+        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
+          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--surface2);"></div>
+        </div>
+        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">14/07</div>
+      </div><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
+        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
+          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--surface2);"></div>
+        </div>
+        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">15/07</div>
+      </div><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
+        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
+          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--surface2);"></div>
+        </div>
+        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">16/07</div>
+      </div><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
+        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
+          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--surface2);"></div>
+        </div>
+        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">17/07</div>
+      </div><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
+        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
+          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--surface2);"></div>
+        </div>
+        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">18/07</div>
+      </div><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
+        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
+        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
+          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--primary);"></div>
+        </div>
+        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">19/07</div>
+      </div></div></section>
       </section>
       <section id="planFuturePanel" class="panel" style="margin-top:.6rem;">
         <h2>7 prochains jours</h2>
-        <div id="planFutureSessions" style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;"></div>
+        <div id="planFutureSessions" style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;"><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.9rem;color:var(--primary);">Aujourd'hui</div>
+          <div style="color:var(--muted);font-size:.78rem;">3 séries</div>
+        </div>
+        <strong style="color:var(--primary);font-size:.95rem;">25 pompes</strong>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.9rem;">Lundi 20 juil</div>
+          <div style="color:var(--muted);font-size:.78rem;">3 séries</div>
+        </div>
+        <strong style="color:var(--primary);font-size:.95rem;">27 pompes</strong>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.9rem;">Mardi 21 juil</div>
+          <div style="color:var(--muted);font-size:.78rem;">3 séries</div>
+        </div>
+        <strong style="color:var(--primary);font-size:.95rem;">28 pompes</strong>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.9rem;">Mercredi 22 juil</div>
+          <div style="color:var(--muted);font-size:.78rem;">3 séries</div>
+        </div>
+        <strong style="color:var(--primary);font-size:.95rem;">30 pompes</strong>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.9rem;">Jeudi 23 juil</div>
+          <div style="color:var(--muted);font-size:.78rem;">4 séries</div>
+        </div>
+        <strong style="color:var(--primary);font-size:.95rem;">39 pompes</strong>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.9rem;">Vendredi 24 juil</div>
+          <div style="color:var(--muted);font-size:.78rem;">4 séries</div>
+        </div>
+        <strong style="color:var(--primary);font-size:.95rem;">40 pompes</strong>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:.9rem;">Samedi 25 juil</div>
+          <div style="color:var(--muted);font-size:.78rem;">4 séries</div>
+        </div>
+        <strong style="color:var(--primary);font-size:.95rem;">40 pompes</strong>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div></div>
       </section>
     </div>
   </div>
@@ -500,13 +685,13 @@
       <h2>Mon profil</h2>
       <label style="margin-top:.6rem;">Jours d'entraînement</label>
       <div class="chips" id="planDaysChipsEdit">
-        <button class="chip" data-day="1">Lun</button>
-        <button class="chip" data-day="2">Mar</button>
-        <button class="chip" data-day="3">Mer</button>
-        <button class="chip" data-day="4">Jeu</button>
-        <button class="chip" data-day="5">Ven</button>
-        <button class="chip" data-day="6">Sam</button>
-        <button class="chip" data-day="0">Dim</button>
+        <button class="chip active" data-day="1">Lun</button>
+        <button class="chip active" data-day="2">Mar</button>
+        <button class="chip active" data-day="3">Mer</button>
+        <button class="chip active" data-day="4">Jeu</button>
+        <button class="chip active" data-day="5">Ven</button>
+        <button class="chip active" data-day="6">Sam</button>
+        <button class="chip active" data-day="0">Dim</button>
       </div>
       <button id="savePlanSettingsBtn" class="btn btn-primary" style="width:100%;margin-top:.7rem;">Enregistrer les modifications</button>
     </section>
@@ -519,6 +704,11 @@
       </div>
     </section>
     </div>
+    <section class="panel" style="margin-top:.6rem;border:1px solid color-mix(in srgb, #ef4444 40%, var(--border));">
+      <h2 style="color:#ef4444;">Zone de danger</h2>
+      <p style="color:var(--muted);font-size:.85rem;margin:.4rem 0 .8rem;">Cette action efface définitivement toutes vos données (plan, historique, séances, préférences) et remet l'application dans son état initial, comme si elle venait d'être installée.</p>
+      <button id="fullResetBtn" class="btn btn-danger" style="width:100%;">Réinitialisation complète</button>
+    </section>
     <div style="text-align:center;color:var(--muted);font-size:.75rem;margin-top:1rem;">Version v65</div>
   </div>
 <div id="tab-calendar" class="tab-content hidden">
@@ -1166,16 +1356,18 @@ function renderPlanTab(){
           <div style="font-size:2.2rem;font-weight:800;line-height:1;">${restSecForToday}</div>
           <div style="color:var(--muted);font-size:.8rem;">secondes</div>
         </div>
-        <div style="position:relative;width:120px;height:66px;flex-shrink:0;">
-          <svg viewBox="0 0 100 58" style="width:100%;height:100%;">
-            <path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="var(--surface2)" stroke-width="10" stroke-linecap="round"></path>
-            ${segHtml}
-          </svg>
+        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
+          <div style="position:relative;width:120px;height:66px;">
+            <svg viewBox="0 0 100 58" style="width:100%;height:100%;">
+              <path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="var(--surface2)" stroke-width="10" stroke-linecap="round"></path>
+              ${segHtml}
+            </svg>
+          </div>
+          <div style="display:flex;gap:.8rem;margin-top:.3rem;align-items:center;font-size:.68rem;color:var(--muted);">
+            <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:.25rem;"></span>Séries</span>
+            <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--primary);margin-right:.25rem;"></span>Pause</span>
+          </div>
         </div>
-      </div>
-      <div style="display:flex;gap:.8rem;margin-top:.55rem;align-items:center;font-size:.72rem;color:var(--muted);">
-        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#22c55e;margin-right:.3rem;"></span>Séries</span>
-        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--primary);margin-right:.3rem;"></span>Pause</span>
       </div>
 `;
     setsEl.parentElement.insertBefore(restCard, setsEl.nextSibling);
@@ -1300,21 +1492,6 @@ function renderPlanTab(){
     });
   }
 
-  if(isTrainingDay){
-    const startBtn=document.createElement('button');
-    startBtn.className = todayCompleted ? 'btn' : 'btn btn-primary';
-    startBtn.style.cssText='width:100%;margin-top:.8rem;';
-    startBtn.textContent = todayCompleted ? 'Refaire cette séance' : 'Commencer cette séance';
-    startBtn.addEventListener('click',()=>{
-      const todayIso=toLocalDateStr(new Date());
-      const intensity=planProfile.days.indexOf(new Date().getDay())+1;
-      const baseSets=generateDailyTarget(planProfile.maxReps,intensity,ratio);
-      const aiToday=applyAIPlanForToday(baseSets, ratio);
-      document.getElementById('targetReps').value=aiToday.sets[0];
-      startPlanSession(todayIso);
-    });
-    setsEl.appendChild(startBtn);
-  }
 }
 
 
@@ -1585,6 +1762,46 @@ function initUserNicknameField(){
   const input=document.getElementById('userNicknameInput');
   if(input) input.value = getUserNickname();
 }
+
+(function(){
+  const modal=document.getElementById('welcomeOnboardingModal');
+  if(!modal) return;
+  const hasNickname=!!localStorage.getItem('user_nickname');
+  const hasPlan=!!localStorage.getItem('pompes-plan-v1');
+  if(hasNickname || hasPlan) return;
+  const step1=document.getElementById('welcomeStep1'),step2=document.getElementById('welcomeStep2'),step3=document.getElementById('welcomeStep3'),step4=document.getElementById('welcomeStep4');
+  let tmpNickname='',tmpMaxReps=0,tmpDays=[];
+  modal.classList.remove('hidden');
+  document.getElementById('welcomeStep1Next').addEventListener('click',()=>{
+    tmpNickname=(document.getElementById('welcomeNicknameInput').value||'').trim().slice(0,24);
+    step1.classList.add('hidden');step2.classList.remove('hidden');
+  });
+  document.getElementById('welcomeStep2Next').addEventListener('click',()=>{
+    const val=Number(document.getElementById('welcomeMaxRepsInput').value);
+    if(!val||val<1){ showToast('Indiquez votre nombre maximum de pompes.'); return; }
+    tmpMaxReps=val;
+    step2.classList.add('hidden');step3.classList.remove('hidden');
+  });
+  document.querySelectorAll('#welcomeDaysChips .chip').forEach(ch=>{
+    ch.addEventListener('click',()=>ch.classList.toggle('active'));
+  });
+  document.getElementById('welcomeStep3Next').addEventListener('click',()=>{
+    tmpDays=[...document.querySelectorAll('#welcomeDaysChips .chip.active')].map(ch=>Number(ch.dataset.day));
+    if(!tmpDays.length){ showToast("Sélectionnez au moins un jour d'entraînement."); return; }
+    if(tmpNickname) localStorage.setItem('user_nickname', tmpNickname);
+    planProfile={maxReps:tmpMaxReps,days:tmpDays,startDate:new Date().toISOString()};
+    savePlan(planProfile);
+    renderPlanTab();
+    renderHomeTab();
+    initUserNicknameField();
+    document.getElementById('welcomeDoneTitle').textContent = tmpNickname ? `Enchanté ${tmpNickname} !` : 'Enchanté !';
+    step3.classList.add('hidden');step4.classList.remove('hidden');
+  });
+  document.getElementById('welcomeStep4Close').addEventListener('click',()=>{
+    modal.classList.add('hidden');
+  });
+})();
+
 initUserNicknameField();
 const saveUserNicknameBtn=document.getElementById('saveUserNicknameBtn');
 if(saveUserNicknameBtn){
@@ -2249,29 +2466,93 @@ function renderProgressChart(byDay){
     days.push({iso:toLocalDateStr(d),total:byDay[toLocalDateStr(d)]||0});
   }
   const maxVal=Math.max(...days.map(d=>d.total),1);
-  const padding=8;
-  const stepX=(w-padding*2)/(days.length-1);
+  const padTop=16,padBottom=16,padLeft=20,padRight=4;
+  const chartW=w-padLeft-padRight,chartH=h-padTop-padBottom;
+  const n=days.length;
+  const stepX=chartW/n;
+  const barW=Math.max(stepX*0.55,2);
 
-  let primaryColor='#1c6e6e';try{primaryColor=window.getComputedStyle(document.documentElement).getPropertyValue('--primary').trim()||primaryColor;}catch(e){}
-  ctx.strokeStyle=primaryColor;
-  ctx.lineWidth=2;
-  ctx.beginPath();
-  days.forEach((d,i)=>{
-    const x=padding+i*stepX;
-    const y=h-padding-((d.total/maxVal)*(h-padding*2));
-    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  let primaryColor='#1c6e6e',mutedColor='#8a99a6',borderColor='#2a3540';
+  try{
+    const cs=window.getComputedStyle(document.documentElement);
+    primaryColor=cs.getPropertyValue('--primary').trim()||primaryColor;
+    mutedColor=cs.getPropertyValue('--muted').trim()||mutedColor;
+    borderColor=cs.getPropertyValue('--border').trim()||borderColor;
+  }catch(e){}
+
+  ctx.strokeStyle=borderColor;
+  ctx.lineWidth=1;
+  ctx.setLineDash([3,3]);
+  [0,0.25,0.5,0.75,1].forEach(f=>{
+    const y=padTop+chartH*(1-f);
+    ctx.beginPath();ctx.moveTo(padLeft,y);ctx.lineTo(w-padRight,y);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle=mutedColor;
+    ctx.font='8px sans-serif';
+    ctx.textAlign='left';
+    ctx.fillText(String(Math.round(maxVal*f)),0,y+3);
+    ctx.setLineDash([3,3]);
   });
-  ctx.stroke();
+  ctx.setLineDash([]);
 
-  ctx.fillStyle=ctx.strokeStyle;
   days.forEach((d,i)=>{
-    if(d.total>0){
-      const x=padding+i*stepX;
-      const y=h-padding-((d.total/maxVal)*(h-padding*2));
-      ctx.beginPath();ctx.arc(x,y,2.2,0,Math.PI*2);ctx.fill();
+    const x=padLeft+i*stepX+(stepX-barW)/2;
+    const barH=(d.total/maxVal)*chartH;
+    const y=padTop+chartH-barH;
+    const r=Math.min(3,barW/2);
+    ctx.fillStyle=primaryColor;
+    ctx.beginPath();
+    if(barH>0){
+      ctx.moveTo(x,y+r);
+      ctx.arcTo(x,y,x+r,y,r);
+      ctx.lineTo(x+barW-r,y);
+      ctx.arcTo(x+barW,y,x+barW,y+r,r);
+      ctx.lineTo(x+barW,padTop+chartH);
+      ctx.lineTo(x,padTop+chartH);
+      ctx.closePath();
+      ctx.fill();
     }
   });
+
+  const windowSize=5;
+  const trendPts=days.map((d,i)=>{
+    const start=Math.max(0,i-Math.floor(windowSize/2));
+    const end=Math.min(days.length,i+Math.ceil(windowSize/2));
+    const slice=days.slice(start,end);
+    const avg=slice.reduce((a,v)=>a+v.total,0)/slice.length;
+    const x=padLeft+i*stepX+stepX/2;
+    const y=padTop+chartH-((avg/maxVal)*chartH);
+    return {x,y};
+  });
+  ctx.strokeStyle=primaryColor;
+  ctx.globalAlpha=0.55;
+  ctx.lineWidth=1.5;
+  ctx.setLineDash([4,3]);
+  ctx.beginPath();
+  trendPts.forEach((p,i)=>{ if(i===0) ctx.moveTo(p.x,p.y); else ctx.lineTo(p.x,p.y); });
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.globalAlpha=1;
+
+  ctx.fillStyle=mutedColor;
+  ctx.font='8px sans-serif';
+  ctx.textAlign='center';
+  [0,6,13,20,27,n-1].forEach(i=>{
+    if(i<0||i>=n) return;
+    const d=days[i];
+    const label=new Date(d.iso+'T00:00:00').getDate();
+    const x=padLeft+i*stepX+stepX/2;
+    ctx.fillText(String(label),x,h-2);
+  });
 }
+document.getElementById('fullResetBtn').addEventListener('click', async ()=>{
+  const confirmed = await customConfirm("Réinitialisation complète : toutes vos données (plan, historique, séances, préférences) seront définitivement supprimées et l'application redémarrera comme neuve. Continuer ?");
+  if(!confirmed) return;
+  try{
+    localStorage.clear();
+  }catch(e){}
+  location.reload();
+});
 document.getElementById('resetCalendarBtn').addEventListener('click',async()=>{
   if(!await customConfirm('Réinitialiser tout le calendrier ? Cette action supprime toutes les séances enregistrées.')) return;
   workouts.length=0;
@@ -2324,8 +2605,8 @@ function updateProgressRing(){
   const ring=document.getElementById('setProgressRing');
   if(!ring) return;
   const target=Number(document.getElementById('targetReps').value)||10;
-  const circumference=276.5;
-  const pct=Math.min(setCount/target,1);
+  const circumference=289;
+  const pct=sessionActive||setCount>0?Math.min(setCount/target,1):0;
   ring.style.strokeDashoffset=String(circumference*(1-pct));
 }
 function updatePlanProgressRing(){
@@ -2885,7 +3166,7 @@ function runPlanCountdown(onComplete){
   },1000);
 }
 
-toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(toggleSessionBtn.dataset.countdownDone!=='1'){runFreeCountdown(()=>{toggleSessionBtn.dataset.countdownDone='1';toggleSessionBtn.click();});return;}delete toggleSessionBtn.dataset.countdownDone;if(cameraReady&&!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
+toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(toggleSessionBtn.dataset.countdownDone!=='1'){runFreeCountdown(()=>{toggleSessionBtn.dataset.countdownDone='1';toggleSessionBtn.click();});return;}delete toggleSessionBtn.dataset.countdownDone;if(cameraReady&&!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';nextSetBtn.classList.remove('hidden');finishWorkoutBtn.classList.remove('hidden');resetBtn.classList.remove('hidden');}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
@@ -2907,6 +3188,7 @@ function finalizeWorkout(finalSetReps){
   if(totalCount<=0){
     completedSets=[];sessionActive=false;
     toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Prêt';
+    nextSetBtn.classList.add('hidden');finishWorkoutBtn.classList.add('hidden');resetBtn.classList.add('hidden');
     showToast('Aucune pompe enregistrée. Appuyez sur Démarrer pour reprendre.',3000);
     return;
   }
@@ -2927,6 +3209,7 @@ function finalizeWorkout(finalSetReps){
   toggleSessionBtn.textContent='Démarrer';
   movementLabel.textContent='Appuyez sur Démarrer';
   phaseEl.textContent='Terminé';
+  nextSetBtn.classList.add('hidden');finishWorkoutBtn.classList.add('hidden');resetBtn.classList.add('hidden');
 
   animateModalCount('doneModalTotal', finalTotal);
   document.getElementById('doneModalDuration').textContent=finalDurationText;
