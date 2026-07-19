@@ -1,4 +1,4 @@
-<!-- v169 -->
+<!-- v170 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -98,9 +98,9 @@
     .tabs-bar{padding:.2rem;margin-bottom:.5rem;}
     .tab-btn{padding:.45rem .6rem;font-size:.78rem;}
     .tab-content{flex:1;display:flex;flex-direction:column;overflow-y:auto;min-height:0;}
-    body.plan-session-active #tab-plan{overflow:hidden;}
-    body.plan-session-active #tab-plan #planActive{display:flex;flex-direction:column;height:100%;overflow:hidden;}
-    body.plan-session-active #tab-plan #planActive > section.panel:first-child{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;padding:.5rem .6rem;}
+    body.plan-session-active #tab-plan{overflow-y:auto;}
+    body.plan-session-active #tab-plan #planActive{display:flex;flex-direction:column;min-height:100%;overflow:visible;}
+    body.plan-session-active #tab-plan #planActive > section.panel:first-child{display:flex;flex-direction:column;flex:1;min-height:0;overflow:visible;padding:.5rem .6rem;}
     body.plan-session-active #planSessionMetrics{display:flex;flex-direction:column;flex-shrink:0;overflow:visible;}
     body.plan-session-active #planSessionMetrics > div[style*="aspect-ratio:1/1"]{width:min(38vw,150px);margin:.3rem auto 0;flex-shrink:0;}
     body.plan-session-active #planCurrentRepValue{font-size:2.6rem !important;}
@@ -475,7 +475,7 @@
     </div>
 
     <div id="planActive" class="hidden">
-      <section class="panel">
+      <section class="panel" id="planTodaySummaryPanel">
         <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
           <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span>Séance du jour</span>
         </div>
@@ -2068,7 +2068,17 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
   });
 });
 document.querySelectorAll('.home-nav-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{ goToTab(btn.dataset.tab); });
+  btn.addEventListener('click',()=>{
+    if(planSessionActive && btn.dataset.tab!=='plan'){
+      showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+      return;
+    }
+    if(sessionActive && btn.dataset.tab!=='training'){
+      showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+      return;
+    }
+    goToTab(btn.dataset.tab);
+  });
 });
 goToTab('home');
 
@@ -2943,7 +2953,7 @@ function syncPlanUI(){
   if(metricsBlock) metricsBlock.classList.toggle('hidden', !planSessionActive);
   // Pendant une séance active, on masque tout ce qui n'est pas le compteur en cours :
   // titre de la séance du jour, détail des sets prévus, progression du plan, jours à venir.
-  const hideDuringSession=['planTodayTitle','planProgressPanel','planFuturePanel'];
+  const hideDuringSession=['planTodayTitle','planTodaySummaryPanel','planProgressPanel','planFuturePanel'];
   hideDuringSession.forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.classList.toggle('hidden', planSessionActive);
