@@ -1,4 +1,4 @@
-<!-- v172 -->
+<!-- v176 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -93,6 +93,7 @@
     /* Mise en page compacte : tient sur un seul écran, s'adapte à toutes les tailles iOS/Android */
     html,body{height:100%;}
     .app{max-width:430px;height:100dvh;display:flex;flex-direction:column;padding:max(env(safe-area-inset-top),1.6rem) .7rem calc(.5rem + env(safe-area-inset-bottom));box-sizing:border-box;overflow:hidden;}
+    body.is-android .app{padding-top:max(env(safe-area-inset-top),2.7rem) !important;}
     .topbar{margin-bottom:.4rem;}
     .logo{width:32px;height:32px;border-radius:10px;}
     .topbar h1{font-size:1rem;margin:0;line-height:1.1;}
@@ -121,8 +122,7 @@
     section.panel:first-child{margin-top:0 !important;}
     .counter-label{font-size:.62rem;}
     .section-title{font-size:1.15rem;}
-    .counter{font-size:clamp(3.5rem,16vw,5.5rem) !important;line-height:1;text-align:center;}
-    #setInfo{font-size:.85rem;}
+    .counter{font-size:clamp(2.6rem,12vw,4rem) !important;line-height:1;text-align:center;}
     #phase{font-size:.7rem;}
     .camera-shell{margin-top:.4rem !important;}
     .camera-overlay{gap:.4rem;}
@@ -176,29 +176,30 @@
 </style>
 </head>
 <body>
+<script>if(/Android/i.test(navigator.userAgent)) document.body.classList.add('is-android');</script>
 <div id="splashScreen">
   <div class="splash-logo-wrap">
     <div class="splash-ring"></div>
     <img src="logo.jpg" alt="Push-Up logo">
   </div>
-  <div class="splash-text">Chargement</div>
+  <div class="splash-text" data-i18n="loading_text">Chargement</div>
 </div>
 <div id="landscapeBlock">
   <div style="font-size:3rem;">📱</div>
-  <div style="font-weight:700;font-size:1.1rem;">Tournez votre téléphone</div>
-  <div style="color:var(--muted);font-size:.9rem;">Push-Up fonctionne uniquement en mode portrait.</div>
+  <div style="font-weight:700;font-size:1.1rem;" data-i18n="landscape_rotate">Tournez votre téléphone</div>
+  <div style="color:var(--muted);font-size:.9rem;" data-i18n="landscape_sub">Push-Up fonctionne uniquement en mode portrait.</div>
 </div>
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v172</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v176</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid" style="margin-top:.5rem;">
-      <button class="btn home-nav-btn" data-tab="home" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span style="color:var(--text);">Accueil</span></button>
-      <button class="btn home-nav-btn" data-tab="plan" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span style="color:var(--text);">Plan</span></button>
-      <button class="btn home-nav-btn" data-tab="training" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg><span style="color:var(--text);">Libre</span></button>
-      <button class="btn home-nav-btn" data-tab="calendar" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span style="color:var(--text);">Calendrier</span></button>
-      <button class="btn home-nav-btn" data-tab="stats" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span style="color:var(--text);">Stats</span></button>
-      <button class="btn home-nav-btn" data-tab="profile" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg><span style="color:var(--text);">Profil</span></button>
+      <button class="btn home-nav-btn" data-tab="home" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span style="color:var(--text);" data-i18n="nav_home">Accueil</span></button>
+      <button class="btn home-nav-btn" data-tab="plan" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span style="color:var(--text);" data-i18n="nav_plan">Plan</span></button>
+      <button class="btn home-nav-btn" data-tab="training" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg><span style="color:var(--text);" data-i18n="nav_free">Libre</span></button>
+      <button class="btn home-nav-btn" data-tab="calendar" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span style="color:var(--text);" data-i18n="nav_calendar">Calendrier</span></button>
+      <button class="btn home-nav-btn" data-tab="stats" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span style="color:var(--text);" data-i18n="nav_stats">Stats</span></button>
+      <button class="btn home-nav-btn" data-tab="profile" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg><span style="color:var(--text);" data-i18n="nav_profile">Profil</span></button>
     </div>
   </header>
   
@@ -207,7 +208,7 @@
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.8rem;flex-wrap:wrap;gap:.3rem;">
       <div>
         <div style="display:flex;align-items:center;gap:.4rem;">
-          <div id="homeGreeting" style="font-size:1.3rem;font-weight:700;">Bonjour</div>
+          <div id="homeGreeting" style="font-size:1.3rem;font-weight:700;" data-i18n="home_greeting">Bonjour</div>
         </div>
         <div style="display:flex;align-items:center;gap:.35rem;margin-top:.15rem;">
           <span id="homeGreetingFlame" style="display:none;"><svg viewBox="0 0 24 24" width="19" height="19" fill="var(--primary)" stroke="none"><path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c0-1-.5-1.5-.5-2.5 2 1 3.5 3 3.5 5.5a6 6 0 01-12 0c0-5 4-6 6-11z"/></svg></span>
@@ -227,15 +228,15 @@
 
     <section class="panel" style="margin-top:.8rem;">
       <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span>Séance du jour</span>
+        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span data-i18n="home_today_session">Séance du jour</span>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;gap:1rem;flex-wrap:wrap;">
         <div>
-          <div id="homeTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span></div>
+          <div id="homeTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> <span data-i18n="training_pushups">pompes</span></span></div>
           <div id="homeTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
           <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
-            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Temps estimé<br><strong id="homeTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
-            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"/></svg> Niveau<br><strong id="homeTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
+            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span data-i18n="home_estimated_time">Temps estimé</span><br><strong id="homeTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
+            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"/></svg> <span data-i18n="home_level">Niveau</span><br><strong id="homeTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
           </div>
         </div>
         <div style="position:relative;width:104px;height:104px;flex-shrink:0;">
@@ -246,17 +247,17 @@
           <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
             <span style="color:var(--primary);"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" stroke="none"><path d="M3 15c0-3 1-5 3-6.5C7.5 7 9 6.5 10.5 6c.6-1.6 2-2.8 3.7-3 1.1-.1 1.8.9 1.3 1.9-.4.8-.6 1.4-.5 2.1 1.6.4 3 1.5 3.7 3 .5 1.1-.6 2.1-1.6 1.5-.5-.3-1-.4-1.4-.2-.5.3-.6 1-.2 1.6.8 1.2 1.2 2.6 1 4-.2 1.5-1.6 2.4-3 2-1.1-.3-1.9-1.2-2.9-1.7-1.3-.7-2.8-.7-4.1 0-.9.5-1.8-.5-1.5-1.5.3-1.1 1-2 1.6-3-1.2.3-2.3 1-3 2-.6.8-1.8.3-1.6-.7z"/></svg></span>
             <span id="homeRingNumber" style="font-size:1.15rem;font-weight:800;">0</span>
-            <span style="font-size:.6rem;color:var(--muted);">au total</span>
+            <span style="font-size:.6rem;color:var(--muted);" data-i18n="home_total">au total</span>
           </div>
         </div>
       </div>
       <div id="homeTodaySummary" style="margin-top:.6rem;color:var(--text);font-size:.9rem;"></div>
-      <button id="homeStartSessionBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;display:flex;align-items:center;justify-content:center;gap:.4rem;">▶ COMMENCER LA SÉANCE</button>
+      <button id="homeStartSessionBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;display:flex;align-items:center;justify-content:center;gap:.4rem;" data-i18n="home_start_session">▶ COMMENCER LA SÉANCE</button>
     </section>
 
     <section class="panel" style="margin-top:.8rem;">
       <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M3 17l5-5 4 4 8-8M15 8h5v5"/></svg></span><span>Progression du plan</span>
+        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M3 17l5-5 4 4 8-8M15 8h5v5"/></svg></span><span data-i18n="home_plan_progress">Progression du plan</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:.5rem;">
         <span id="homeProgressWeekLabel" style="font-size:.95rem;font-weight:600;">Semaine 1 sur 8</span>
@@ -269,23 +270,23 @@
 
     <section class="panel" style="margin-top:.8rem;">
       <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none" style="flex-shrink:0;"><path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c0-1-.5-1.5-.5-2.5 2 1 3.5 3 3.5 5.5a6 6 0 01-12 0c0-5 4-6 6-11z"/></svg></span><span>Cette semaine</span>
+        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none" style="flex-shrink:0;"><path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c0-1-.5-1.5-.5-2.5 2 1 3.5 3 3.5 5.5a6 6 0 01-12 0c0-5 4-6 6-11z"/></svg></span><span data-i18n="home_this_week">Cette semaine</span>
       </div>
       <div style="display:flex;justify-content:space-between;margin-top:.7rem;text-align:center;">
         <div style="flex:1;">
           <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></div>
           <div id="homeWeekSessions" style="font-size:1.3rem;font-weight:800;">0/0</div>
-          <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Séances complétées</div>
+          <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;"><span data-i18n="home_sessions_completed">Séances complétées</span></div>
         </div>
         <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
           <div><svg viewBox="0 0 24 24" width="22" height="22" fill="var(--primary)" stroke="none"><path d="M3 15c0-3 1-5 3-6.5C7.5 7 9 6.5 10.5 6c.6-1.6 2-2.8 3.7-3 1.1-.1 1.8.9 1.3 1.9-.4.8-.6 1.4-.5 2.1 1.6.4 3 1.5 3.7 3 .5 1.1-.6 2.1-1.6 1.5-.5-.3-1-.4-1.4-.2-.5.3-.6 1-.2 1.6.8 1.2 1.2 2.6 1 4-.2 1.5-1.6 2.4-3 2-1.1-.3-1.9-1.2-2.9-1.7-1.3-.7-2.8-.7-4.1 0-.9.5-1.8-.5-1.5-1.5.3-1.1 1-2 1.6-3-1.2.3-2.3 1-3 2-.6.8-1.8.3-1.6-.7z"/></svg></div>
           <div id="homeWeekTotal" style="font-size:1.3rem;font-weight:800;">0</div>
-          <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Pompes au total</div>
+          <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;"><span data-i18n="home_total_pushups">Pompes au total</span></div>
         </div>
         <div style="flex:1;">
           <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M3 17l5-5 4 4 8-8M15 8h5v5"/></svg></div>
           <div id="homeWeekProgress" style="font-size:1.3rem;font-weight:800;">–</div>
-          <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;">Vs semaine dernière</div>
+          <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;"><span data-i18n="home_vs_last_week">Vs semaine dernière</span></div>
         </div>
       </div>
     </section>
@@ -295,8 +296,8 @@
   <div id="tab-training" class="tab-content hidden">
   <section class="panel">
     <div style="display:flex;align-items:center;justify-content:space-between;">
-      <div style="font-size:1.05rem;font-weight:800;">SÉRIE <span id="setInfo">1</span></div>
-      <div id="phase" style="color:var(--primary);font-weight:700;font-size:.9rem;">Prêt</div>
+      <div style="font-size:1.05rem;font-weight:800;"><span data-i18n="training_series_label">SÉRIE</span> <span id="setInfo">1</span></div>
+      <div id="phase" style="color:var(--primary);font-weight:700;font-size:.9rem;" data-i18n="training_ready">Prêt</div>
     </div>
     <div style="text-align:center;width:100%;position:relative;margin-top:.6rem;">
       <div style="position:relative;width:min(64vw,240px);aspect-ratio:1/1;margin:0 auto;">
@@ -305,76 +306,73 @@
           <circle id="setProgressRing" cx="50" cy="50" r="46" fill="none" stroke="var(--primary)" stroke-width="5" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="289" style="transition:stroke-dashoffset .3s ease;"></circle>
         </svg>
         <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
-          <div class="counter" id="count" style="font-size:3.6rem;font-weight:800;line-height:1;">0</div>
-          <div style="color:var(--muted);font-size:.85rem;margin-top:.1rem;">pompes</div>
+          <div class="counter" id="count" style="font-size:2.8rem;font-weight:800;line-height:1;">0</div>
+          <div style="color:var(--muted);font-size:1.1rem;font-weight:600;margin-top:.15rem;" data-i18n="training_pushups">pompes</div>
         </div>
       </div>
     </div>
     <div class="camera-shell" style="aspect-ratio:auto;height:auto;background:transparent;">
       <video id="video" autoplay muted playsinline webkit-playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
       <canvas id="work" style="display:none;"></canvas>
-      <div class="camera-overlay" style="position:static;display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap;margin-top:.7rem;">
-        <div class="pill" style="border-radius:999px;padding:.35rem .8rem;background:var(--surface2);display:flex;align-items:center;gap:.4rem;font-size:.8rem;"><span class="dot" id="cameraDot"></span><span id="cameraStatus">Caméra inactive</span></div>
+      <div class="camera-overlay" style="position:static;visibility:hidden;height:0;overflow:hidden;margin:0;">
+        <div class="pill" style="border-radius:999px;padding:.35rem .8rem;background:var(--surface2);display:flex;align-items:center;gap:.4rem;font-size:.8rem;"><span class="dot" id="cameraDot"></span><span id="cameraStatus" data-i18n="training_camera_inactive">Caméra inactive</span></div>
         <div class="pill" style="border-radius:999px;padding:.35rem .8rem;background:var(--surface2);display:flex;align-items:center;gap:.4rem;font-size:.8rem;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span id="movementLabel">Repos: 60 s</span></div>
       </div>
     </div>
     <div class="controls" style="margin-top:1rem;">
-      <button id="toggleSession" class="btn btn-primary" disabled style="grid-column:1/-1;">▶ Démarrer la série</button>
-      <button id="nextSet" class="btn hidden" disabled>Série suivante</button>
-      <button id="finishWorkout" class="btn btn-danger hidden" disabled>Fin entraînement</button>
-      <button id="resetCount" class="btn hidden" style="grid-column:1/-1">Réinitialiser le set</button>
+      <button id="toggleSession" class="btn btn-primary" disabled style="grid-column:1/-1;" data-i18n="training_start_set">▶ Démarrer la série</button>
+      <button id="nextSet" class="btn hidden" disabled data-i18n="training_next_set">Série suivante</button>
+      <button id="finishWorkout" class="btn btn-danger hidden" disabled data-i18n="training_finish_workout">Fin entraînement</button>
+      <button id="resetCount" class="btn hidden" style="grid-column:1/-1" data-i18n="training_reset_set">Réinitialiser le set</button>
     </div>
   </section>
 
   <section class="panel hidden" id="restPanel" style="margin-top:1rem;text-align:center;">
-    <h2 style="margin-bottom:.6rem;">Minuteur de repos</h2>
-    <div class="section-title">Pause en cours</div><div class="rest-time" id="restDisplay">01:00</div><div id="restText">Reprenez votre souffle.</div>
-    <div class="controls" style="margin-top:1rem;grid-template-columns:1fr;"><button id="resumeAfterRest" class="btn btn-primary">Reprendre maintenant</button><button id="skipRest" class="btn hidden">Ignorer</button></div>
+    <h2 style="margin-bottom:.6rem;" data-i18n="training_rest_timer">Minuteur de repos</h2>
+    <div class="section-title" data-i18n="training_rest_ongoing">Pause en cours</div><div class="rest-time" id="restDisplay">01:00</div><div id="restText" data-i18n="training_catch_breath">Reprenez votre souffle.</div>
+    <div class="controls" style="margin-top:1rem;grid-template-columns:1fr;"><button id="resumeAfterRest" class="btn btn-primary" data-i18n="training_resume_now">Reprendre maintenant</button><button id="skipRest" class="btn hidden" data-i18n="training_skip">Ignorer</button></div>
   </section>
 
   <section class="panel" style="margin-top:1rem;">
-    <div style="color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;margin-bottom:.6rem;">Résumé séance</div>
+    <div style="color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;margin-bottom:.6rem;" data-i18n="training_session_summary">Résumé séance</div>
     <div style="display:flex;justify-content:space-around;align-items:flex-start;text-align:center;">
       <div style="flex:1;">
         <div style="color:var(--primary);"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" stroke="none"><path d="M3 15c0-3 1-5 3-6.5C7.5 7 9 6.5 10.5 6c.6-1.6 2-2.8 3.7-3 1.1-.1 1.8.9 1.3 1.9-.4.8-.6 1.4-.5 2.1 1.6.4 3 1.5 3.7 3 .5 1.1-.6 2.1-1.6 1.5-.5-.3-1-.4-1.4-.2-.5.3-.6 1-.2 1.6.8 1.2 1.2 2.6 1 4-.2 1.5-1.6 2.4-3 2-1.1-.3-1.9-1.2-2.9-1.7-1.3-.7-2.8-.7-4.1 0-.9.5-1.8-.5-1.5-1.5.3-1.1 1-2 1.6-3-1.2.3-2.3 1-3 2-.6.8-1.8.3-1.6-.7z"/></svg></div>
-        <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;">Total séance</div>
-        <strong id="totalCount" style="font-size:1.8rem;display:block;">0</strong>
-        <div style="color:var(--muted);font-size:.78rem;">pompes</div>
+        <strong id="totalCount" style="font-size:1.8rem;display:block;margin-top:.3rem;">0</strong>
+        <div style="color:var(--muted);font-size:.78rem;" data-i18n="training_pushups">pompes</div>
       </div>
       <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
         <div style="color:var(--primary);"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
-        <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;">Séries</div>
-        <strong id="sessionSetsCount" style="font-size:1.8rem;display:block;">0</strong>
-        <div style="color:var(--muted);font-size:.78rem;">séries</div>
+        <strong id="sessionSetsCount" style="font-size:1.8rem;display:block;margin-top:.3rem;">0</strong>
+        <div style="color:var(--muted);font-size:.78rem;" data-i18n="training_series_unit">séries</div>
       </div>
       <div style="flex:1;">
         <div style="color:var(--primary);"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-        <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;">Durée</div>
-        <strong id="sessionDuration" style="font-size:1.8rem;display:block;">00:00</strong>
+        <strong id="sessionDuration" style="font-size:1.8rem;display:block;margin-top:.3rem;">00:00</strong>
       </div>
     </div>
   </section>
 
   <section class="panel" style="margin-top:1rem;">
-    <div style="color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;margin-bottom:.6rem;">Réglages de repos</div>
+    <div style="color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;margin-bottom:.6rem;" data-i18n="training_rest_settings">Réglages de repos</div>
     <div style="text-align:center;">
       <input id="restSeconds" type="number" min="10" max="900" value="60" style="display:none;">
       <input id="targetReps" type="hidden" value="10">
-      <div style="font-size:2.2rem;font-weight:800;"><span id="restSecondsDisplay">60</span> <span style="font-size:1rem;color:var(--muted);font-weight:600;">seconds</span></div>
+      <div style="font-size:2.2rem;font-weight:800;"><span id="restSecondsDisplay">60</span> <span style="font-size:1rem;color:var(--muted);font-weight:600;" data-i18n="training_seconds">secondes</span></div>
     </div>
     <div class="chips" style="margin-top:.8rem;"><button class="chip" data-rest="30">30 sec</button><button class="chip active" data-rest="60">1 min</button><button class="chip" data-rest="90">1 min 30</button><button class="chip" data-rest="120">2 min</button></div>
   </section>
 
   <div id="validateModal" class="modal-overlay hidden">
     <div class="modal-box">
-      <div class="section-title">Série terminée</div>
+      <div class="section-title" data-i18n="training_series_done">Série terminée</div>
       <div class="modal-count" id="validateCount">0</div>
       <div class="modal-stepper">
         <button id="decrementRep" class="icon-btn stepper-btn">−</button>
-        <span class="modal-count-label">pompes</span>
+        <span class="modal-count-label" data-i18n="training_pushups">pompes</span>
         <button id="incrementRep" class="icon-btn stepper-btn">+</button>
       </div>
-      <button id="confirmSet" class="btn btn-primary" style="width:100%;margin-top:1.2rem;">Valider et passer au repos</button>
+      <button id="confirmSet" class="btn btn-primary" style="width:100%;margin-top:1.2rem;" data-i18n="training_validate_rest">Valider et passer au repos</button>
     </div>
   </div>
 
@@ -385,82 +383,82 @@
   <div id="welcomeOnboardingModal" class="modal-overlay hidden">
     <div class="modal-box" style="max-width:400px;text-align:left;">
       <div id="welcomeStep1">
-        <div class="section-title">Question 1 sur 4</div>
-        <h2 style="margin-top:.3rem;">Quelle langue souhaitez-vous utiliser ?</h2>
+        <div class="section-title" data-i18n="onboarding_q1">Question 1 sur 4</div>
+        <h2 style="margin-top:.3rem;" data-i18n="onboarding_lang_q">Quelle langue souhaitez-vous utiliser ?</h2>
         <div class="chips" id="welcomeLangChips" style="margin-top:.8rem;">
           <button class="chip active" data-lang="fr">Français</button>
-          <button class="chip" data-lang="en" disabled style="opacity:.4;cursor:not-allowed;">Anglais</button>
-          <button class="chip" data-lang="es" disabled style="opacity:.4;cursor:not-allowed;">Espagnol</button>
+          <button class="chip" data-lang="en">English</button>
+          <button class="chip" data-lang="es" disabled style="opacity:.4;cursor:not-allowed;">Español</button>
         </div>
-        <p style="color:var(--muted);font-size:.78rem;margin-top:.6rem;">Seul le français est disponible pour le moment. Les autres langues arriveront bientôt.</p>
-        <button id="welcomeStep1Next" class="btn btn-primary" style="width:100%;margin-top:1.2rem;">Continuer</button>
+        <p style="color:var(--muted);font-size:.78rem;margin-top:.6rem;" data-i18n="onboarding_lang_note">Seul le français est disponible pour le moment. Les autres langues arriveront bientôt.</p>
+        <button id="welcomeStep1Next" class="btn btn-primary" style="width:100%;margin-top:1.2rem;" data-i18n="onboarding_continue">Continuer</button>
       </div>
       <div id="welcomeStep2" class="hidden">
-        <div class="section-title">Question 2 sur 4</div>
-        <h2 style="margin-top:.3rem;">Comment souhaitez-vous être appelé ?</h2>
-        <input id="welcomeNicknameInput" type="text" maxlength="24" placeholder="Ex : Alex" style="margin-top:.8rem;">
-        <button id="welcomeStep2Next" class="btn btn-primary" style="width:100%;margin-top:1.2rem;">Continuer</button>
+        <div class="section-title" data-i18n="onboarding_q2">Question 2 sur 4</div>
+        <h2 style="margin-top:.3rem;" data-i18n="onboarding_name_q">Comment souhaitez-vous être appelé ?</h2>
+        <input id="welcomeNicknameInput" type="text" maxlength="24" placeholder="Ex : Alex" data-i18n-ph="onboarding_name_placeholder" style="margin-top:.8rem;">
+        <button id="welcomeStep2Next" class="btn btn-primary" style="width:100%;margin-top:1.2rem;" data-i18n="onboarding_continue">Continuer</button>
       </div>
       <div id="welcomeStep3" class="hidden">
-        <div class="section-title">Question 3 sur 4</div>
-        <h2 style="margin-top:.3rem;">Combien de pompes pouvez-vous faire en une seule fois ?</h2>
+        <div class="section-title" data-i18n="onboarding_q3">Question 3 sur 4</div>
+        <h2 style="margin-top:.3rem;" data-i18n="onboarding_maxreps_q">Combien de pompes pouvez-vous faire en une seule fois ?</h2>
         <input id="welcomeMaxRepsInput" type="number" min="1" max="200" placeholder="Ex : 15" style="margin-top:.8rem;">
-        <button id="welcomeStep3Next" class="btn btn-primary" style="width:100%;margin-top:1.2rem;">Continuer</button>
+        <button id="welcomeStep3Next" class="btn btn-primary" style="width:100%;margin-top:1.2rem;" data-i18n="onboarding_continue">Continuer</button>
       </div>
       <div id="welcomeStep4" class="hidden">
-        <div class="section-title">Question 4 sur 4</div>
-        <h2 style="margin-top:.3rem;">Quels jours voulez-vous vous entraîner ?</h2>
+        <div class="section-title" data-i18n="onboarding_q4">Question 4 sur 4</div>
+        <h2 style="margin-top:.3rem;" data-i18n="onboarding_days_q">Quels jours voulez-vous vous entraîner ?</h2>
         <div class="chips" id="welcomeDaysChips" style="margin-top:.8rem;">
-          <button class="chip" data-day="1">Lun</button>
-          <button class="chip" data-day="2">Mar</button>
-          <button class="chip" data-day="3">Mer</button>
-          <button class="chip" data-day="4">Jeu</button>
-          <button class="chip" data-day="5">Ven</button>
-          <button class="chip" data-day="6">Sam</button>
-          <button class="chip" data-day="0">Dim</button>
+          <button class="chip" data-day="1" data-i18n="day_mon">Lun</button>
+          <button class="chip" data-day="2" data-i18n="day_tue">Mar</button>
+          <button class="chip" data-day="3" data-i18n="day_wed">Mer</button>
+          <button class="chip" data-day="4" data-i18n="day_thu">Jeu</button>
+          <button class="chip" data-day="5" data-i18n="day_fri">Ven</button>
+          <button class="chip" data-day="6" data-i18n="day_sat">Sam</button>
+          <button class="chip" data-day="0" data-i18n="day_sun">Dim</button>
         </div>
-        <button id="welcomeStep4Next" class="btn btn-primary" style="width:100%;margin-top:1.2rem;">Continuer</button>
+        <button id="welcomeStep4Next" class="btn btn-primary" style="width:100%;margin-top:1.2rem;" data-i18n="onboarding_continue">Continuer</button>
       </div>
       <div id="welcomeStep5" class="hidden" style="text-align:center;">
         <div style="font-size:2.2rem;">👋</div>
-        <h2 id="welcomeDoneTitle" style="margin-top:.4rem;">Enchanté !</h2>
-        <p style="color:var(--muted);font-size:.9rem;margin-top:.4rem;">Toutes ces informations peuvent être modifiées à tout moment dans la page Profil.</p>
-        <button id="welcomeStep5Close" class="btn btn-primary" style="width:100%;margin-top:1.2rem;">C'est parti !</button>
+        <h2 id="welcomeDoneTitle" style="margin-top:.4rem;" data-i18n="onboarding_hi">Enchanté !</h2>
+        <p style="color:var(--muted);font-size:.9rem;margin-top:.4rem;" data-i18n="onboarding_done_sub">Toutes ces informations peuvent être modifiées à tout moment dans la page Profil.</p>
+        <button id="welcomeStep5Close" class="btn btn-primary" style="width:100%;margin-top:1.2rem;" data-i18n="onboarding_lets_go">C'est parti !</button>
       </div>
     </div>
   </div>
 
   <div id="freeCountdownModal" class="modal-overlay hidden">
   <div class="modal-box">
-    <div class="section-title">Préparez-vous</div>
+    <div class="section-title" data-i18n="modal_get_ready">Préparez-vous</div>
     <div class="modal-count" id="freeCountdownValue">10</div>
-    <div style="color:var(--muted);font-size:.9rem">La séance libre démarre automatiquement.</div>
+    <div style="color:var(--muted);font-size:.9rem" data-i18n="modal_free_autostart">La séance libre démarre automatiquement.</div>
   </div>
 </div>
 <div id="planCountdownModal" class="modal-overlay hidden">
   <div class="modal-box">
-    <div class="section-title">Préparez-vous</div>
+    <div class="section-title" data-i18n="modal_get_ready">Préparez-vous</div>
     <div class="modal-count" id="planCountdownValue">10</div>
-    <div style="color:var(--muted);font-size:.9rem">La séance plan démarre automatiquement.</div>
+    <div style="color:var(--muted);font-size:.9rem" data-i18n="modal_plan_autostart">La séance plan démarre automatiquement.</div>
   </div>
 </div>
 <div id="workoutDoneModal" class="modal-overlay hidden">
     <div class="modal-box" style="text-align:center;position:relative;overflow:hidden;">
       <div id="doneModalConfetti" style="position:absolute;inset:0;pointer-events:none;overflow:hidden;"></div>
       <div id="doneModalEmoji" style="font-size:2.2rem;transform:scale(0);transition:transform .4s cubic-bezier(.34,1.56,.64,1);">🎉</div>
-      <div class="section-title" style="margin-top:.4rem;">Séance terminée !</div>
+      <div class="section-title" style="margin-top:.4rem;" data-i18n="modal_workout_done">Séance terminée !</div>
       <div style="display:flex;justify-content:space-around;gap:1rem;margin-top:1rem;">
         <div>
-          <div style="color:var(--muted);font-size:.8rem;">Pompes totales</div>
+          <div style="color:var(--muted);font-size:.8rem;" data-i18n="modal_total_pushups">Pompes totales</div>
           <div id="doneModalTotal" style="font-size:2rem;font-weight:700;color:var(--primary);">0</div>
         </div>
         <div>
-          <div style="color:var(--muted);font-size:.8rem;">Durée</div>
+          <div style="color:var(--muted);font-size:.8rem;" data-i18n="plan_duration">Durée</div>
           <div id="doneModalDuration" style="font-size:2rem;font-weight:700;">00:00</div>
         </div>
       </div>
       <div id="doneModalSets" style="margin-top:.8rem;color:var(--muted);font-size:.85rem;"></div>
-      <button id="closeDoneModal" class="btn btn-primary" style="width:100%;margin-top:1.3rem;">Fermer</button>
+      <button id="closeDoneModal" class="btn btn-primary" style="width:100%;margin-top:1.3rem;" data-i18n="modal_close">Fermer</button>
     </div>
   </div>
 
@@ -468,37 +466,37 @@
   <div id="tab-plan" class="tab-content hidden">
     <div id="planOnboarding">
       <section class="panel">
-        <h2>Créer mon plan d'entraînement</h2>
-        <label for="planMaxReps">Combien de pompes maximum pouvez-vous faire en une seule fois ?</label>
+        <h2 data-i18n="plan_create_title">Créer mon plan d'entraînement</h2>
+        <label for="planMaxReps" data-i18n="plan_maxreps_label">Combien de pompes maximum pouvez-vous faire en une seule fois ?</label>
         <input type="number" id="planMaxReps" min="1" max="200" placeholder="Ex: 15">
       </section>
       <section class="panel" style="margin-top:.6rem;">
-        <label>Quels jours voulez-vous vous entraîner ?</label>
+        <label data-i18n="plan_days_label">Quels jours voulez-vous vous entraîner ?</label>
         <div class="chips" id="planDaysChips">
-          <button class="chip" data-day="1">Lun</button>
-          <button class="chip" data-day="2">Mar</button>
-          <button class="chip" data-day="3">Mer</button>
-          <button class="chip" data-day="4">Jeu</button>
-          <button class="chip" data-day="5">Ven</button>
-          <button class="chip" data-day="6">Sam</button>
-          <button class="chip" data-day="0">Dim</button>
+          <button class="chip" data-day="1" data-i18n="day_mon">Lun</button>
+          <button class="chip" data-day="2" data-i18n="day_tue">Mar</button>
+          <button class="chip" data-day="3" data-i18n="day_wed">Mer</button>
+          <button class="chip" data-day="4" data-i18n="day_thu">Jeu</button>
+          <button class="chip" data-day="5" data-i18n="day_fri">Ven</button>
+          <button class="chip" data-day="6" data-i18n="day_sat">Sam</button>
+          <button class="chip" data-day="0" data-i18n="day_sun">Dim</button>
         </div>
       </section>
-      <button id="createPlanBtn" class="btn btn-primary" style="width:100%;margin-top:.6rem;">Créer mon plan</button>
+      <button id="createPlanBtn" class="btn btn-primary" style="width:100%;margin-top:.6rem;" data-i18n="plan_create_btn">Créer mon plan</button>
     </div>
 
     <div id="planActive" class="hidden">
       <section class="panel" id="planTodaySummaryPanel">
         <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-          <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span>Séance du jour</span>
+          <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span data-i18n="plan_today_session">Séance du jour</span>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;gap:1rem;flex-wrap:wrap;">
           <div>
-            <div id="planTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span></div>
+            <div id="planTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> <span data-i18n="training_pushups">pompes</span></span></div>
             <div id="planTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
             <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
-              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Temps estimé<br><strong id="planTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
-              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"/></svg> Niveau<br><strong id="planTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
+              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span data-i18n="home_estimated_time">Temps estimé</span><br><strong id="planTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
+              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"/></svg> <span data-i18n="home_level">Niveau</span><br><strong id="planTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
               
             </div>
           </div>
@@ -510,11 +508,11 @@
             <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
               <span style="color:var(--primary);"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" stroke="none"><path d="M3 15c0-3 1-5 3-6.5C7.5 7 9 6.5 10.5 6c.6-1.6 2-2.8 3.7-3 1.1-.1 1.8.9 1.3 1.9-.4.8-.6 1.4-.5 2.1 1.6.4 3 1.5 3.7 3 .5 1.1-.6 2.1-1.6 1.5-.5-.3-1-.4-1.4-.2-.5.3-.6 1-.2 1.6.8 1.2 1.2 2.6 1 4-.2 1.5-1.6 2.4-3 2-1.1-.3-1.9-1.2-2.9-1.7-1.3-.7-2.8-.7-4.1 0-.9.5-1.8-.5-1.5-1.5.3-1.1 1-2 1.6-3-1.2.3-2.3 1-3 2-.6.8-1.8.3-1.6-.7z"/></svg></span>
               <span id="planHomeRingNumber" style="font-size:1.15rem;font-weight:800;">0</span>
-              <span style="font-size:.6rem;color:var(--muted);">au total</span>
+              <span style="font-size:.6rem;color:var(--muted);" data-i18n="home_total">au total</span>
             </div>
           </div>
         </div>
-        <button id="planHomeStartBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;display:flex;align-items:center;justify-content:center;gap:.4rem;">▶ COMMENCER LA SÉANCE</button>
+        <button id="planHomeStartBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;display:flex;align-items:center;justify-content:center;gap:.4rem;" data-i18n="plan_start_session">▶ COMMENCER LA SÉANCE</button>
       </section>
       <section class="panel" style="text-align:center;">
         <div id="planTodayTitle" class="hidden">—</div>
@@ -530,97 +528,107 @@
         </div>
         <div id="planCurrentSetInfo" style="color:var(--muted);font-size:.85rem;margin-top:-.2rem;">Série 1 / 1</div>
         <div id="planSetProgressInfo" style="color:var(--muted);font-size:.8rem;margin-top:.2rem;">0 / 0 pompes faites dans ce set</div>
-        <button id="stopPlanTrainingBtn" class="btn btn-danger hidden" style="width:100%;margin-top:.8rem;">Terminer l'entraînement</button>
+        <button id="stopPlanTrainingBtn" class="btn btn-danger hidden" style="width:100%;margin-top:.8rem;" data-i18n="plan_finish_training">Terminer l'entraînement</button>
         <div id="planRestPanel" class="hidden" style="margin-top:1rem;text-align:center;padding:1rem;background:var(--surface2);border-radius:1rem;">
-          <div class="section-title">Pause en cours</div>
+          <div class="section-title" data-i18n="plan_rest_ongoing">Pause en cours</div>
           <div class="rest-time" id="planRestDisplay" style="font-size:2.4rem;font-weight:700;margin:.3rem 0;">01:00</div>
-          <div id="planRestText" style="color:var(--muted);font-size:.85rem;">Repos avant le prochain set.</div>
-          <button id="planSkipRest" class="btn btn-primary" style="width:100%;margin-top:.8rem;">Reprendre maintenant</button>
+          <div id="planRestText" style="color:var(--muted);font-size:.85rem;" data-i18n="plan_rest_next">Repos avant le prochain set.</div>
+          <button id="planSkipRest" class="btn btn-primary" style="width:100%;margin-top:.8rem;" data-i18n="plan_resume_now">Reprendre maintenant</button>
         </div>
         <div id="planSessionMetricsRow" style="display:flex;justify-content:space-around;gap:.5rem;margin-top:1rem;flex-shrink:0;">
-          <div class="metric" style="text-align:center;"><span>Pompes séance</span><strong id="planTotalCount" style="font-size:1.8rem;">0</strong></div>
-          <div class="metric" style="text-align:center;"><span>Durée</span><strong id="planSessionDuration" style="font-size:1.8rem;">00:00</strong></div>
+          <div class="metric" style="text-align:center;"><span data-i18n="plan_session_pushups">Pompes séance</span><strong id="planTotalCount" style="font-size:1.8rem;">0</strong></div>
+          <div class="metric" style="text-align:center;"><span data-i18n="plan_duration">Durée</span><strong id="planSessionDuration" style="font-size:1.8rem;">00:00</strong></div>
         </div>
         </div>
         <div id="planTodaySets" style="margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;text-align:left;"></div>
       </section>
       <section id="planFuturePanel" class="panel" style="margin-top:.6rem;">
-        <h2>7 prochains jours</h2>
+        <h2 data-i18n="plan_next_7_days">7 prochains jours</h2>
         <div id="planFutureSessions" style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;"></div>
       </section>
     </div>
   </div>
 <div id="tab-profile" class="tab-content hidden">
     <section class="panel" style="display:flex;justify-content:space-between;align-items:center;">
-      <h2 style="margin:0;">Apparence</h2>
+      <h2 style="margin:0;" data-i18n="profile_appearance">Apparence</h2>
       <div style="display:flex;gap:.3rem;background:var(--surface2);border-radius:999px;padding:.25rem;">
-        <button class="theme-opt" data-mode="dark">Sombre</button>
-        <button class="theme-opt" data-mode="system">Système</button>
-        <button class="theme-opt" data-mode="light">Clair</button>
+        <button class="theme-opt" data-mode="dark" data-i18n="profile_dark">Sombre</button>
+        <button class="theme-opt" data-mode="system" data-i18n="profile_system">Système</button>
+        <button class="theme-opt" data-mode="light" data-i18n="profile_light">Clair</button>
       </div>
     </section>
 
     <section class="panel" style="margin-top:.6rem;">
-      <h2>Profil</h2>
-      <label for="userNicknameInput">Prénom ou surnom</label>
-      <input id="userNicknameInput" type="text" maxlength="24" placeholder="Ex : Alex">
+      <h2 data-i18n="profile_title">Profil</h2>
+      <label for="userNicknameInput" data-i18n="profile_nickname_label">Prénom ou surnom</label>
+      <input id="userNicknameInput" type="text" maxlength="24" placeholder="Ex : Alex" data-i18n-ph="onboarding_name_placeholder">
       <div id="nicknameSavedHint" style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-size:.82rem;margin-top:.6rem;opacity:0;transition:opacity .3s ease;">
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
-        <span>Enregistré automatiquement</span>
+        <span data-i18n="profile_autosaved">Enregistré automatiquement</span>
       </div>
+    </section>
+
+    <section class="panel" style="margin-top:.6rem;">
+      <h2 data-i18n="profile_language">Choix de la langue</h2>
+      <div class="chips" id="profileLangChips" style="margin-top:.4rem;">
+        <button class="chip lang-choice-chip" data-lang="fr">Français</button>
+        <button class="chip lang-choice-chip" data-lang="en">English</button>
+        <button class="chip lang-choice-chip" data-lang="es" disabled style="opacity:.4;cursor:not-allowed;">Español</button>
+      </div>
+      <div style="color:var(--muted);font-size:.78rem;margin-top:.5rem;" data-i18n="profile_language_note">Seuls le français et l'anglais sont disponibles pour le moment. L'espagnol arrivera bientôt.</div>
     </section>
 
     <div id="profileEmptyState" class="hidden">
       <section class="panel" style="text-align:center;margin-top:.6rem;">
-        <h2>Aucun plan actif</h2>
-        <p style="color:var(--muted);font-size:.9rem;margin:.6rem 0 1rem;">Créez d'abord votre plan d'entraînement dans l'onglet Plan : c'est là que vous indiquez votre nombre de pompes maximum et vos jours d'entraînement.</p>
-        <button id="goToPlanFromProfileBtn" class="btn btn-primary" style="width:100%;">Aller à l'onglet Plan</button>
+        <h2 data-i18n="profile_no_plan">Aucun plan actif</h2>
+        <p style="color:var(--muted);font-size:.9rem;margin:.6rem 0 1rem;" data-i18n="profile_no_plan_sub">Créez d'abord votre plan d'entraînement dans l'onglet Plan : c'est là que vous indiquez votre nombre de pompes maximum et vos jours d'entraînement.</p>
+        <button id="goToPlanFromProfileBtn" class="btn btn-primary" style="width:100%;" data-i18n="profile_go_to_plan">Aller à l'onglet Plan</button>
       </section>
     </div>
 
     <div id="profileFormWrap">
     <section class="panel" style="margin-top:.6rem;">
-      <h2>Jours d'entraînement</h2>
+      <h2 data-i18n="profile_training_days">Jours d'entraînement</h2>
       <div class="chips" id="planDaysChipsEdit">
-        <button class="chip" data-day="1">Lun</button>
-        <button class="chip" data-day="2">Mar</button>
-        <button class="chip" data-day="3">Mer</button>
-        <button class="chip" data-day="4">Jeu</button>
-        <button class="chip" data-day="5">Ven</button>
-        <button class="chip" data-day="6">Sam</button>
-        <button class="chip" data-day="0">Dim</button>
+        <button class="chip" data-day="1" data-i18n="day_mon">Lun</button>
+        <button class="chip" data-day="2" data-i18n="day_tue">Mar</button>
+        <button class="chip" data-day="3" data-i18n="day_wed">Mer</button>
+        <button class="chip" data-day="4" data-i18n="day_thu">Jeu</button>
+        <button class="chip" data-day="5" data-i18n="day_fri">Ven</button>
+        <button class="chip" data-day="6" data-i18n="day_sat">Sam</button>
+        <button class="chip" data-day="0" data-i18n="day_sun">Dim</button>
       </div>
-      <div style="color:var(--muted);font-size:.78rem;margin-top:.5rem;">Utilisé pour planifier votre programme</div>
-      <button id="savePlanSettingsBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;">Enregistrer les modifications</button>
+      <div style="color:var(--muted);font-size:.78rem;margin-top:.5rem;" data-i18n="profile_days_used_for">Utilisé pour planifier votre programme</div>
+      <button id="savePlanSettingsBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;" data-i18n="profile_save_changes">Enregistrer les modifications</button>
     </section>
 
     <section class="panel" style="margin-top:.6rem;">
-      <h2>Préférences</h2>
+      <h2 data-i18n="profile_preferences">Préférences</h2>
       <div class="pref-row">
         <div class="pref-icon"><span id="toggleSoundIcon" style="width:18px;height:18px;display:inline-flex;"></span></div>
         <div class="pref-text">
-          <div class="pref-title">Sons de séance</div>
-          <div class="pref-sub">Bips de début et fin</div>
+          <div class="pref-title" data-i18n="profile_session_sounds">Sons de séance</div>
+          <div class="pref-sub" data-i18n="profile_beep_desc">Bips de début et fin</div>
         </div>
-        <div id="toggleSoundBtn" class="switch" role="switch" aria-label="Activer/désactiver le son"><div class="switch-knob"></div></div>
+        <div id="toggleSoundBtn" class="switch" role="switch" aria-label="Activer/désactiver le son" data-i18n-aria="profile_session_sounds"><div class="switch-knob"></div></div>
       </div>
       <div class="pref-row">
         <div class="pref-icon"><span id="toggleVibrationIcon" style="width:18px;height:18px;display:inline-flex;"></span></div>
         <div class="pref-text">
-          <div class="pref-title">Vibrations</div>
-          <div class="pref-sub">Retour haptique pendant la séance</div>
+          <div class="pref-title" data-i18n="profile_vibrations">Vibrations</div>
+          <div class="pref-sub" data-i18n="profile_haptic_desc">Retour haptique pendant la séance</div>
         </div>
-        <div id="toggleVibrationBtn" class="switch" role="switch" aria-label="Activer/désactiver le vibreur"><div class="switch-knob"></div></div>
+        <div id="toggleVibrationBtn" class="switch" role="switch" aria-label="Activer/désactiver le vibreur" data-i18n-aria="profile_vibrations"><div class="switch-knob"></div></div>
       </div>
     </section>
 
     <section class="panel" style="margin-top:.6rem;">
-      <h2>Plan</h2>
+      <h2 data-i18n="profile_plan_section">Plan</h2>
       <button id="resetPlanBtn" class="pref-row" style="width:100%;background:none;border:none;text-align:left;cursor:pointer;padding:.7rem 0;color:var(--text);">
         <div class="pref-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></div>
         <div class="pref-text">
-          <div class="pref-title">Réinitialiser le plan</div>
-          <div class="pref-sub">Supprime le programme actuel, conserve votre historique</div>
+          <div class="pref-title" data-i18n="profile_reset_plan">Réinitialiser le plan</div>
+          <div class="pref-sub" data-i18n="profile_reset_plan_sub">Supprime le programme actuel, conserve votre historique</div>
         </div>
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
       </button>
@@ -628,14 +636,14 @@
     </div>
 
     <section class="panel" style="margin-top:.6rem;">
-      <h2 style="color:#ef4444;">Réinitialisation complète</h2>
+      <h2 style="color:#ef4444;" data-i18n="profile_full_reset">Réinitialisation complète</h2>
       <button id="fullResetBtn" class="pref-row" style="width:100%;background:none;border:none;text-align:left;cursor:pointer;padding:.7rem 0;">
         <div class="pref-icon" style="background:color-mix(in srgb, #ef4444 14%, transparent);color:#ef4444;">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0l-1 14a1 1 0 01-1 1H7a1 1 0 01-1-1L5 6"/></svg>
         </div>
         <div class="pref-text">
-          <div class="pref-title" style="color:#ef4444;">Supprimer toutes les données</div>
-          <div class="pref-sub">Efface définitivement vos séances, statistiques et préférences</div>
+          <div class="pref-title" style="color:#ef4444;" data-i18n="profile_delete_all">Supprimer toutes les données</div>
+          <div class="pref-sub" data-i18n="profile_delete_all_sub">Efface définitivement vos séances, statistiques et préférences</div>
         </div>
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
       </button>
@@ -652,8 +660,8 @@
         </div>
       </div>
       <div style="flex:1;">
-        <div style="font-weight:700;"><span>Série actuelle : </span><span id="streakCount">0</span> <span id="streakUnit">semaine</span></div>
-        <div style="color:var(--muted);font-size:.8rem;">Au moins une séance par semaine</div>
+        <div style="font-weight:700;"><span data-i18n="calendar_current_streak">Série actuelle : </span><span id="streakCount">0</span> <span id="streakUnit">semaine</span></div>
+        <div style="color:var(--muted);font-size:.8rem;" data-i18n="calendar_at_least_one">Au moins une séance par semaine</div>
       </div>
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
     </section>
@@ -663,7 +671,7 @@
         <h2 id="calMonthLabel" style="text-transform:uppercase;letter-spacing:.05em;">Juillet 2026</h2>
         <button id="calNextMonth" class="icon-btn">›</button>
       </div>
-      <div class="cal-weekdays"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+      <div class="cal-weekdays"><span data-i18n="cal_wd_mon">L</span><span data-i18n="cal_wd_tue">M</span><span data-i18n="cal_wd_wed">M</span><span data-i18n="cal_wd_thu">J</span><span data-i18n="cal_wd_fri">V</span><span data-i18n="cal_wd_sat">S</span><span data-i18n="cal_wd_sun">D</span></div>
       <div id="calGrid" class="cal-grid"></div>
     </section>
     <section class="panel" id="calDaySummaryPanel" style="margin-top:.6rem;display:flex;align-items:center;gap:.8rem;">
@@ -671,25 +679,25 @@
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
       </div>
       <div style="flex:1;">
-        <div id="calDaySummaryDate" style="font-weight:700;">Aujourd'hui</div>
+        <div id="calDaySummaryDate" style="font-weight:700;" data-i18n="calendar_today">Aujourd'hui</div>
         <div id="calDaySummaryStatus" style="color:var(--primary);font-size:.85rem;font-weight:600;"></div>
         <div id="calDaySummaryDetail" style="color:var(--muted);font-size:.82rem;margin-top:.1rem;"></div>
       </div>
     </section>
-    <button id="calDaySummaryAction" class="btn btn-primary hidden" style="width:100%;margin-top:.6rem;">▶ Commencer la séance</button>
+    <button id="calDaySummaryAction" class="btn btn-primary hidden" style="width:100%;margin-top:.6rem;" data-i18n="calendar_start_session">▶ Commencer la séance</button>
     <section class="panel" style="margin-top:.6rem;">
-      <div style="font-weight:700;margin-bottom:.6rem;">Données et sauvegarde</div>
+      <div style="font-weight:700;margin-bottom:.6rem;" data-i18n="calendar_data_backup">Données et sauvegarde</div>
       <div style="display:flex;gap:.5rem;">
-        <button id="exportDataBtn" class="btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 8l5-5 5 5M5 21h14"/></svg>Exporter</button>
-        <button id="importDataBtn" class="btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9M7 16l5 5 5-5M5 3h14"/></svg>Importer</button>
+        <button id="exportDataBtn" class="btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 8l5-5 5 5M5 21h14"/></svg><span data-i18n="calendar_export">Exporter</span></button>
+        <button id="importDataBtn" class="btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9M7 16l5 5 5-5M5 3h14"/></svg><span data-i18n="calendar_import">Importer</span></button>
       </div>
     </section>
-    <button id="resetCalendarBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;">Réinitialiser le calendrier</button>
+    <button id="resetCalendarBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;" data-i18n="calendar_reset">Réinitialiser le calendrier</button>
     <input type="file" id="importFileInput" accept=".json" style="display:none;">
   </div>
   <div id="tab-stats" class="tab-content hidden">
     <section class="panel hidden" id="streakPanel" style="text-align:center;">
-      <div class="section-title">Série en cours</div>
+      <div class="section-title" data-i18n="stats_current_streak">Série en cours</div>
       <div style="font-size:2.2rem;font-weight:700;margin-top:.2rem;" id="streakValue">0 jour</div>
       <div style="font-size:.75rem;color:var(--muted);margin-top:.2rem;" id="streakBest">Meilleure série : 0 jour</div>
     </section>
@@ -697,8 +705,8 @@
     <section class="panel">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
-          <div style="font-weight:800;font-size:1.05rem;">Progression</div>
-          <div style="font-size:.78rem;color:var(--muted);margin-top:.1rem;">Total pompes par semaine</div>
+          <div style="font-weight:800;font-size:1.05rem;" data-i18n="stats_progression">Progression</div>
+          <div style="font-size:.78rem;color:var(--muted);margin-top:.1rem;" data-i18n="stats_weekly_total">Total pompes par semaine</div>
         </div>
         <div style="position:relative;">
           <button id="statsRangeBtn" class="chip active" style="border-radius:999px;display:flex;align-items:center;gap:.3rem;">
@@ -713,56 +721,56 @@
         </div>
       </div>
       <svg id="statsProgressChart" viewBox="0 0 300 150" style="width:100%;height:150px;margin-top:.4rem;overflow:visible;"></svg>
-      <div id="statsChartEmpty" class="hidden" style="text-align:center;color:var(--muted);font-size:.85rem;padding:1rem 0;">Pas encore assez de données pour afficher une tendance.</div>
+      <div id="statsChartEmpty" class="hidden" style="text-align:center;color:var(--muted);font-size:.85rem;padding:1rem 0;" data-i18n="stats_not_enough_data">Pas encore assez de données pour afficher une tendance.</div>
     </section>
 
     <section class="panel" style="margin-top:.6rem;">
-      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.7rem;">Records personnels</div>
+      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.7rem;" data-i18n="stats_personal_records">Records personnels</div>
       <div style="display:flex;justify-content:space-around;text-align:center;">
         <div style="flex:1;">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0V4z"/><path d="M7 6H4v2a3 3 0 003 3M17 6h3v2a3 3 0 01-3 3"/></svg>
-          <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;">Meilleur set</div>
+          <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" data-i18n="stats_best_set">Meilleur set</div>
           <strong style="font-size:1.6rem;display:block;" id="recordSet">0</strong>
         </div>
         <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3-5.5-3-5.5 3 1-6.3L3 8.9 9 8z"/></svg>
-          <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;">Meilleure séance</div>
+          <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" data-i18n="stats_best_session">Meilleure séance</div>
           <strong style="font-size:1.6rem;display:block;" id="recordSession">0</strong>
         </div>
         <div style="flex:1;">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2c1 3-2 4-2 7 0 1.5 1 2.5 2 2.5s2-1 2-2.2c1.2 1 2 2.6 2 4.2 0 3-2.2 5.5-6 5.5s-6.5-2.7-6.5-6.2c0-4 2.5-6.3 4.5-9C8.5 4.5 10 3 12 2z" fill="var(--primary)"/></svg>
-          <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;">Total cumulé</div>
+          <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" data-i18n="stats_cumulative_total">Total cumulé</div>
           <strong style="font-size:1.6rem;display:block;" id="totalCumulative">0</strong>
         </div>
       </div>
     </section>
 
     <section class="panel hidden" style="margin-top:.6rem;">
-      <h2>Badges</h2>
+      <h2 data-i18n="stats_badges">Badges</h2>
       <div id="badgesGrid" style="display:flex;gap:.6rem;margin-top:.6rem;overflow-x:auto;padding-bottom:.2rem;"></div>
     </section>
 
     <section class="panel" style="margin-top:.6rem;">
-      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.4rem;">Évolution (30 derniers jours)</div>
+      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.4rem;" data-i18n="stats_evolution">Évolution (30 derniers jours)</div>
       <canvas id="progressChart" width="400" height="180" style="width:100%;height:180px;margin-top:.3rem;"></canvas>
     </section>
 
     <section class="panel" style="margin-top:.6rem;">
-      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.7rem;">Statistiques générales</div>
+      <div style="font-weight:800;font-size:1.05rem;margin-bottom:.7rem;" data-i18n="stats_general_stats">Statistiques générales</div>
       <div style="display:flex;justify-content:space-around;text-align:center;">
         <div style="flex:1;">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
-          <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;">Nombre de séances</div>
+          <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" data-i18n="stats_session_count">Nombre de séances</div>
           <strong style="font-size:1.4rem;display:block;" id="statSessionCount">0</strong>
         </div>
         <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/></svg>
-          <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;">Moyenne par séance</div>
+          <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" data-i18n="stats_avg_per_session">Moyenne par séance</div>
           <strong style="font-size:1.4rem;display:block;" id="statAverage">0</strong>
         </div>
         <div style="flex:1;">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3-5.5-3-5.5 3 1-6.3L3 8.9 9 8z"/></svg>
-          <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;">Meilleur jour</div>
+          <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" data-i18n="stats_best_day">Meilleur jour</div>
           <strong style="font-size:1.1rem;display:block;" id="statBestDay">—</strong>
         </div>
       </div>
@@ -773,24 +781,24 @@
       <div class="modal-box" style="max-width:420px;text-align:left;">
         <div class="counter-label" id="calendarDetailDate">Séance</div>
         <div id="calendarDetailContent" style="margin-top:.8rem;font-size:.92rem;line-height:1.6;"></div>
-        <button id="closeCalendarDetail" class="btn" style="width:100%;margin-top:1.2rem;">Fermer</button>
+        <button id="closeCalendarDetail" class="btn" style="width:100%;margin-top:1.2rem;" data-i18n="modal_close">Fermer</button>
       </div>
     </div>
     <div id="customConfirmModal" class="modal-overlay hidden">
       <div class="modal-box" style="max-width:360px;">
         <div id="customConfirmMessage" style="font-size:.95rem;line-height:1.5;margin-bottom:1.2rem;"></div>
         <div style="display:flex;gap:.6rem;">
-          <button id="customConfirmCancel" class="btn" style="flex:1;">Annuler</button>
-          <button id="customConfirmOk" class="btn btn-danger" style="flex:1;">Confirmer</button>
+          <button id="customConfirmCancel" class="btn" style="flex:1;" data-i18n="confirm_cancel">Annuler</button>
+          <button id="customConfirmOk" class="btn btn-danger" style="flex:1;" data-i18n="confirm_confirm">Confirmer</button>
         </div>
       </div>
     </div>
     <div id="sessionFeedbackModal" class="modal-overlay hidden">
       <div class="modal-box" style="max-width:380px;text-align:center;">
-        <h2 style="margin-top:0;">Comment s'est passée cette séance ?</h2>
-        <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.2rem;">Ça aide à ajuster vos prochaines séances.</p>
-        <button id="feedbackOkBtn" class="btn btn-primary" style="width:100%;margin-bottom:.6rem;">Bien passée</button>
-        <button id="feedbackHardBtn" class="btn" style="width:100%;">Difficile (pauses supplémentaires)</button>
+        <h2 style="margin-top:0;" data-i18n="feedback_question">Comment s'est passée cette séance ?</h2>
+        <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.2rem;" data-i18n="feedback_sub">Ça aide à ajuster vos prochaines séances.</p>
+        <button id="feedbackOkBtn" class="btn btn-primary" style="width:100%;margin-bottom:.6rem;" data-i18n="feedback_good">Bien passée</button>
+        <button id="feedbackHardBtn" class="btn" style="width:100%;" data-i18n="feedback_hard">Difficile (pauses supplémentaires)</button>
       </div>
     </div>
   </div>
@@ -799,6 +807,247 @@
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.20.0/dist/tf-backend-webgl.min.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js" crossorigin="anonymous"></script>
 <script>
+const APP_I18N = {
+fr: {
+ nav_home:"Accueil", nav_plan:"Plan", nav_free:"Libre", nav_calendar:"Calendrier", nav_stats:"Stats", nav_profile:"Profil",
+ loading_text:"Chargement", landscape_rotate:"Tournez votre téléphone", landscape_sub:"Push-Up fonctionne uniquement en mode portrait.",
+ home_today_session:"Séance du jour", home_estimated_time:"Temps estimé", home_level:"Niveau", home_total:"au total",
+ home_start_session:"▶ COMMENCER LA SÉANCE", home_plan_progress:"Progression du plan", home_this_week:"Cette semaine",
+ home_sessions_completed:"Séances complétées", home_total_pushups:"Pompes au total", home_vs_last_week:"Vs semaine dernière",
+ home_greeting:"Bonjour",
+ training_ready:"Prêt", training_pushups:"pompes", training_camera_inactive:"Caméra inactive",
+ training_start_set:"▶ Démarrer la série", training_next_set:"Série suivante", training_finish_workout:"Fin entraînement",
+ training_reset_set:"Réinitialiser le set", training_rest_timer:"Minuteur de repos", training_rest_ongoing:"Pause en cours",
+ training_catch_breath:"Reprenez votre souffle.", training_resume_now:"Reprendre maintenant", training_skip:"Ignorer",
+ training_session_summary:"Résumé séance", training_total_session:"Total séance", training_series:"Séries", training_series_unit:"séries",
+ training_duration:"Durée", training_rest_settings:"Réglages de repos", training_seconds:"secondes",
+ training_series_done:"Série terminée", training_validate_rest:"Valider et passer au repos",
+ onboarding_q1:"Question 1 sur 4", onboarding_lang_q:"Quelle langue souhaitez-vous utiliser ?",
+ onboarding_lang_note:"Seuls le français et l'anglais sont disponibles pour le moment. Les autres langues arriveront bientôt.",
+ onboarding_continue:"Continuer", onboarding_q2:"Question 2 sur 4", onboarding_name_q:"Comment souhaitez-vous être appelé ?",
+ onboarding_q3:"Question 3 sur 4", onboarding_maxreps_q:"Combien de pompes pouvez-vous faire en une seule fois ?",
+ onboarding_q4:"Question 4 sur 4", onboarding_days_q:"Quels jours voulez-vous vous entraîner ?",
+ onboarding_done_sub:"Toutes ces informations peuvent être modifiées à tout moment dans la page Profil.",
+ onboarding_lets_go:"C'est parti !", onboarding_hi:"Enchanté !", onboarding_hi_name:"Enchanté {name} !",
+ onboarding_name_placeholder:"Ex : Alex", onboarding_maxreps_error:"Indiquez votre nombre maximum de pompes.", onboarding_days_error:"Sélectionnez au moins un jour d'entraînement.",
+ modal_get_ready:"Préparez-vous", modal_free_autostart:"La séance libre démarre automatiquement.",
+ modal_plan_autostart:"La séance plan démarre automatiquement.",
+ modal_workout_done:"Séance terminée !", modal_total_pushups:"Pompes totales", modal_close:"Fermer",
+ plan_create_title:"Créer mon plan d'entraînement", plan_maxreps_label:"Combien de pompes maximum pouvez-vous faire en une seule fois ?",
+ plan_days_label:"Quels jours voulez-vous vous entraîner ?", plan_create_btn:"Créer mon plan",
+ plan_today_session:"Séance du jour", plan_start_session:"▶ COMMENCER LA SÉANCE", plan_finish_training:"Terminer l'entraînement",
+ plan_rest_ongoing:"Pause en cours", plan_rest_next:"Repos avant le prochain set.", plan_resume_now:"Reprendre maintenant",
+ plan_session_pushups:"Pompes séance", plan_duration:"Durée", plan_next_7_days:"7 prochains jours",
+ profile_appearance:"Apparence", profile_dark:"Sombre", profile_system:"Système", profile_light:"Clair",
+ profile_title:"Profil", profile_nickname_label:"Prénom ou surnom", profile_autosaved:"Enregistré automatiquement",
+ profile_no_plan:"Aucun plan actif", profile_no_plan_sub:"Créez d'abord votre plan d'entraînement dans l'onglet Plan : c'est là que vous indiquez votre nombre de pompes maximum et vos jours d'entraînement.",
+ profile_go_to_plan:"Aller à l'onglet Plan", profile_training_days:"Jours d'entraînement", profile_days_used_for:"Utilisé pour planifier votre programme",
+ profile_save_changes:"Enregistrer les modifications", profile_preferences:"Préférences", profile_session_sounds:"Sons de séance",
+ profile_beep_desc:"Bips de début et fin", profile_vibrations:"Vibrations", profile_haptic_desc:"Retour haptique pendant la séance",
+ profile_plan_section:"Plan", profile_reset_plan:"Réinitialiser le plan", profile_reset_plan_sub:"Supprime le programme actuel, conserve votre historique",
+ profile_full_reset:"Réinitialisation complète", profile_delete_all:"Supprimer toutes les données", profile_delete_all_sub:"Efface définitivement vos séances, statistiques et préférences",
+ profile_language:"Choix de la langue", profile_language_note:"Seuls le français et l'anglais sont disponibles pour le moment. L'espagnol arrivera bientôt.",
+ calendar_current_streak:"Série actuelle : ", calendar_week_unit:"semaine", calendar_at_least_one:"Au moins une séance par semaine",
+ calendar_today:"Aujourd'hui", calendar_start_session:"▶ Commencer la séance", calendar_data_backup:"Données et sauvegarde",
+ calendar_export:"Exporter", calendar_import:"Importer", calendar_reset:"Réinitialiser le calendrier", calendar_session:"Séance",
+ stats_current_streak:"Série en cours", stats_best_streak:"Meilleure série : ", stats_progression:"Progression",
+ stats_weekly_total:"Total pompes par semaine", stats_not_enough_data:"Pas encore assez de données pour afficher une tendance.",
+ stats_personal_records:"Records personnels", stats_best_set:"Meilleur set", stats_best_session:"Meilleure séance",
+ stats_cumulative_total:"Total cumulé", stats_badges:"Badges", stats_evolution:"Évolution (30 derniers jours)",
+ stats_general_stats:"Statistiques générales", stats_session_count:"Nombre de séances", stats_avg_per_session:"Moyenne par séance",
+ stats_best_day:"Meilleur jour",
+ confirm_cancel:"Annuler", confirm_confirm:"Confirmer",
+ feedback_question:"Comment s'est passée cette séance ?", feedback_sub:"Ça aide à ajuster vos prochaines séances.",
+ feedback_good:"Bien passée", feedback_hard:"Difficile (pauses supplémentaires)",
+ day_mon:"Lun", day_tue:"Mar", day_wed:"Mer", day_thu:"Jeu", day_fri:"Ven", day_sat:"Sam", day_sun:"Dim",
+ cal_wd_mon:"L", cal_wd_tue:"M", cal_wd_wed:"M", cal_wd_thu:"J", cal_wd_fri:"V", cal_wd_sat:"S", cal_wd_sun:"D",
+ no_session_recorded:"Aucune séance enregistrée",
+ badge_3_days:"3 jours de suite", badge_1_week:"1 semaine de suite", badge_2_weeks:"2 semaines de suite",
+ badge_1_month:"1 mois de suite", badge_2_months:"2 mois de suite", badge_100_days:"100 jours de suite",
+ day_singular:"jour", day_plural:"jours", calendar_week_unit_plural:"semaines",
+ confirm_cycle_done:"Vous avez terminé {weeks} semaines de plan ! Faites un maximum de pompes en une série pour recalibrer votre niveau et générer un nouveau plan adapté.",
+ confirm_reset_plan:"Réinitialiser votre plan et recommencer le questionnaire ?",
+ confirm_delete_session:"Supprimer définitivement cette séance ?",
+ confirm_reset_calendar:"Réinitialiser tout le calendrier ? Cette action supprime toutes les séances enregistrées.",
+ confirm_import:"Importer {count} séance(s) ? Cela remplacera vos données actuelles.",
+ confirm_stop_training:"Arrêter l'entraînement maintenant ? {count} pompes seront enregistrées.",
+ phase_paused:"Pause", phase_in_progress:"En cours", phase_start_short:"Démarrer", phase_reposition:"Repositionnez-vous",
+ calendar_rest_day:"Jour de repos",
+ toast_session_lock:"Terminez ou arrêtez la séance en cours avant de changer d'onglet.",
+ toast_reposition_camera:"Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.",
+ toast_camera_unavailable:"Caméra indisponible : passage en mode manuel. Utilisez les boutons +/- pour compter vos pompes.",
+ toast_plan_updated:"Plan mis à jour.", toast_plan_session_done:"Séance plan terminée.",
+ toast_session_updated:"Séance mise à jour.", toast_session_deleted:"Séance supprimée.",
+ toast_max_reps_test:"Faites votre maximum de pompes en une série. Le résultat mettra automatiquement à jour votre plan.",
+ toast_level_updated:"Niveau mis à jour : {prev} → {max} pompes max. Génération du nouveau plan...",
+ plan_set_info_default:"Série 1 / 1", training_series_done_label:"Série", plan_pushups_done_in_set:"pompes faites dans ce set",
+ toast_plan_session_started:"Séance plan lancée : {target} pompes pour le set 1.",
+ home_week_label:"Semaine {n} sur {total} (cycle {cycle})",
+ calendar_session_done:"Séance terminée", calendar_session_planned:"Séance planifiée", calendar_no_session_that_day:"Aucune séance ce jour-là",
+ plan_ai_active:"Plan IA actif", plan_pace_up:"Rythme accéléré · plus de volume aujourd'hui", plan_pace_down:"Rythme allégé · reprise en douceur", plan_pace_stable:"Rythme stable · volume habituel",
+ plan_no_session_today:"Aucune séance planifiée aujourd'hui. Profitez du repos, ou faites une séance libre si vous en avez envie.",
+ plan_session_done_label:"Séance effectuée", plan_rest_time:"Temps de repos", plan_recent_history:"Historique récent",
+ level_beginner:"Débutant", level_novice:"Novice", level_intermediate:"Intermédiaire", level_advanced:"Avancé", level_confirmed:"Confirmé", level_elite:"Élite",
+ day_full_sun:"Dimanche", day_full_mon:"Lundi", day_full_tue:"Mardi", day_full_wed:"Mercredi", day_full_thu:"Jeudi", day_full_fri:"Vendredi", day_full_sat:"Samedi",
+ month_short_0:"jan", month_short_1:"fév", month_short_2:"mar", month_short_3:"avr", month_short_4:"mai", month_short_5:"juin",
+ month_short_6:"juil", month_short_7:"août", month_short_8:"sep", month_short_9:"oct", month_short_10:"nov", month_short_11:"déc",
+ plan_no_session_today_short:"Aucune séance planifiée aujourd'hui.", home_no_plan_yet:"Aucun plan actif pour le moment. Créez votre plan dans l'onglet Plan.",
+ home_create_plan_to_track:"Créez votre plan pour suivre votre progression.", plan_adjusted_default:"Ajusté selon vos séances",
+ badge_pace_light:"Rythme allégé", badge_pace_fast:"Rythme accéléré", badge_pace_stable:"Rythme stable", badge_easing_in:"Reprise en douceur",
+ month_full_0:"Janvier", month_full_1:"Février", month_full_2:"Mars", month_full_3:"Avril", month_full_4:"Mai", month_full_5:"Juin",
+ month_full_6:"Juillet", month_full_7:"Août", month_full_8:"Septembre", month_full_9:"Octobre", month_full_10:"Novembre", month_full_11:"Décembre",
+ calendar_details_coming:"Détails à venir",
+ toast_camera_activating:"Activation de la caméra...", camera_calibrated:"Calibré", camera_no_pose:"Aucune pose détectée",
+ camera_press_start:"Appuyez sur Démarrer", camera_pose_detected:"Pose détectée", camera_loading_model:"Chargement du modèle…",
+ camera_active:"Caméra active", camera_access_denied:"Accès refusé", camera_manual_mode:"Mode manuel (sans caméra)",
+ training_rest_over:"Pause terminée", toast_no_pushup_recorded:"Aucune pompe enregistrée. Appuyez sur Démarrer pour reprendre.",
+ toast_plan_generating:"Génération du plan... (le serveur peut prendre jusqu'à 1 min à démarrer)",
+ toast_server_unavailable:"Serveur indisponible, plan généré localement.",
+ plan_note_skipped:"Volume réduit après jour sauté", plan_note_hard:"Volume réduit après une séance difficile",
+ plan_note_ahead:"Ajusté après une séance réalisée en avance", plan_note_extra:"Ajusté suite à des pompes supplémentaires réalisées",
+ plan_note_progressive:"Adaptation progressive", toast_camera_denied:"Impossible d'activer la caméra. Autorisez l'accès puis réessayez.",
+ toast_plan_created:"Plan créé avec succès !", toast_create_plan_first:"Créez d'abord votre plan dans l'onglet Plan.",
+ toast_days_updated:"Jours d'entraînement mis à jour.",
+ confirm_full_reset:"Réinitialisation complète : toutes vos données (plan, historique, séances, préférences) seront définitivement supprimées et l'application redémarrera comme neuve. Continuer ?",
+ toast_calendar_reset:"Calendrier réinitialisé.", toast_data_exported:"Données exportées.",
+ toast_data_imported:"Données importées avec succès.", toast_invalid_file:"Fichier invalide, import annulé.",
+ toast_plan_finished:"Plan terminé : {count} pompes enregistrées !", toast_session_stopped:"Séance arrêtée : {count} pompes enregistrées.",
+ phase_done:"Terminé", training_sets_completed:"set(s) réalisé(s)", training_validate_finish:"Valider et terminer l'entraînement", training_series_label:"SÉRIE"
+},
+en: {
+ nav_home:"Home", nav_plan:"Plan", nav_free:"Free", nav_calendar:"Calendar", nav_stats:"Stats", nav_profile:"Profile",
+ loading_text:"Loading", landscape_rotate:"Turn your phone", landscape_sub:"Push-Up only works in portrait mode.",
+ home_today_session:"Today's session", home_estimated_time:"Estimated time", home_level:"Level", home_total:"total",
+ home_start_session:"▶ START SESSION", home_plan_progress:"Plan progress", home_this_week:"This week",
+ home_sessions_completed:"Sessions completed", home_total_pushups:"Total push-ups", home_vs_last_week:"Vs last week",
+ home_greeting:"Hello",
+ training_ready:"Ready", training_pushups:"push-ups", training_camera_inactive:"Camera inactive",
+ training_start_set:"▶ Start set", training_next_set:"Next set", training_finish_workout:"End workout",
+ training_reset_set:"Reset set", training_rest_timer:"Rest timer", training_rest_ongoing:"Resting",
+ training_catch_breath:"Catch your breath.", training_resume_now:"Resume now", training_skip:"Skip",
+ training_session_summary:"Session summary", training_total_session:"Session total", training_series:"Sets", training_series_unit:"sets",
+ training_duration:"Duration", training_rest_settings:"Rest settings", training_seconds:"seconds",
+ training_series_done:"Set complete", training_validate_rest:"Confirm and rest",
+ onboarding_q1:"Question 1 of 4", onboarding_lang_q:"Which language would you like to use?",
+ onboarding_lang_note:"Only French and English are available for now. Other languages are coming soon.",
+ onboarding_continue:"Continue", onboarding_q2:"Question 2 of 4", onboarding_name_q:"What would you like to be called?",
+ onboarding_q3:"Question 3 of 4", onboarding_maxreps_q:"How many push-ups can you do in one set?",
+ onboarding_q4:"Question 4 of 4", onboarding_days_q:"Which days do you want to train?",
+ onboarding_done_sub:"All of this can be changed anytime in the Profile tab.",
+ onboarding_lets_go:"Let's go!", onboarding_hi:"Nice to meet you!", onboarding_hi_name:"Nice to meet you, {name}!",
+ onboarding_name_placeholder:"e.g. Alex", onboarding_maxreps_error:"Enter your maximum number of push-ups.", onboarding_days_error:"Select at least one training day.",
+ modal_get_ready:"Get ready", modal_free_autostart:"The free session starts automatically.",
+ modal_plan_autostart:"The plan session starts automatically.",
+ modal_workout_done:"Workout complete!", modal_total_pushups:"Total push-ups", modal_close:"Close",
+ plan_create_title:"Create my training plan", plan_maxreps_label:"What's the maximum number of push-ups you can do in one set?",
+ plan_days_label:"Which days do you want to train?", plan_create_btn:"Create my plan",
+ plan_today_session:"Today's session", plan_start_session:"▶ START SESSION", plan_finish_training:"End workout",
+ plan_rest_ongoing:"Resting", plan_rest_next:"Rest before the next set.", plan_resume_now:"Resume now",
+ plan_session_pushups:"Session push-ups", plan_duration:"Duration", plan_next_7_days:"Next 7 days",
+ profile_appearance:"Appearance", profile_dark:"Dark", profile_system:"System", profile_light:"Light",
+ profile_title:"Profile", profile_nickname_label:"First name or nickname", profile_autosaved:"Saved automatically",
+ profile_no_plan:"No active plan", profile_no_plan_sub:"First create your training plan in the Plan tab — that's where you set your maximum push-ups and training days.",
+ profile_go_to_plan:"Go to the Plan tab", profile_training_days:"Training days", profile_days_used_for:"Used to schedule your program",
+ profile_save_changes:"Save changes", profile_preferences:"Preferences", profile_session_sounds:"Session sounds",
+ profile_beep_desc:"Start and end beeps", profile_vibrations:"Vibration", profile_haptic_desc:"Haptic feedback during the session",
+ profile_plan_section:"Plan", profile_reset_plan:"Reset plan", profile_reset_plan_sub:"Deletes the current program, keeps your history",
+ profile_full_reset:"Full reset", profile_delete_all:"Delete all data", profile_delete_all_sub:"Permanently erases your sessions, stats, and preferences",
+ profile_language:"Language", profile_language_note:"Only French and English are available for now. Spanish is coming soon.",
+ calendar_current_streak:"Current streak: ", calendar_week_unit:"week", calendar_at_least_one:"At least one session per week",
+ calendar_today:"Today", calendar_start_session:"▶ Start session", calendar_data_backup:"Data & backup",
+ calendar_export:"Export", calendar_import:"Import", calendar_reset:"Reset calendar", calendar_session:"Session",
+ stats_current_streak:"Current streak", stats_best_streak:"Best streak: ", stats_progression:"Progress",
+ stats_weekly_total:"Total push-ups per week", stats_not_enough_data:"Not enough data yet to show a trend.",
+ stats_personal_records:"Personal records", stats_best_set:"Best set", stats_best_session:"Best session",
+ stats_cumulative_total:"Cumulative total", stats_badges:"Badges", stats_evolution:"Progress (last 30 days)",
+ stats_general_stats:"General stats", stats_session_count:"Number of sessions", stats_avg_per_session:"Average per session",
+ stats_best_day:"Best day",
+ confirm_cancel:"Cancel", confirm_confirm:"Confirm",
+ feedback_question:"How did this session go?", feedback_sub:"This helps fine-tune your next sessions.",
+ feedback_good:"Went well", feedback_hard:"Hard (needed extra rest)",
+ day_mon:"Mon", day_tue:"Tue", day_wed:"Wed", day_thu:"Thu", day_fri:"Fri", day_sat:"Sat", day_sun:"Sun",
+ cal_wd_mon:"M", cal_wd_tue:"T", cal_wd_wed:"W", cal_wd_thu:"T", cal_wd_fri:"F", cal_wd_sat:"S", cal_wd_sun:"S",
+ no_session_recorded:"No session recorded",
+ badge_3_days:"3-day streak", badge_1_week:"1-week streak", badge_2_weeks:"2-week streak",
+ badge_1_month:"1-month streak", badge_2_months:"2-month streak", badge_100_days:"100-day streak",
+ day_singular:"day", day_plural:"days", calendar_week_unit_plural:"weeks",
+ confirm_cycle_done:"You've completed {weeks} weeks of your plan! Do as many push-ups as you can in one set to recalibrate your level and generate a new tailored plan.",
+ confirm_reset_plan:"Reset your plan and start the questionnaire again?",
+ confirm_delete_session:"Permanently delete this session?",
+ confirm_reset_calendar:"Reset the whole calendar? This will delete all recorded sessions.",
+ confirm_import:"Import {count} session(s)? This will replace your current data.",
+ confirm_stop_training:"Stop the workout now? {count} push-ups will be recorded.",
+ phase_paused:"Paused", phase_in_progress:"In progress", phase_start_short:"Start", phase_reposition:"Reposition yourself",
+ calendar_rest_day:"Rest day",
+ toast_session_lock:"Finish or stop the current session before switching tabs.",
+ toast_reposition_camera:"Stand in frame for 1–2 seconds then try again.",
+ toast_camera_unavailable:"Camera unavailable: switching to manual mode. Use the +/- buttons to count your push-ups.",
+ toast_plan_updated:"Plan updated.", toast_plan_session_done:"Plan session complete.",
+ toast_session_updated:"Session updated.", toast_session_deleted:"Session deleted.",
+ toast_max_reps_test:"Do as many push-ups as you can in one set. The result will automatically update your plan.",
+ toast_level_updated:"Level updated: {prev} → {max} max push-ups. Generating your new plan...",
+ plan_set_info_default:"Set 1 / 1", training_series_done_label:"Set", plan_pushups_done_in_set:"push-ups done in this set",
+ toast_plan_session_started:"Plan session started: {target} push-ups for set 1.",
+ home_week_label:"Week {n} of {total} (cycle {cycle})",
+ calendar_session_done:"Session complete", calendar_session_planned:"Session planned", calendar_no_session_that_day:"No session that day",
+ plan_ai_active:"AI plan active", plan_pace_up:"Faster pace · more volume today", plan_pace_down:"Lighter pace · easing back in", plan_pace_stable:"Steady pace · usual volume",
+ plan_no_session_today:"No session planned today. Enjoy the rest, or do a free session if you feel like it.",
+ plan_session_done_label:"Session done", plan_rest_time:"Rest time", plan_recent_history:"Recent history",
+ level_beginner:"Beginner", level_novice:"Novice", level_intermediate:"Intermediate", level_advanced:"Advanced", level_confirmed:"Proficient", level_elite:"Elite",
+ day_full_sun:"Sunday", day_full_mon:"Monday", day_full_tue:"Tuesday", day_full_wed:"Wednesday", day_full_thu:"Thursday", day_full_fri:"Friday", day_full_sat:"Saturday",
+ month_short_0:"Jan", month_short_1:"Feb", month_short_2:"Mar", month_short_3:"Apr", month_short_4:"May", month_short_5:"Jun",
+ month_short_6:"Jul", month_short_7:"Aug", month_short_8:"Sep", month_short_9:"Oct", month_short_10:"Nov", month_short_11:"Dec",
+ plan_no_session_today_short:"No session planned today.", home_no_plan_yet:"No active plan yet. Create your plan in the Plan tab.",
+ home_create_plan_to_track:"Create your plan to track your progress.", plan_adjusted_default:"Adjusted based on your sessions",
+ badge_pace_light:"Lighter pace", badge_pace_fast:"Faster pace", badge_pace_stable:"Steady pace", badge_easing_in:"Easing back in",
+ month_full_0:"January", month_full_1:"February", month_full_2:"March", month_full_3:"April", month_full_4:"May", month_full_5:"June",
+ month_full_6:"July", month_full_7:"August", month_full_8:"September", month_full_9:"October", month_full_10:"November", month_full_11:"December",
+ calendar_details_coming:"Details coming soon",
+ toast_camera_activating:"Activating camera...", camera_calibrated:"Calibrated", camera_no_pose:"No pose detected",
+ camera_press_start:"Press Start", camera_pose_detected:"Pose detected", camera_loading_model:"Loading model…",
+ camera_active:"Camera active", camera_access_denied:"Access denied", camera_manual_mode:"Manual mode (no camera)",
+ training_rest_over:"Rest over", toast_no_pushup_recorded:"No push-up recorded. Press Start to resume.",
+ toast_plan_generating:"Generating your plan... (the server can take up to 1 minute to start)",
+ toast_server_unavailable:"Server unavailable, plan generated locally.",
+ plan_note_skipped:"Reduced volume after a skipped day", plan_note_hard:"Reduced volume after a hard session",
+ plan_note_ahead:"Adjusted after a session done ahead of schedule", plan_note_extra:"Adjusted after extra push-ups were done",
+ plan_note_progressive:"Progressive adjustment", toast_camera_denied:"Couldn't activate the camera. Allow access then try again.",
+ toast_plan_created:"Plan created successfully!", toast_create_plan_first:"First create your plan in the Plan tab.",
+ toast_days_updated:"Training days updated.",
+ confirm_full_reset:"Full reset: all your data (plan, history, sessions, preferences) will be permanently deleted and the app will restart fresh. Continue?",
+ toast_calendar_reset:"Calendar reset.", toast_data_exported:"Data exported.",
+ toast_data_imported:"Data imported successfully.", toast_invalid_file:"Invalid file, import cancelled.",
+ toast_plan_finished:"Plan complete: {count} push-ups recorded!", toast_session_stopped:"Session stopped: {count} push-ups recorded.",
+ phase_done:"Done", training_sets_completed:"set(s) completed", training_validate_finish:"Confirm and finish workout", training_series_label:"SET"
+}
+};
+let appLang = localStorage.getItem('app_language') || 'fr';
+function t(key){ const d=APP_I18N[appLang]||APP_I18N.fr; return (d && d[key]!=null) ? d[key] : ((APP_I18N.fr[key]!=null)?APP_I18N.fr[key]:key); }
+function appLocale(){ return appLang==='en' ? 'en-US' : 'fr-FR'; }
+function applyI18nStatic(){
+  document.documentElement.lang = appLang;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{ el.textContent = t(el.getAttribute('data-i18n')); });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ el.setAttribute('placeholder', t(el.getAttribute('data-i18n-ph'))); });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el=>{ el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria'))); });
+}
+function refreshDynamicUI(){
+  try{ if(typeof renderHomeTab==='function') renderHomeTab(); }catch(e){}
+  try{ if(typeof renderPlanTab==='function') renderPlanTab(); }catch(e){}
+  try{ if(typeof renderCalendar==='function') renderCalendar(); }catch(e){}
+  try{ if(typeof renderStats==='function') renderStats(); }catch(e){}
+  try{ if(typeof renderHistory==='function') renderHistory(); }catch(e){}
+}
+function setAppLanguage(lang){
+  if(lang!=='fr' && lang!=='en') return;
+  appLang = lang;
+  localStorage.setItem('app_language', lang);
+  applyI18nStatic();
+  refreshDynamicUI();
+  document.querySelectorAll('.lang-choice-chip').forEach(ch=>{
+    ch.classList.toggle('active', ch.dataset.lang===lang);
+  });
+}
+
 let audioCtx=null;
 let soundEnabled = localStorage.getItem('pref_sound')!=='off';
 let vibrationEnabled = localStorage.getItem('pref_vibration')!=='off';
@@ -910,6 +1159,7 @@ function applyThemeMode(mode){
 }
 let themeMode = localStorage.getItem(THEME_KEY) || 'system';
 applyThemeMode(themeMode);
+applyI18nStatic();
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', ()=>{
   if(themeMode==='system') applyThemeMode('system');
 });
@@ -918,6 +1168,13 @@ document.querySelectorAll('.theme-opt').forEach(btn=>{
     themeMode = btn.dataset.mode;
     localStorage.setItem(THEME_KEY, themeMode);
     applyThemeMode(themeMode);
+  });
+});
+document.querySelectorAll('#profileLangChips .chip').forEach(btn=>{
+  btn.classList.toggle('active', btn.dataset.lang===appLang);
+  btn.addEventListener('click', ()=>{
+    if(btn.disabled) return;
+    setAppLanguage(btn.dataset.lang);
   });
 });
 const $=id=>document.getElementById(id); const video=$('video'), work=$('work'), wctx=work.getContext('2d'), toastEl=$('toast');
@@ -1004,14 +1261,14 @@ async function regeneratePlanFromAI(reason='regular'){
     context: ctx
   };
   const isColdCall = !!AI_PLAN_API_URL;
-  if(isColdCall) showToast('Génération du plan... (le serveur peut prendre jusqu\'à 1 min à démarrer)', 6000);
+  if(isColdCall) showToast(t('toast_plan_generating'), 6000);
   try{
     const ai = await generatePlanWithAI(payload);
     const plan = normalizeAIPlan(ai);
     if(!plan) throw new Error('empty plan');
     planProfile.aiPlan = plan;
     savePlan(planProfile);
-    if(isColdCall) showToast('Plan mis à jour.', 2200);
+    if(isColdCall) showToast(t('toast_plan_updated'), 2200);
     return plan;
   }catch(e){
     console.error('AI plan generation failed', e && e.message ? e.message : String(e));
@@ -1019,7 +1276,7 @@ async function regeneratePlanFromAI(reason='regular'){
     if(fallback){
       planProfile.aiPlan = fallback;
       savePlan(planProfile);
-      if(isColdCall) showToast('Serveur indisponible, plan généré localement.', 3200);
+      if(isColdCall) showToast(t('toast_server_unavailable'), 3200);
       return fallback;
     }
     return null;
@@ -1048,7 +1305,7 @@ function recordSkippedPlanDay(){
   const todayIso=toLocalDateStr(new Date());
   const existing=workouts.find(w=>w && w.source==='plan' && w.skipped===true && w.isoDate===todayIso);
   if(existing) return;
-  workouts.push({date:new Date().toLocaleDateString('fr-FR')+' '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate:todayIso,total:0,duration:'00:00',sets:[],source:'plan',skipped:true});
+  workouts.push({date:new Date().toLocaleDateString(appLocale())+' '+new Date().toLocaleTimeString(appLocale(),{hour:'2-digit',minute:'2-digit'}),isoDate:todayIso,total:0,duration:'00:00',sets:[],source:'plan',skipped:true});
   try{saveHistory();}catch(e){}
 }
 
@@ -1068,11 +1325,11 @@ function buildFallbackAIPlan(reason='regular'){
     let sets=generateDailyTarget(maxReps,intensity,ratio,reason);
     if(reason==='skipped_day' && i===0) sets=sets.map(v=>Math.max(2,Math.round(v*0.92)));
     const restSeconds = sets.length>=6 ? 75 : sets.length>=5 ? 60 : 90;
-    const note = reason==='skipped_day' && i===0 ? 'Volume réduit après jour sauté'
-      : reason==='was_hard' ? 'Volume réduit après une séance difficile'
-      : reason==='ahead_session' && i===0 ? 'Ajusté après une séance réalisée en avance'
-      : reason==='extra_reps' ? 'Ajusté suite à des pompes supplémentaires réalisées'
-      : 'Adaptation progressive';
+    const note = reason==='skipped_day' && i===0 ? t('plan_note_skipped')
+      : reason==='was_hard' ? t('plan_note_hard')
+      : reason==='ahead_session' && i===0 ? t('plan_note_ahead')
+      : reason==='extra_reps' ? t('plan_note_extra')
+      : t('plan_note_progressive');
     rows.push({date:toLocalDateStr(d), sets, restSeconds, note});
   }
   return {version:1, generatedAt:new Date().toISOString(), days:rows};
@@ -1186,10 +1443,10 @@ async function maybePromptMaxTest(){
   if(lastPrompted>=info.cycleNumber) return;
   localStorage.setItem('last_maxtest_cycle', String(info.cycleNumber));
   window.pendingMaxTestCycle=info.cycleNumber;
-  const accepted=await customConfirm(`Vous avez terminé ${PLAN_CYCLE_WEEKS} semaines de plan ! Faites un maximum de pompes en une série pour recalibrer votre niveau et générer un nouveau plan adapté.`);
+  const accepted=await customConfirm(t('confirm_cycle_done').replace('{weeks}',PLAN_CYCLE_WEEKS));
   if(accepted){
     goToTab('training');
-    showToast('Faites votre maximum de pompes en une série. Le résultat mettra automatiquement à jour votre plan.', 5000);
+    showToast(t('toast_max_reps_test'), 5000);
   }
 }
 function applyMaxTestResult(maxRepsAchieved){
@@ -1197,7 +1454,7 @@ function applyMaxTestResult(maxRepsAchieved){
   const previous=planProfile.maxReps;
   planProfile.maxReps=Math.round(maxRepsAchieved);
   savePlan(planProfile);
-  showToast(`Niveau mis à jour : ${previous} → ${planProfile.maxReps} pompes max. Génération du nouveau plan...`, 4000);
+  showToast(t('toast_level_updated').replace('{prev}',previous).replace('{max}',planProfile.maxReps), 4000);
   regeneratePlanFromAI('recalibration').catch(()=>{});
   window.pendingMaxTestCycle=null;
 }
@@ -1249,9 +1506,9 @@ function renderPlanTab(){
   if(planWeekNumberEl) planWeekNumberEl.textContent=weekNumber;
   const planAdaptStatusEl=document.getElementById('planAdaptStatus');
   if(planAdaptStatusEl) planAdaptStatusEl.textContent=
-    (planProfile.aiPlan ? 'Plan IA actif · ' : '') + (
-    ratio>1.05?'Rythme accéléré · plus de volume aujourd\'hui':
-    ratio<0.82?'Rythme allégé · reprise en douceur':'Rythme stable · volume habituel');
+    (planProfile.aiPlan ? t('plan_ai_active')+' · ' : '') + (
+    ratio>1.05?t('plan_pace_up'):
+    ratio<0.82?t('plan_pace_down'):t('plan_pace_stable'));
   maybePromptMaxTest();
 
   const titleEl=document.getElementById('planTodayTitle');
@@ -1262,8 +1519,8 @@ function renderPlanTab(){
   let displayTotal=0;
   let todayCompleted=false;
   if(!isTrainingDay){
-    titleEl.textContent='Jour de repos';
-    setsEl.innerHTML='<div style="color:var(--muted);font-size:.85rem;">Aucune séance planifiée aujourd\'hui. Profitez du repos, ou faites une séance libre si vous en avez envie.</div>';
+    titleEl.textContent=t('calendar_rest_day');
+    setsEl.innerHTML=`<div style="color:var(--muted);font-size:.85rem;">${t('plan_no_session_today')}</div>`;
     window.lastTodayPlanSnapshot=null;
   }else{
     const intensity=planProfile.days.indexOf(todayDow)+1;
@@ -1281,8 +1538,8 @@ function renderPlanTab(){
     displayTotal = todayCompleted ? (todayWorkout.total || displaySets.reduce((a,b)=>a+b,0)) : displaySets.reduce((a,b)=>a+b,0);
     window.lastTodayPlanSnapshot = {sets:displaySets.slice(), total:displayTotal, completed:todayCompleted};
     titleEl.innerHTML = todayCompleted
-      ? `<span style="color:var(--primary);">✓ Séance effectuée</span> · ${displaySets.length} sets · ${displayTotal} pompes au total`
-      : `${displaySets.length} sets · ${displayTotal} pompes au total`;
+      ? `<span style="color:var(--primary);">✓ ${t('plan_session_done_label')}</span> · ${displaySets.length} ${t('training_series_unit')} · ${displayTotal} ${t('training_pushups')} ${t('home_total')}`
+      : `${displaySets.length} ${t('training_series_unit')} · ${displayTotal} ${t('training_pushups')} ${t('home_total')}`;
     const restSecForToday = (aiToday && aiToday.restSeconds) || 60;
     displaySets.forEach((reps,i)=>{
       const row=document.createElement('div');
@@ -1294,12 +1551,12 @@ function renderPlanTab(){
       row.innerHTML=`
         <div style="width:28px;height:28px;border-radius:50%;border:2px solid ${todayCompleted?'#22c55e':'var(--primary)'};color:${todayCompleted?'#22c55e':'var(--primary)'};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;">${i+1}</div>
         <div style="flex:1;">
-          <div style="font-weight:700;font-size:.85rem;letter-spacing:.02em;text-transform:uppercase;">Série ${i+1}</div>
-          <div style="color:var(--muted);font-size:.78rem;">${reps} pompes</div>
+          <div style="font-weight:700;font-size:.85rem;letter-spacing:.02em;text-transform:uppercase;">${t('training_series_done_label')} ${i+1}</div>
+          <div style="color:var(--muted);font-size:.78rem;">${reps} ${t('training_pushups')}</div>
         </div>
         <div style="text-align:right;">
           <div style="font-weight:800;font-size:1rem;${todayCompleted?'color:#22c55e;':''}">${doneCount}/${reps}</div>
-          <div style="color:var(--muted);font-size:.7rem;">pompes</div>
+          <div style="color:var(--muted);font-size:.7rem;">${t('training_pushups')}</div>
         </div>
         ${rightIcon}`;
       setsEl.appendChild(row);
@@ -1330,12 +1587,12 @@ function renderPlanTab(){
     }).join('');
     restCard.innerHTML=`
       <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>Temps de repos</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>${t('plan_rest_time')}</span>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-top:.6rem;">
         <div>
           <div style="font-size:2.2rem;font-weight:800;line-height:1;">${restSecForToday}</div>
-          <div style="color:var(--muted);font-size:.8rem;">secondes</div>
+          <div style="color:var(--muted);font-size:.8rem;">${t('training_seconds')}</div>
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
           <div style="position:relative;width:120px;height:66px;">
@@ -1345,8 +1602,8 @@ function renderPlanTab(){
             </svg>
           </div>
           <div style="display:flex;gap:.8rem;margin-top:.3rem;align-items:center;font-size:.68rem;color:var(--muted);">
-            <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:.25rem;"></span>Séries</span>
-            <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--primary);margin-right:.25rem;"></span>Pause</span>
+            <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:.25rem;"></span>${t('training_series_unit')}</span>
+            <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--primary);margin-right:.25rem;"></span>${t('phase_paused')}</span>
           </div>
         </div>
       </div>
@@ -1378,7 +1635,7 @@ function renderPlanTab(){
     }).join('');
     histCard.innerHTML=`
       <div style="display:flex;justify-content:space-between;align-items:center;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-        <span>Historique récent</span><span style="color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;">pompes</span>
+        <span>${t('plan_recent_history')}</span><span style="color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;">${t('training_pushups')}</span>
       </div>
       <div style="display:flex;justify-content:space-between;gap:.3rem;margin-top:.8rem;">${barsHtml}</div>`;
     setsEl.parentElement.insertBefore(histCard, restCard.nextSibling);
@@ -1394,12 +1651,12 @@ function renderPlanTab(){
     const startBtn=document.getElementById('planHomeStartBtn');
     const setCount = isTrainingDay ? (window.lastTodayPlanSnapshot ? window.lastTodayPlanSnapshot.sets.length : 0) : 0;
     const total = isTrainingDay ? displayTotal : 0;
-    if(bigNumEl) bigNumEl.innerHTML=`${total}<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span>`;
-    if(setsLabelEl) setsLabelEl.textContent = isTrainingDay ? `${setCount} série${setCount>1?'s':''}` : 'Jour de repos';
+    if(bigNumEl) bigNumEl.innerHTML=`${total}<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> ${t('training_pushups')}</span>`;
+    if(setsLabelEl) setsLabelEl.textContent = isTrainingDay ? `${setCount} ${t(setCount>1?'training_series_unit':'training_series_done_label')}` : t('calendar_rest_day');
     if(durationEl) durationEl.textContent = setCount ? `${Math.max(2,Math.round(setCount*1.4))} min` : '–';
     if(levelEl){
       const mx=planProfile.maxReps||0;
-      levelEl.textContent = mx<12?'Débutant':(mx<25?'Novice':(mx<45?'Intermédiaire':(mx<70?'Avancé':(mx<110?'Confirmé':'Élite'))));
+      levelEl.textContent = mx<12?t('level_beginner'):(mx<25?t('level_novice'):(mx<45?t('level_intermediate'):(mx<70?t('level_advanced'):(mx<110?t('level_confirmed'):t('level_elite')))));
     }
     if(restEl){
       const aiDay=getAIPlanForDate(toLocalDateStr(new Date()));
@@ -1420,7 +1677,7 @@ function renderPlanTab(){
   if(future){
     future.innerHTML='';
     const nextDates=getNextCalendarDates(7);
-    const dayNames=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    const dayNames=[t('day_full_sun'),t('day_full_mon'),t('day_full_tue'),t('day_full_wed'),t('day_full_thu'),t('day_full_fri'),t('day_full_sat')];
     let nextAdvanceUnlocked=false;
     const svgCal='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>';
     const svgCheck='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--inv)" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>';
@@ -1428,7 +1685,7 @@ function renderPlanTab(){
     nextDates.forEach((d,idx)=>{
       const isToday = idx===0;
       const isTrainingDayRow = planProfile.days.includes(d.getDay());
-      const label = isToday ? `Aujourd'hui` : `${dayNames[d.getDay()]} ${d.getDate()} ${monthNamesShort[d.getMonth()]}`;
+      const label = isToday ? t('calendar_today') : `${dayNames[d.getDay()]} ${d.getDate()} ${monthShort(d.getMonth())}`;
       const row=document.createElement('div');
       row.style.cssText='display:flex;align-items:center;gap:.7rem;padding:.75rem .8rem;background:var(--surface2);border:1px solid var(--border);border-radius:1rem;';
       if(!isTrainingDayRow){
@@ -1436,7 +1693,7 @@ function renderPlanTab(){
           <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;">${svgCal}</div>
           <div style="flex:1;">
             <div style="font-weight:700;font-size:.9rem;">${label}</div>
-            <div style="color:var(--muted);font-size:.78rem;">Jour de repos</div>
+            <div style="color:var(--muted);font-size:.78rem;">${t('calendar_rest_day')}</div>
           </div>`;
         future.appendChild(row);
         return;
@@ -1458,9 +1715,9 @@ function renderPlanTab(){
         <div style="width:32px;height:32px;border-radius:50%;background:${alreadyDone?'var(--primary)':'var(--surface)'};color:${alreadyDone?'var(--inv)':'var(--muted)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${alreadyDone?svgCheck:svgCal}</div>
         <div style="flex:1;">
           <div style="font-weight:700;font-size:.9rem;${isToday?'color:var(--primary);':''}">${label}</div>
-          <div style="color:var(--muted);font-size:.78rem;">${setCountRow} série${setCountRow>1?'s':''}</div>
+          <div style="color:var(--muted);font-size:.78rem;">${setCountRow} ${t(setCountRow>1?'training_series_unit':'training_series_done_label')}</div>
         </div>
-        <strong style="color:var(--primary);font-size:.95rem;">${total} pompes</strong>
+        <strong style="color:var(--primary);font-size:.95rem;">${total} ${t('training_pushups')}</strong>
         ${svgChevron}`;
       row.style.cursor='pointer';
       const isNextUnlockableTrainingDay = isTrainingDayRow && !alreadyDone && !nextAdvanceUnlocked && todayCompleted;
@@ -1492,7 +1749,7 @@ let planRestRemaining=0;
 let planSessionStartTime=null;
 let planSessionTimerInterval=null;
 
-const monthNamesShort=['jan','fév','mar','avr','mai','juin','juil','août','sep','oct','nov','déc'];
+function monthShort(i){ return t('month_short_'+i); }
 function getNextTrainingDates(days, count){
   const result=[];
   if(!days || !days.length) return result;
@@ -1564,19 +1821,19 @@ function updatePlanSessionUI(){
   const setsEl=document.getElementById('planTodaySets');
   if(!planSessionActive || !planSessionSets.length){
     if(repEl) repEl.textContent='0';
-    if(setInfo) setInfo.textContent='Série 1 / 1';
+    if(setInfo) setInfo.textContent=t('plan_set_info_default');
     const ring=document.getElementById('planProgressRing');
     if(ring) ring.style.strokeDashoffset='276.5';
     return;
   }
-  if(title) title.textContent=`Séance plan · ${Number.isFinite(planSessionSets.reduce((a,b)=>a+(Number.isFinite(b.total)?b.total:0),0)) ? planSessionSets.reduce((a,b)=>a+(Number.isFinite(b.total)?b.total:0),0) : 0} pompes`;
+  if(title) title.textContent=`${t('plan_today_session')} · ${Number.isFinite(planSessionSets.reduce((a,b)=>a+(Number.isFinite(b.total)?b.total:0),0)) ? planSessionSets.reduce((a,b)=>a+(Number.isFinite(b.total)?b.total:0),0) : 0} ${t('training_pushups')}`;
   if(repEl) repEl.textContent=Number.isFinite(planSessionRemaining) ? planSessionRemaining : 0;
-  if(setInfo) setInfo.textContent=`Série ${planSessionIndex+1} / ${((planSessionSets[0]&&planSessionSets[0].sets)||[]).length || 1}`;
+  if(setInfo) setInfo.textContent=`${t('training_series_done_label')} ${planSessionIndex+1} / ${((planSessionSets[0]&&planSessionSets[0].sets)||[]).length || 1}`;
   const setProgressEl=document.getElementById('planSetProgressInfo');
   if(setProgressEl){
     const target=planSessionRepTarget||0;
     const done=Math.max(0, target-(Number.isFinite(planSessionRemaining)?planSessionRemaining:target));
-    setProgressEl.textContent=`${done} / ${target} pompes faites dans ce set`;
+    setProgressEl.textContent=`${done} / ${target} ${t('plan_pushups_done_in_set')}`;
   }
   updatePlanProgressRing();
   if(setsEl && planSessionSets[0]){
@@ -1586,7 +1843,7 @@ function updatePlanSessionUI(){
       row.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:.6rem .8rem;background:var(--surface2);border-radius:.8rem;';
       const done = i < planSessionIndex;
       const active = i === planSessionIndex;
-      row.innerHTML=`<span>Série ${i+1}</span><strong style="color:${done?'#22c55e':active?'var(--primary)':'var(--text)'};">${reps} pompes</strong>`;
+      row.innerHTML=`<span>${t('training_series_done_label')} ${i+1}</span><strong style="color:${done?'#22c55e':active?'var(--primary)':'var(--text)'};">${reps} ${t('training_pushups')}</strong>`;
       setsEl.appendChild(row);
     });
   }
@@ -1598,11 +1855,11 @@ async function startPlanSession(dateIso){
   // La caméra doit être activée dans le geste de clic lui-même, sinon les navigateurs
   // mobiles bloquent silencieusement getUserMedia après le délai du compte à rebours.
   if(!cameraReady){
-    showToast('Activation de la caméra...',2000);
+    showToast(t('toast_camera_activating'),2000);
     await startCamera();
   }
   if(!cameraReady){
-    showToast('Impossible d\'activer la caméra. Autorisez l\'accès puis réessayez.',4000);
+    showToast(t('toast_camera_denied'),4000);
     return;
   }
   runPlanCountdown(()=>{ startPlanSessionInner(dateIso); });
@@ -1626,11 +1883,11 @@ async function startPlanSessionInner(targetDateIso){
   const safeSets=(aiDay.sets && aiDay.sets.length ? aiDay.sets : baseSets).filter(n=>Number.isFinite(n)&&n>0);
   if(!safeSets.length) return;
   if(!cameraReady){
-    showToast('Impossible d\'activer la caméra. Autorisez l\'accès puis réessayez.',4000);
+    showToast(t('toast_camera_denied'),4000);
     return;
   }
   if(!autoCalibrate()){
-    showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.',3000);
+    showToast(t('toast_reposition_camera'),3000);
     return;
   }
   planSessionSets=[{week:intensity, sets:safeSets, total:safeSets.reduce((a,b)=>a+b,0)}];
@@ -1649,7 +1906,7 @@ async function startPlanSessionInner(targetDateIso){
   if(totalEl) totalEl.textContent='0';
   updatePlanSessionUI();
   syncPlanUI();
-  showToast(`Séance plan lancée : ${planSessionRepTarget} pompes pour le set 1.`,3000);
+  showToast(t('toast_plan_session_started').replace('{target}',planSessionRepTarget),3000);
   updatePlanScreenState();
 }
 
@@ -1688,13 +1945,13 @@ function advancePlanSetAfterRest(){
   const sets = planSessionSets[0].sets;
   if(planSessionIndex >= sets.length){
     planSessionActive=false;
-    showToast('Séance plan terminée.',3000);
+    showToast(t('toast_plan_session_done'),3000);
     return;
   }
   planSessionRepTarget = sets[planSessionIndex];
   planSessionRemaining = planSessionRepTarget;
   document.getElementById('planCurrentRepValue').textContent = planSessionRemaining;
-  document.getElementById('planCurrentSetInfo').textContent = `Série ${planSessionIndex+1} / ${sets.length}`;
+  document.getElementById('planCurrentSetInfo').textContent = `${t('training_series_done_label')} ${planSessionIndex+1} / ${sets.length}`;
   updatePlanSessionUI();
 }
 
@@ -1705,12 +1962,12 @@ document.querySelectorAll('#planDaysChips .chip').forEach(ch=>{
 document.getElementById('createPlanBtn').addEventListener('click',()=>{
   const maxReps=Number(document.getElementById('planMaxReps').value);
   const selectedDays=[...document.querySelectorAll('#planDaysChips .chip.active')].map(ch=>Number(ch.dataset.day));
-  if(!maxReps||maxReps<1){ showToast('Indiquez votre nombre maximum de pompes.'); return; }
-  if(!selectedDays.length){ showToast('Sélectionnez au moins un jour d\'entraînement.'); return; }
+  if(!maxReps||maxReps<1){ showToast(t('onboarding_maxreps_error')); return; }
+  if(!selectedDays.length){ showToast(t('onboarding_days_error')); return; }
   planProfile={maxReps,days:selectedDays,startDate:new Date().toISOString()};
   savePlan(planProfile);
   renderPlanTab();
-  showToast('Plan créé avec succès !');
+  showToast(t('toast_plan_created'));
 });
 
 
@@ -1718,20 +1975,20 @@ document.querySelectorAll('#planDaysChipsEdit .chip').forEach(ch=>{
   ch.addEventListener('click',()=>ch.classList.toggle('active'));
 });
 document.getElementById('savePlanSettingsBtn').addEventListener('click',()=>{
-  if(!planProfile){ showToast('Créez d\'abord votre plan dans l\'onglet Plan.'); return; }
+  if(!planProfile){ showToast(t('toast_create_plan_first')); return; }
   const newDays=[...document.querySelectorAll('#planDaysChipsEdit .chip.active')].map(ch=>Number(ch.dataset.day));
-  if(!newDays.length){ showToast('Sélectionnez au moins un jour d\'entraînement.'); return; }
+  if(!newDays.length){ showToast(t('onboarding_days_error')); return; }
   planProfile.days=newDays;
   savePlan(planProfile);
   renderPlanTab();
-  showToast('Jours d\'entraînement mis à jour.');
+  showToast(t('toast_days_updated'));
 });
 const goToPlanFromProfileBtn=document.getElementById('goToPlanFromProfileBtn');
 if(goToPlanFromProfileBtn) goToPlanFromProfileBtn.addEventListener('click',()=>{
   document.querySelector('.tab-btn[data-tab="plan"]').click();
 });
 document.getElementById('resetPlanBtn').addEventListener('click',async()=>{
-  if(!await customConfirm('Réinitialiser votre plan et recommencer le questionnaire ?')) return;
+  if(!await customConfirm(t('confirm_reset_plan'))) return;
   planProfile=null;
   savePlan(null);
   renderPlanTab();
@@ -1754,14 +2011,14 @@ function initUserNicknameField(){
   let tmpNickname='',tmpMaxReps=0,tmpDays=[];
   modal.classList.remove('hidden');
   document.querySelectorAll('#welcomeLangChips .chip').forEach(ch=>{
+    ch.classList.add('lang-choice-chip');
+    ch.classList.toggle('active', ch.dataset.lang===appLang);
     ch.addEventListener('click',()=>{
       if(ch.disabled) return;
-      document.querySelectorAll('#welcomeLangChips .chip').forEach(c=>c.classList.remove('active'));
-      ch.classList.add('active');
+      setAppLanguage(ch.dataset.lang);
     });
   });
   document.getElementById('welcomeStep1Next').addEventListener('click',()=>{
-    localStorage.setItem('app_language','fr');
     step1.classList.add('hidden');step2.classList.remove('hidden');
   });
   document.getElementById('welcomeStep2Next').addEventListener('click',()=>{
@@ -1770,7 +2027,7 @@ function initUserNicknameField(){
   });
   document.getElementById('welcomeStep3Next').addEventListener('click',()=>{
     const val=Number(document.getElementById('welcomeMaxRepsInput').value);
-    if(!val||val<1){ showToast('Indiquez votre nombre maximum de pompes.'); return; }
+    if(!val||val<1){ showToast(t('onboarding_maxreps_error')); return; }
     tmpMaxReps=val;
     step3.classList.add('hidden');step4.classList.remove('hidden');
   });
@@ -1779,14 +2036,14 @@ function initUserNicknameField(){
   });
   document.getElementById('welcomeStep4Next').addEventListener('click',()=>{
     tmpDays=[...document.querySelectorAll('#welcomeDaysChips .chip.active')].map(ch=>Number(ch.dataset.day));
-    if(!tmpDays.length){ showToast("Sélectionnez au moins un jour d'entraînement."); return; }
+    if(!tmpDays.length){ showToast(t('onboarding_days_error')); return; }
     if(tmpNickname) localStorage.setItem('user_nickname', tmpNickname);
     planProfile={maxReps:tmpMaxReps,days:tmpDays,startDate:new Date().toISOString()};
     savePlan(planProfile);
     renderPlanTab();
     renderHomeTab();
     initUserNicknameField();
-    document.getElementById('welcomeDoneTitle').textContent = tmpNickname ? `Enchanté ${tmpNickname} !` : 'Enchanté !';
+    document.getElementById('welcomeDoneTitle').textContent = tmpNickname ? t('onboarding_hi_name').replace('{name}',tmpNickname) : t('onboarding_hi');
     step4.classList.add('hidden');step5.classList.remove('hidden');
   });
   document.getElementById('welcomeStep5Close').addEventListener('click',()=>{
@@ -1856,7 +2113,7 @@ function updateAppNavActiveState(tabName){
 document.querySelectorAll('.app-nav-grid .home-nav-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     if(planSessionActive || sessionActive){
-      showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+      showToast(t('toast_session_lock'),3000);
       return;
     }
     goToTab(btn.getAttribute('data-tab'));
@@ -1882,12 +2139,12 @@ function goToTab(tabName){
   updateAppNavActiveState(tabName);
 }
 const STREAK_BADGE_LEVELS=[
-  {days:3, icon:'🔥', label:'3 jours de suite'},
-  {days:7, icon:'⚡', label:'1 semaine de suite'},
-  {days:14, icon:'🌟', label:'2 semaines de suite'},
-  {days:30, icon:'🏆', label:'1 mois de suite'},
-  {days:60, icon:'💎', label:'2 mois de suite'},
-  {days:100, icon:'👑', label:'100 jours de suite'}
+  {days:3, icon:'🔥', labelKey:'badge_3_days'},
+  {days:7, icon:'⚡', labelKey:'badge_1_week'},
+  {days:14, icon:'🌟', labelKey:'badge_2_weeks'},
+  {days:30, icon:'🏆', labelKey:'badge_1_month'},
+  {days:60, icon:'💎', labelKey:'badge_2_months'},
+  {days:100, icon:'👑', labelKey:'badge_100_days'}
 ];
 function renderStreakBadge(){
   const section=document.getElementById('homeStreakBadgeSection');
@@ -1897,11 +2154,12 @@ function renderStreakBadge(){
   if(!eligible.length){ section.style.display='none'; return; }
   const current=eligible[eligible.length-1];
   document.getElementById('homeStreakBadgeIcon').textContent=current.icon;
-  document.getElementById('homeStreakBadgeLabel').textContent=current.label;
-  document.getElementById('homeStreakBadgeSub').textContent=`Série actuelle : ${streak.current} jour${streak.current>1?'s':''}`;
+  document.getElementById('homeStreakBadgeLabel').textContent=t(current.labelKey);
+  document.getElementById('homeStreakBadgeSub').textContent=`${t('calendar_current_streak')}${streak.current} ${t(streak.current>1?'day_plural':'day_singular')}`;
   section.style.display='';
 }
-const MOTIVATION_QUOTES=[
+const MOTIVATION_QUOTES={
+fr:[
 "Les petites victoires répétées deviennent de grands résultats.",
 "Chaque répétition vous rapproche de la meilleure version de vous-même.",
 "La discipline d'aujourd'hui est la force de demain.",
@@ -1917,12 +2175,31 @@ const MOTIVATION_QUOTES=[
 "Chaque série compte, même les jours difficiles.",
 "Le succès est la somme de petits efforts répétés jour après jour.",
 "Ne comptez pas les jours, faites que les jours comptent."
-];
+],
+en:[
+"Small repeated wins turn into big results.",
+"Every rep brings you closer to your best self.",
+"Today's discipline is tomorrow's strength.",
+"The body achieves what the mind believes is possible.",
+"One day at a time, one push-up at a time.",
+"Consistency beats intensity in the long run.",
+"You don't need to be extreme, just consistent.",
+"Motivation gets you started, habit keeps you going.",
+"The only bad workout is the one you didn't do.",
+"Your only limit is the one you accept.",
+"Progressing, even slowly, is still winning.",
+"Strength doesn't come from what you can do, but from what you thought you couldn't.",
+"Every set counts, even on hard days.",
+"Success is the sum of small efforts repeated day after day.",
+"Don't count the days, make the days count."
+]
+};
 function getWeeklyMotivationQuote(){
   const weekStart=getWeekStart(new Date());
   const seed=Math.floor(weekStart.getTime()/86400000);
-  const idx=Math.abs(seed) % MOTIVATION_QUOTES.length;
-  return MOTIVATION_QUOTES[idx];
+  const list=MOTIVATION_QUOTES[appLang]||MOTIVATION_QUOTES.fr;
+  const idx=Math.abs(seed) % list.length;
+  return list[idx];
 }
 function renderHomeGreeting(){
   const greetingEl=document.getElementById('homeGreeting');
@@ -1931,10 +2208,10 @@ function renderHomeGreeting(){
   const streakCountEl=document.getElementById('homeGreetingStreakCount');
   if(greetingEl){
     const nickname=getUserNickname();
-    greetingEl.textContent = nickname ? `Bonjour ${nickname}` : 'Bonjour';
+    greetingEl.textContent = nickname ? `${t('home_greeting')} ${nickname}` : t('home_greeting');
   }
   if(dateEl){
-    const todayLabel=new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+    const todayLabel=new Date().toLocaleDateString(appLocale(),{day:'numeric',month:'long',year:'numeric'});
     dateEl.textContent = todayLabel.charAt(0).toUpperCase()+todayLabel.slice(1);
   }
   if(flameEl && streakCountEl){
@@ -1965,31 +2242,31 @@ function renderHomeTab(){
   if(planProfile){
     renderPlanTab();
     const titleEl=document.getElementById('planTodayTitle');
-    isRestDay=titleEl && titleEl.textContent.trim()==='Jour de repos';
+    isRestDay=titleEl && titleEl.textContent.trim()===t('calendar_rest_day');
     const snap=window.lastTodayPlanSnapshot;
     if(isRestDay || !snap || !snap.sets || !snap.sets.length){
-      if(summaryEl) summaryEl.innerHTML=titleEl?titleEl.innerHTML:'Aucune séance planifiée aujourd\'hui.';
-      if(bigNumEl) bigNumEl.innerHTML='0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span>';
+      if(summaryEl) summaryEl.innerHTML=titleEl?titleEl.innerHTML:t('plan_no_session_today_short');
+      if(bigNumEl) bigNumEl.innerHTML=`0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> ${t('training_pushups')}</span>`;
       if(setsLabelEl) setsLabelEl.textContent='';
     } else {
       setCount=snap.sets.length;
       todayTotal=snap.total;
       if(summaryEl) summaryEl.textContent='';
-      if(bigNumEl) bigNumEl.innerHTML=`${todayTotal}<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span>`;
-      if(setsLabelEl) setsLabelEl.textContent=`${setCount} série${setCount>1?'s':''}`;
+      if(bigNumEl) bigNumEl.innerHTML=`${todayTotal}<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> ${t('training_pushups')}</span>`;
+      if(setsLabelEl) setsLabelEl.textContent=`${setCount} ${t(setCount>1?'training_series_unit':'training_series_done_label')}`;
     }
     if(durationEl) durationEl.textContent = setCount ? `${Math.max(2,Math.round(setCount*1.4))} min` : '–';
     if(levelEl){
       const mx=planProfile.maxReps||0;
-      levelEl.textContent = mx<12?'Débutant':(mx<25?'Novice':(mx<45?'Intermédiaire':(mx<70?'Avancé':(mx<110?'Confirmé':'Élite'))));
+      levelEl.textContent = mx<12?t('level_beginner'):(mx<25?t('level_novice'):(mx<45?t('level_intermediate'):(mx<70?t('level_advanced'):(mx<110?t('level_confirmed'):t('level_elite')))));
     }
     if(startBtn){
       startBtn.style.display = isRestDay ? 'none' : 'flex';
       startBtn.onclick=()=>{ goToTab('plan'); startPlanSession(); };
     }
   } else {
-    if(summaryEl) summaryEl.textContent='Aucun plan actif pour le moment. Créez votre plan dans l\'onglet Plan.';
-    if(bigNumEl) bigNumEl.innerHTML='0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> pompes</span>';
+    if(summaryEl) summaryEl.textContent=t('home_no_plan_yet');
+    if(bigNumEl) bigNumEl.innerHTML=`0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> ${t('training_pushups')}</span>`;
     if(setsLabelEl) setsLabelEl.textContent='';
     if(durationEl) durationEl.textContent='–';
     if(levelEl) levelEl.textContent='–';
@@ -2012,8 +2289,8 @@ function renderHomeTab(){
   if(planProfile){
     const cycleInfo=getPlanCycleInfo();
     const weekNum=cycleInfo.weekInCycle;
-    const statusTxt=planProfile.aiPlan ? (planProfile.aiPlan.note || 'Ajusté selon vos séances') : 'Ajusté selon vos séances';
-    if(weekLabelEl) weekLabelEl.textContent=`Semaine ${weekNum} sur ${totalPlanWeeks} (cycle ${cycleInfo.cycleNumber})`;
+    const statusTxt=planProfile.aiPlan ? (planProfile.aiPlan.note || t('plan_adjusted_default')) : t('plan_adjusted_default');
+    if(weekLabelEl) weekLabelEl.textContent=t('home_week_label').replace('{n}',weekNum).replace('{total}',totalPlanWeeks).replace('{cycle}',cycleInfo.cycleNumber);
     const curWeekStart=getWeekStart(new Date());
     const curWeekEnd=new Date(curWeekStart); curWeekEnd.setDate(curWeekEnd.getDate()+6);
     const trainedDaysThisWeek=new Set();
@@ -2032,11 +2309,11 @@ function renderHomeTab(){
     if(badgesEl){
       badgesEl.innerHTML='';
       const items=[];
-      if(planProfile.aiPlan) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V4M9 4h6"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg> Plan IA actif`);
-      if(statusTxt.includes('allégé')) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h4l2-3 3 6 2-3h5"/></svg> Rythme allégé`);
-      else if(statusTxt.includes('accéléré')) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg> Rythme accéléré`);
-      else items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h16"/></svg> Rythme stable`);
-      items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M5 20c0-8 6-14 14-14 0 8-6 14-14 14zM5 20c2-4 5-7 9-9"/></svg> Reprise en douceur`);
+      if(planProfile.aiPlan) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V4M9 4h6"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg> ${t('plan_ai_active')}`);
+      if(statusTxt.includes('allégé') || statusTxt.toLowerCase().includes('lighter')) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h4l2-3 3 6 2-3h5"/></svg> ${t('badge_pace_light')}`);
+      else if(statusTxt.includes('accéléré') || statusTxt.toLowerCase().includes('faster')) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg> ${t('badge_pace_fast')}`);
+      else items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h16"/></svg> ${t('badge_pace_stable')}`);
+      items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M5 20c0-8 6-14 14-14 0 8-6 14-14 14zM5 20c2-4 5-7 9-9"/></svg> ${t('badge_easing_in')}`);
       items.forEach(txt=>{
         const span=document.createElement('span');
         span.innerHTML=txt;
@@ -2045,11 +2322,11 @@ function renderHomeTab(){
     }
     if(progressEl) progressEl.textContent='';
   } else {
-    if(weekLabelEl) weekLabelEl.textContent='Aucun plan actif';
+    if(weekLabelEl) weekLabelEl.textContent=t('profile_no_plan');
     if(percentEl) percentEl.textContent='0%';
     if(barEl) barEl.innerHTML='';
     if(badgesEl) badgesEl.innerHTML='';
-    if(progressEl) progressEl.textContent='Créez votre plan pour suivre votre progression.';
+    if(progressEl) progressEl.textContent=t('home_create_plan_to_track');
   }
 
   const weekSessionsEl=document.getElementById('homeWeekSessions');
@@ -2085,11 +2362,11 @@ function renderHomeTab(){
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     if(planSessionActive && btn.dataset.tab!=='plan'){
-      showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+      showToast(t('toast_session_lock'),3000);
       return;
     }
     if(sessionActive && btn.dataset.tab!=='training'){
-      showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+      showToast(t('toast_session_lock'),3000);
       return;
     }
     goToTab(btn.dataset.tab);
@@ -2098,11 +2375,11 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
 document.querySelectorAll('.home-nav-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     if(planSessionActive && btn.dataset.tab!=='plan'){
-      showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+      showToast(t('toast_session_lock'),3000);
       return;
     }
     if(sessionActive && btn.dataset.tab!=='training'){
-      showToast('Terminez ou arrêtez la séance en cours avant de changer d\'onglet.',3000);
+      showToast(t('toast_session_lock'),3000);
       return;
     }
     goToTab(btn.dataset.tab);
@@ -2112,7 +2389,7 @@ goToTab('home');
 
 let calViewYear=new Date().getFullYear();
 let calViewMonth=new Date().getMonth();
-const calMonthNames=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+function calMonthName(i){ return t('month_full_'+i); }
 
 function workoutsForDate(iso){
   return workouts.map((w,i)=>({...w,idx:i})).filter(w=>w.isoDate===iso);
@@ -2153,7 +2430,7 @@ function updateStreakDisplay(){
   if(!countEl) return;
   const streak=computeWeeklyStreak();
   countEl.textContent=streak;
-  if(unitEl) unitEl.textContent = streak>1 ? 'semaines' : 'semaine';
+  if(unitEl) unitEl.textContent = streak>1 ? t('calendar_week_unit_plural') : t('calendar_week_unit');
   const flame=document.getElementById('streakFlame');
   if(flame) flame.style.opacity = streak>0 ? '1' : '.35';
 }
@@ -2162,7 +2439,7 @@ function renderCalendar(){
   const label=document.getElementById('calMonthLabel');
   if(!grid||!label) return;
   updateStreakDisplay();
-  label.textContent=(calMonthNames[calViewMonth]+' '+calViewYear).toUpperCase();
+  label.textContent=(calMonthName(calViewMonth)+' '+calViewYear).toUpperCase();
   grid.innerHTML='';
   const firstDay=new Date(calViewYear,calViewMonth,1);
   let startOffset=firstDay.getDay()-1; if(startOffset<0) startOffset=6;
@@ -2198,34 +2475,34 @@ function renderCalDaySummary(iso){
   if(!dateEl) return;
   const d=new Date(iso+'T00:00:00');
   const todayIso=toLocalDateStr(new Date());
-  const dateLabel=d.toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
-  dateEl.textContent=iso===todayIso?"Aujourd'hui":(dateLabel.charAt(0).toUpperCase()+dateLabel.slice(1));
+  const dateLabel=d.toLocaleDateString(appLocale(),{weekday:'long',day:'numeric',month:'long'});
+  dateEl.textContent=iso===todayIso?t('calendar_today'):(dateLabel.charAt(0).toUpperCase()+dateLabel.slice(1));
   const dayWorkouts=workoutsForDate(iso);
   actionBtn.classList.add('hidden');
   actionBtn.onclick=null;
   if(dayWorkouts.length){
     const totalReps=dayWorkouts.reduce((a,w)=>a+(w.total||0),0);
     const totalSets=dayWorkouts.reduce((a,w)=>a+(w.sets?w.sets.length:0),0);
-    statusEl.textContent='Séance terminée';
+    statusEl.textContent=t('calendar_session_done');
     statusEl.style.color='var(--primary)';
-    detailEl.textContent=`${totalReps} pompes · ${totalSets} série${totalSets>1?'s':''}`;
+    detailEl.textContent=`${totalReps} ${t('training_pushups')} · ${totalSets} ${t(totalSets>1?'training_series_unit':'training_series_done_label')}`;
     detailEl.style.cursor='pointer';
     detailEl.onclick=()=>openCalendarDetail(iso);
   } else if(planProfile && iso>=todayIso && planProfile.days.includes(d.getDay())){
     const aiDay=getAIPlanForDate(iso);
     const sets=aiDay && aiDay.sets && aiDay.sets.length ? aiDay.sets : [];
     const total=sets.reduce((a,v)=>a+v,0);
-    statusEl.textContent='Séance planifiée';
+    statusEl.textContent=t('calendar_session_planned');
     statusEl.style.color='var(--primary)';
-    detailEl.textContent=sets.length?`${total} pompes · ${sets.length} séries`:'Détails à venir';
+    detailEl.textContent=sets.length?`${total} ${t('training_pushups')} · ${sets.length} ${t('training_series_unit')}`:t('calendar_details_coming');
     if(iso===todayIso){
       actionBtn.classList.remove('hidden');
       actionBtn.onclick=()=>goToTab('plan');
     }
   } else {
-    statusEl.textContent='Jour de repos';
+    statusEl.textContent=t('calendar_rest_day');
     statusEl.style.color='var(--muted)';
-    detailEl.textContent='Aucune séance ce jour-là';
+    detailEl.textContent=t('calendar_no_session_that_day');
   }
 }
 
@@ -2258,7 +2535,7 @@ document.getElementById('calNextMonth').addEventListener('click',()=>{
 function openCalendarDetail(iso){
   const dayWorkouts=workoutsForDate(iso);
   if(!dayWorkouts.length) return;
-  const dateLabel=new Date(iso+'T00:00:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+  const dateLabel=new Date(iso+'T00:00:00').toLocaleDateString(appLocale(),{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('calendarDetailDate').textContent=dateLabel.charAt(0).toUpperCase()+dateLabel.slice(1);
   let html='';
   dayWorkouts.forEach((w,wi)=>{
@@ -2297,19 +2574,19 @@ function openCalendarDetail(iso){
       workouts[wIdx].total=newTotal;
       saveHistory();
       renderCalendar();
-      showToast('Séance mise à jour.');
+      showToast(t('toast_session_updated'));
       openCalendarDetail(iso);
     });
   });
   document.querySelectorAll('.deleteWorkoutBtn').forEach(btn=>{
     btn.addEventListener('click',async()=>{
       const wIdx=Number(btn.dataset.workoutIdx);
-      if(!await customConfirm('Supprimer définitivement cette séance ?')) return;
+      if(!await customConfirm(t('confirm_delete_session'))) return;
       workouts.splice(wIdx,1);
       saveHistory();
       renderCalendar();
       renderStats();
-      showToast('Séance supprimée.');
+      showToast(t('toast_session_deleted'));
       const remaining=workoutsForDate(iso);
       if(remaining.length){
         openCalendarDetail(iso);
@@ -2440,7 +2717,7 @@ function renderStats(){
   try{
   const streak=computeStreak();
   document.getElementById('streakValue').textContent=`${streak.current} jour${streak.current>1?'s':''}`;
-  document.getElementById('streakBest').textContent=`Meilleure série : ${streak.best} jour${streak.best>1?'s':''}`;
+  document.getElementById('streakBest').textContent=`${t('stats_best_streak')}${streak.best} ${t(streak.best>1?'day_plural':'day_singular')}`;
 
   renderWeeklyProgressChart();
   const stats=computeStats();
@@ -2449,7 +2726,7 @@ function renderStats(){
   document.getElementById('totalCumulative').textContent=stats.totalCumulative;
   document.getElementById('statSessionCount').textContent=stats.sessionCount;
   document.getElementById('statAverage').textContent=stats.average;
-  document.getElementById('statBestDay').textContent=stats.bestDay.iso?`${new Date(stats.bestDay.iso+'T00:00:00').toLocaleDateString('fr-FR')} (${stats.bestDay.total})`:'—';
+  document.getElementById('statBestDay').textContent=stats.bestDay.iso?`${new Date(stats.bestDay.iso+'T00:00:00').toLocaleDateString(appLocale())} (${stats.bestDay.total})`:'—';
 
   const badgesGrid=document.getElementById('badgesGrid');
   badgesGrid.innerHTML='';
@@ -2563,7 +2840,7 @@ function renderProgressChart(byDay){
   });
 }
 document.getElementById('fullResetBtn').addEventListener('click', async ()=>{
-  const confirmed = await customConfirm("Réinitialisation complète : toutes vos données (plan, historique, séances, préférences) seront définitivement supprimées et l'application redémarrera comme neuve. Continuer ?");
+  const confirmed = await customConfirm(t('confirm_full_reset'));
   if(!confirmed) return;
   try{
     localStorage.clear();
@@ -2571,12 +2848,12 @@ document.getElementById('fullResetBtn').addEventListener('click', async ()=>{
   location.reload();
 });
 document.getElementById('resetCalendarBtn').addEventListener('click',async()=>{
-  if(!await customConfirm('Réinitialiser tout le calendrier ? Cette action supprime toutes les séances enregistrées.')) return;
+  if(!await customConfirm(t('confirm_reset_calendar'))) return;
   workouts.length=0;
   saveHistory();
   renderCalendar();renderStats();
   document.getElementById('calendarDetailModal').classList.add('hidden');
-  showToast('Calendrier réinitialisé.');
+  showToast(t('toast_calendar_reset'));
 });
 document.getElementById('exportDataBtn').addEventListener('click',()=>{
   const dataStr=JSON.stringify({workouts,restSeconds:document.getElementById('restSeconds').value,exportedAt:new Date().toISOString()},null,2);
@@ -2586,7 +2863,7 @@ document.getElementById('exportDataBtn').addEventListener('click',()=>{
   a.download=`pushup-backup-${toLocalDateStr(new Date())}.json`;
   a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),1200);
-  showToast('Données exportées.');
+  showToast(t('toast_data_exported'));
 });
 document.getElementById('importDataBtn').addEventListener('click',()=>{
   document.getElementById('importFileInput').click();
@@ -2599,15 +2876,15 @@ document.getElementById('importFileInput').addEventListener('change',(e)=>{
     try{
       const data=JSON.parse(ev.target.result);
       if(!Array.isArray(data.workouts)) throw new Error('format invalide');
-      if(!await customConfirm(`Importer ${data.workouts.length} séance(s) ? Cela remplacera vos données actuelles.`)) return;
+      if(!await customConfirm(t('confirm_import').replace('{count}',data.workouts.length))) return;
       workouts.length=0;
       data.workouts.forEach(w=>workouts.push(w));
       saveHistory();
       renderCalendar();
       renderHistory();renderStats();
-      showToast('Données importées avec succès.');
+      showToast(t('toast_data_imported'));
     }catch(err){
-      showToast('Fichier invalide, import annulé.');
+      showToast(t('toast_invalid_file'));
     }
   };
   reader.readAsText(file);
@@ -2616,7 +2893,7 @@ document.getElementById('importFileInput').addEventListener('change',(e)=>{
 
 
 
-function renderHistory(){historyList.innerHTML='';if(!workouts.length){historyList.innerHTML='<div class="history-item"><span>Aucune séance enregistrée</span><span>—</span></div>';return;}workouts.slice().reverse().forEach(w=>{const item=document.createElement('div');item.className='history-item';item.innerHTML=`<span>${w.date}</span><strong>${w.total} pompes · ${w.sets.length} sets</strong>`;historyList.appendChild(item);});}
+function renderHistory(){historyList.innerHTML='';if(!workouts.length){historyList.innerHTML=`<div class="history-item"><span>${t('no_session_recorded')}</span><span>—</span></div>`;return;}workouts.slice().reverse().forEach(w=>{const item=document.createElement('div');item.className='history-item';item.innerHTML=`<span>${w.date}</span><strong>${w.total} ${t('training_pushups')} · ${w.sets.length} ${t('training_series_unit')}</strong>`;historyList.appendChild(item);});}
 function refreshHeader(){setInfoEl.textContent=currentSet;countEl.textContent=setCount;totalCountEl.textContent=totalCount;const ssc=document.getElementById('sessionSetsCount');if(ssc)ssc.textContent=completedSets.length;updateProgressRing();}
 function updateProgressRing(){
   const ring=document.getElementById('setProgressRing');
@@ -2635,7 +2912,7 @@ function updatePlanProgressRing(){
   const pct=Math.min(done/target,1);
   ring.style.strokeDashoffset=String(circumference*(1-pct));
 }
-function setChipsActive(v){document.querySelectorAll('.chip[data-rest]').forEach(ch=>ch.classList.toggle('active',Number(ch.dataset.rest)===Number(v)));const rd=document.getElementById('restSecondsDisplay');if(rd)rd.textContent=v;const ml=document.getElementById('movementLabel');if(ml)ml.textContent=`Repos: ${v} s`;} refreshHeader(); setChipsActive(restSecondsInput.value);
+function setChipsActive(v){document.querySelectorAll('.chip[data-rest]').forEach(ch=>ch.classList.toggle('active',Number(ch.dataset.rest)===Number(v)));const rd=document.getElementById('restSecondsDisplay');if(rd)rd.textContent=v;const ml=document.getElementById('movementLabel');if(ml)ml.textContent=`${t('training_rest_ongoing')}: ${v} s`;} refreshHeader(); setChipsActive(restSecondsInput.value);
 document.querySelectorAll('.chip[data-rest]').forEach(ch=>ch.addEventListener('click',()=>{restSecondsInput.value=ch.dataset.rest;setChipsActive(ch.dataset.rest)})); restSecondsInput.addEventListener('input',()=>setChipsActive(restSecondsInput.value));
 function angle(a,b,c){const ab=[a.x-b.x,a.y-b.y],cb=[c.x-b.x,c.y-b.y];const dot=ab[0]*cb[0]+ab[1]*cb[1];const mag1=Math.hypot(...ab),mag2=Math.hypot(...cb);if(!mag1||!mag2)return null;return Math.acos(Math.max(-1,Math.min(1,dot/(mag1*mag2))))*180/Math.PI;}
 function kp(list,name){const p=list.find(k=>k.name===name);return (p&&p.score>=0.35)?{x:p.x/video.videoWidth,y:p.y/video.videoHeight,visibility:p.score}:null;}
@@ -2669,7 +2946,7 @@ function getPoseMetrics(keypoints){
 function autoCalibrate(){
   calibrated=true;
   poseWasDetected=false;
-  movementLabel.textContent='Calibré';
+  movementLabel.textContent=t('camera_calibrated');
   return true;
 }
 
@@ -2704,7 +2981,7 @@ function processRep(metrics){
     downFrames=0;
     upFrames=0;
     lastRepAt=now;
-    phaseEl.textContent='Prêt';
+    phaseEl.textContent=t('training_ready');
     return;
   }
 
@@ -2735,7 +3012,7 @@ function processRep(metrics){
     state='up';
     downFrames=0;
     upFrames=0;
-    phaseEl.textContent='Prêt';
+    phaseEl.textContent=t('training_ready');
     lastDebugInfo={info:'retour ignoré',outOfView};
     return;
   }
@@ -2748,16 +3025,16 @@ function renderDebug(keypoints, detected){
   const inSession = sessionActive || planSessionActive;
   if(!keypoints || !detected){
     if(!inSession && !calibrated) movementLabel.textContent='Placez-vous dans le cadre';
-    else if(!inSession && calibrated) movementLabel.textContent='Calibré';
-    else if(inSession) movementLabel.textContent='Aucune pose détectée';
+    else if(!inSession && calibrated) movementLabel.textContent=t('camera_calibrated');
+    else if(inSession) movementLabel.textContent=t('camera_no_pose');
     return;
   }
   if(!inSession && calibrated){
-    movementLabel.textContent='Calibré';
+    movementLabel.textContent=t('camera_calibrated');
   } else if(!inSession && detected){
-    movementLabel.textContent='Appuyez sur Démarrer';
+    movementLabel.textContent=t('camera_press_start');
   } else if(inSession){
-    movementLabel.textContent='Pose détectée';
+    movementLabel.textContent=t('camera_pose_detected');
   }
 }
 
@@ -2810,25 +3087,25 @@ window.addEventListener('pagehide',stopCameraResources);
 async function startCamera(){
   if(stream) return;
   try{
-    cameraStatus.textContent='Chargement du modèle…';
+    cameraStatus.textContent=t('camera_loading_model');
     await tf.setBackend('webgl');
     await tf.ready();
     if(!detector) detector=await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet,{modelType:poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING});
     stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
     video.setAttribute('playsinline',true); video.setAttribute('webkit-playsinline',true); video.srcObject=stream; await video.play();
-    cameraReady=true; localStorage.setItem('cameraGranted','1'); cameraStatus.textContent='Caméra active'; cameraDot.className='dot live'; movementLabel.textContent='Appuyez sur Démarrer'; const _eb=document.getElementById('enableCameraBtn'); if(_eb) _eb.classList.add('hidden');
-    toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent='Prêt';
+    cameraReady=true; localStorage.setItem('cameraGranted','1'); cameraStatus.textContent=t('camera_active'); cameraDot.className='dot live'; movementLabel.textContent=t('camera_press_start'); const _eb=document.getElementById('enableCameraBtn'); if(_eb) _eb.classList.add('hidden');
+    toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent=t('training_ready');
     if(!rafId) rafId=requestAnimationFrame(detectLoop);
   }catch(e){
-    cameraStatus.textContent='Accès refusé';cameraDot.className='dot warn';
+    cameraStatus.textContent=t('camera_access_denied');cameraDot.className='dot warn';
     stopCameraResources();
     manualMode=true;
-    toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent='Prêt';
-    movementLabel.textContent='Mode manuel (sans caméra)';
-    showToast('Caméra indisponible : passage en mode manuel. Utilisez les boutons +/- pour compter vos pompes.',4500);
+    toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent=t('training_ready');
+    movementLabel.textContent=t('camera_manual_mode');
+    showToast(t('toast_camera_unavailable'),4500);
   }
 }
-function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;phaseEl.textContent='Prêt';}
+function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;phaseEl.textContent=t('training_ready');}
 function formatRest(s){const m=String(Math.floor(s/60)).padStart(2,'0');const sec=String(s%60).padStart(2,'0');return `${m}:${sec}`;}
 
 
@@ -2839,7 +3116,7 @@ function playCountdownBeep(secondsLeft){
 
 let restTargetTime=null;let restBeepedSeconds=new Set();
 function startRest(){
-  restActive=true;sessionActive=false;toggleSessionBtn.textContent='Démarrer';
+  restActive=true;sessionActive=false;toggleSessionBtn.textContent=t('phase_start_short');
   restRemaining=Number(restSecondsInput.value||60);
   restTargetTime=Date.now()+restRemaining*1000;
   restBeepedSeconds=new Set();
@@ -2865,7 +3142,7 @@ function restTick(){
   if(remainingMs<=0){
     clearInterval(restTimer);
     restTargetTime=null;
-    restText.textContent='Pause terminée';
+    restText.textContent=t('training_rest_over');
     autoResumeAfterRest();
   }
 }
@@ -2883,10 +3160,10 @@ function autoResumeAfterRest(){
     resetTracking();
     if(autoCalibrate()){
       sessionActive=true;
-      toggleSessionBtn.textContent='Pause';
-      phaseEl.textContent='En cours';
+      toggleSessionBtn.textContent=t('phase_paused');
+      phaseEl.textContent=t('phase_in_progress');
     } else {
-      phaseEl.textContent='Prêt';
+      phaseEl.textContent=t('training_ready');
     }
   },600);
 }
@@ -2897,7 +3174,7 @@ function openValidateModal(mode='nextSet'){
   validateModalMode=mode;
   pendingReps = setCount;
   document.getElementById('validateCount').textContent = pendingReps;
-  document.getElementById('confirmSet').textContent = mode==='finish' ? "Valider et terminer l'entraînement" : 'Valider et passer au repos';
+  document.getElementById('confirmSet').textContent = mode==='finish' ? t('training_validate_finish') : t('training_validate_rest');
   document.getElementById('validateModal').classList.remove('hidden');
 }
 function closeValidateModal(){
@@ -2932,7 +3209,7 @@ async function startPlanTraining(){
   applyPlanModeUI();
   updatePlanScreenState();
   updatePlanSessionUI();
-  showToast(`Séance plan lancée : ${planSessionRepTarget} pompes pour le set 1.`,3000); updatePlanScreenState();
+  showToast(t('toast_plan_session_started').replace('{target}',planSessionRepTarget),3000); updatePlanScreenState();
 }
 
 async function finishPlanTraining(completed){
@@ -2949,7 +3226,7 @@ async function finishPlanTraining(completed){
     const targetDateForPlan=planSessionTargetDate || isoDate;
     const durationMs=planSessionStartTime?(Date.now()-planSessionStartTime):0;
     const doneSets=(planSessionSets[0]&&planSessionSets[0].sets ? planSessionSets[0].sets.slice(0,planSessionIndex+(completed?1:0)) : []).map((reps,i)=>({set:i+1,reps}));
-    const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,targetDate:targetDateForPlan,total:planTotalCount,duration:formatDuration(durationMs),sets:doneSets,source:'plan'};
+    const workout={date:now.toLocaleDateString(appLocale())+' '+now.toLocaleTimeString(appLocale(),{hour:'2-digit',minute:'2-digit'}),isoDate,targetDate:targetDateForPlan,total:planTotalCount,duration:formatDuration(durationMs),sets:doneSets,source:'plan'};
     workouts.push(workout);
     try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
     try{renderHistory();}catch(e){console.error('renderHistory error', e && e.message ? e.message : String(e));}
@@ -2965,7 +3242,7 @@ async function finishPlanTraining(completed){
   updatePlanScreenState();
   updatePlanSessionUI();
   if(typeof renderPlanTab==='function') renderPlanTab();
-  showToast(completed ? `Plan terminé : ${planTotalCount} pompes enregistrées !` : `Séance arrêtée : ${planTotalCount} pompes enregistrées.`);
+  showToast(completed ? t('toast_plan_finished').replace('{count}',planTotalCount) : t('toast_session_stopped').replace('{count}',planTotalCount));
   planTotalCount=0;
   planSessionTargetDate=null;
   const totalEl=document.getElementById('planTotalCount');
@@ -3016,7 +3293,7 @@ function updatePlanScreenState(){
 }
 
 function pad(n){return String(n).padStart(2,'0')} function toICSDate(d){return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;}
-function downloadCalendarEvent(workout){const start=new Date(),end=new Date(start.getTime()+30*60000);const desc=`Total : ${workout.total} pompes\\nSéries : ${workout.sets.map(s=>`Série ${s.set} : ${s.reps}`).join(' | ')}`;const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pompes//FR//EN','BEGIN:VEVENT',`UID:pompes-${Date.now()}@webapp`,`DTSTAMP:${toICSDate(new Date())}`,`DTSTART:${toICSDate(start)}`,`DTEND:${toICSDate(end)}`,`SUMMARY:Séance Pompes - ${workout.total} pompes`,`DESCRIPTION:${desc}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pompes-seance.ics';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200);}
+function downloadCalendarEvent(workout){const start=new Date(),end=new Date(start.getTime()+30*60000);const desc=`${t('training_total_session')} : ${workout.total} ${t('training_pushups')}\\n${t('training_series')} : ${workout.sets.map(s=>`${t('training_series_done_label')} ${s.set} : ${s.reps}`).join(' | ')}`;const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pompes//FR//EN','BEGIN:VEVENT',`UID:pompes-${Date.now()}@webapp`,`DTSTAMP:${toICSDate(new Date())}`,`DTSTART:${toICSDate(start)}`,`DTEND:${toICSDate(end)}`,`SUMMARY:${t('calendar_session')} - ${workout.total} ${t('training_pushups')}`,`DESCRIPTION:${desc}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pompes-seance.ics';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200);}
 window.addEventListener('load',async()=>{
   // Verrouillage natif si le navigateur le supporte (iOS Safari ne le supporte pas ;
   // le blocage visuel CSS #landscapeBlock reste la protection réelle sur iPhone).
@@ -3134,7 +3411,7 @@ if(planSkipRestBtn) planSkipRestBtn.addEventListener('click',()=>{ stopPlanRest(
 const stopPlanTrainingBtn=document.getElementById('stopPlanTrainingBtn');
 if(stopPlanTrainingBtn) stopPlanTrainingBtn.addEventListener('click',async()=>{
   if(!planSessionActive) return;
-  if(await customConfirm(`Arrêter l'entraînement maintenant ? ${planTotalCount} pompes seront enregistrées.`)){
+  if(await customConfirm(t('confirm_stop_training').replace('{count}',planTotalCount))){
     finishPlanTraining(false);
   }
 });
@@ -3156,9 +3433,15 @@ function runFreeCountdown(onComplete){
     clearInterval(freeCountdownTimer);
     freeCountdownTimer=null;
     modal.classList.add('hidden');
-    try{beep();}catch(_){}
+    beepBurst();
     onComplete();
   },1000);
+}
+
+function beepBurst(count=7, interval=110, freq=1046, duration=90){
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{ try{beep(freq,duration);}catch(_){} }, i*interval);
+  }
 }
 
 let planCountdownTimer=null;
@@ -3178,26 +3461,26 @@ function runPlanCountdown(onComplete){
     clearInterval(planCountdownTimer);
     planCountdownTimer=null;
     modal.classList.add('hidden');
-    try{beep();}catch(_){}
+    beepBurst();
     onComplete();
   },1000);
 }
 
-toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(toggleSessionBtn.dataset.countdownDone!=='1'){runFreeCountdown(()=>{toggleSessionBtn.dataset.countdownDone='1';toggleSessionBtn.click();});return;}delete toggleSessionBtn.dataset.countdownDone;if(cameraReady&&!autoCalibrate()){showToast('Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.');return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';nextSetBtn.classList.remove('hidden');finishWorkoutBtn.classList.remove('hidden');resetBtn.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}else{sessionActive=false;toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Pause';}});
+toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(toggleSessionBtn.dataset.countdownDone!=='1'){runFreeCountdown(()=>{toggleSessionBtn.dataset.countdownDone='1';toggleSessionBtn.click();});return;}delete toggleSessionBtn.dataset.countdownDone;if(cameraReady&&!autoCalibrate()){showToast(t('toast_reposition_camera'));return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent=t('phase_paused');phaseEl.textContent=t('phase_in_progress');nextSetBtn.classList.remove('hidden');finishWorkoutBtn.classList.remove('hidden');resetBtn.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}else{sessionActive=false;toggleSessionBtn.textContent=t('phase_start_short');phaseEl.textContent=t('phase_paused');}});
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
-document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent='Prêt';}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;toggleSessionBtn.textContent='Pause';phaseEl.textContent='En cours';}else{phaseEl.textContent='Prêt';movementLabel.textContent='Repositionnez-vous';}});
+document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent=t('training_ready');}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;toggleSessionBtn.textContent=t('phase_paused');phaseEl.textContent=t('phase_in_progress');}else{phaseEl.textContent=t('training_ready');movementLabel.textContent=t('phase_reposition');}});
 resetBtn.addEventListener('click',()=>{setCount=0;refreshHeader();resetTracking();});
 finishWorkoutBtn.addEventListener('click',()=>{
   if(totalCount===0 && setCount===0){
     sessionActive=false;
-    toggleSessionBtn.textContent='Démarrer';
-    phaseEl.textContent='Prêt';
+    toggleSessionBtn.textContent=t('phase_start_short');
+    phaseEl.textContent=t('training_ready');
     resetSessionTimer();
     resetTracking();
     nextSetBtn.classList.add('hidden');finishWorkoutBtn.classList.add('hidden');resetBtn.classList.add('hidden');
-    showToast('Aucune pompe enregistrée. Appuyez sur Démarrer pour reprendre.',3000);
+    showToast(t('toast_no_pushup_recorded'),3000);
     return;
   }
   openValidateModal('finish');
@@ -3207,9 +3490,9 @@ function finalizeWorkout(finalSetReps){
   totalCount = totalCount - setCount + finalSetReps;
   if(totalCount<=0){
     completedSets=[];sessionActive=false;
-    toggleSessionBtn.textContent='Démarrer';phaseEl.textContent='Prêt';
+    toggleSessionBtn.textContent=t('phase_start_short');phaseEl.textContent=t('training_ready');
     nextSetBtn.classList.add('hidden');finishWorkoutBtn.classList.add('hidden');resetBtn.classList.add('hidden');
-    showToast('Aucune pompe enregistrée. Appuyez sur Démarrer pour reprendre.',3000);
+    showToast(t('toast_no_pushup_recorded'),3000);
     return;
   }
   stopRest();sessionActive=false;
@@ -3219,21 +3502,21 @@ function finalizeWorkout(finalSetReps){
   const finalTotal=totalCount;
   const finalSetsCount=completedSets.length;
   const finalDurationText=formatDuration(durationMs);
-  const workout={date:now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}),isoDate,total:finalTotal,duration:finalDurationText,sets:[...completedSets]};
+  const workout={date:now.toLocaleDateString(appLocale())+' '+now.toLocaleTimeString(appLocale(),{hour:'2-digit',minute:'2-digit'}),isoDate,total:finalTotal,duration:finalDurationText,sets:[...completedSets]};
 
   setCount=0;totalCount=0;currentSet=1;completedSets=[];
   refreshHeader();
   resetTracking();
   resetSessionTimer();
   calibrated=false;
-  toggleSessionBtn.textContent='Démarrer';
-  movementLabel.textContent='Appuyez sur Démarrer';
-  phaseEl.textContent='Terminé';
+  toggleSessionBtn.textContent=t('phase_start_short');
+  movementLabel.textContent=t('camera_press_start');
+  phaseEl.textContent=t('phase_done');
   nextSetBtn.classList.add('hidden');finishWorkoutBtn.classList.add('hidden');resetBtn.classList.add('hidden');
 
   animateModalCount('doneModalTotal', finalTotal);
   document.getElementById('doneModalDuration').textContent=finalDurationText;
-  document.getElementById('doneModalSets').textContent=`${finalSetsCount} set(s) réalisé(s)`;
+  document.getElementById('doneModalSets').textContent=`${finalSetsCount} ${t('training_sets_completed')}`;
   document.getElementById('workoutDoneModal').classList.remove('hidden');
   const emojiEl=document.getElementById('doneModalEmoji');
   if(emojiEl){ emojiEl.style.transform='scale(0)'; requestAnimationFrame(()=>{ emojiEl.style.transform='scale(1)'; }); }
