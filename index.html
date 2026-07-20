@@ -1,4 +1,4 @@
-<!-- v176 -->
+<!-- v177 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -50,6 +50,27 @@
     .home-quick-grid .home-nav-btn{background:transparent;color:var(--text);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;padding:.4rem .1rem;min-height:56px;font-size:.62rem;}
 .home-quick-grid .home-nav-btn svg{width:17px;height:17px;}
 .home-quick-grid .home-nav-btn.active{border-color:var(--primary);}
+#globalNavGrid{
+  position:fixed;left:0;right:0;bottom:0;z-index:150;
+  max-width:430px;margin:0 auto;
+  display:flex;justify-content:space-around;align-items:stretch;gap:0;
+  background:color-mix(in srgb, var(--surface) 92%, transparent);
+  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
+  border-top:1px solid var(--border);
+  padding:.35rem .2rem calc(.35rem + env(safe-area-inset-bottom));
+  box-shadow:0 -4px 16px rgba(0,0,0,.08);
+}
+#globalNavGrid .home-nav-btn{
+  background:transparent;border:none;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:.2rem;padding:.3rem .1rem;flex:1;min-height:48px;
+  font-size:.62rem;font-weight:600;border-radius:.8rem;
+  transition:color .15s ease;
+}
+#globalNavGrid .home-nav-btn svg{width:22px;height:22px;transition:transform .15s ease;}
+#globalNavGrid .home-nav-btn.active{color:var(--primary);}
+#globalNavGrid .home-nav-btn.active svg{transform:translateY(-1px);}
+.tab-content{padding-bottom:calc(4.6rem + env(safe-area-inset-bottom));}
     .camera-shell{position:relative;overflow:hidden;border-radius:1rem;background:#0f1113;aspect-ratio:3/4;margin-top:1rem}.camera-shell video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.camera-shell canvas{display:none}
     .camera-overlay{position:absolute;left:.8rem;right:.8rem;bottom:.8rem;z-index:2}.pill{display:inline-flex;align-items:center;gap:.45rem;border-radius:var(--pill);padding:.45rem .75rem;background:rgba(17,20,24,.62);backdrop-filter:blur(10px);color:#fff;font-size:.78rem}.dot{width:.55rem;height:.55rem;border-radius:50%;background:#9ca3af}.dot.live{background:#22c55e}.dot.warn{background:#f59e0b}
     .grid,.controls{display:grid;gap:.75rem}.controls,.grid,.two-col{grid-template-columns:1fr 1fr}.btn,.chip,.icon-btn,input{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--pill)} .btn{min-height:52px;padding:.9rem 1rem;font-weight:700}.btn-primary{background:var(--primary);color:var(--inv);border:none}.btn-danger{background:var(--text);color:var(--inv);border:none}.icon-btn{width:48px;height:48px}
@@ -71,7 +92,7 @@
     .pref-text .pref-sub{color:var(--muted);font-size:.78rem;margin-top:.1rem;}
 
     .history-list{display:grid;gap:.6rem}.history-item{padding:.85rem 1rem;border-radius:1rem;background:var(--surface2);display:flex;justify-content:space-between;gap:1rem;font-size:.92rem}.hidden{display:none!important}.rest-time{font-size:clamp(2.8rem,12vw,4rem);font-weight:700}.help p,.help li{color:var(--muted);font-size:.92rem}
-    .modal-overlay{position:fixed;inset:0;background:rgba(10,10,10,.6);display:flex;align-items:center;justify-content:center;z-index:100;padding:1.5rem;}
+    .modal-overlay{position:fixed;inset:0;background:rgba(10,10,10,.6);display:flex;align-items:center;justify-content:center;z-index:200;padding:1.5rem;}
     @keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1;}100%{transform:translateY(320px) rotate(540deg);opacity:0;}}
     .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.6rem;max-width:360px;width:100%;text-align:center;}
     .modal-count{font-size:clamp(3.5rem,16vw,5rem);font-weight:700;line-height:1;margin:.6rem 0;}
@@ -189,17 +210,17 @@
   <div style="font-weight:700;font-size:1.1rem;" data-i18n="landscape_rotate">Tournez votre téléphone</div>
   <div style="color:var(--muted);font-size:.9rem;" data-i18n="landscape_sub">Push-Up fonctionne uniquement en mode portrait.</div>
 </div>
-<div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:max(env(safe-area-inset-bottom),1rem);z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
+<div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:calc(4.9rem + env(safe-area-inset-bottom));z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v176</p></div></div>
-    <div class="home-quick-grid app-nav-grid" id="globalNavGrid" style="margin-top:.5rem;">
-      <button class="btn home-nav-btn" data-tab="home" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span style="color:var(--text);" data-i18n="nav_home">Accueil</span></button>
-      <button class="btn home-nav-btn" data-tab="plan" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span style="color:var(--text);" data-i18n="nav_plan">Plan</span></button>
-      <button class="btn home-nav-btn" data-tab="training" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg><span style="color:var(--text);" data-i18n="nav_free">Libre</span></button>
-      <button class="btn home-nav-btn" data-tab="calendar" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span style="color:var(--text);" data-i18n="nav_calendar">Calendrier</span></button>
-      <button class="btn home-nav-btn" data-tab="stats" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span style="color:var(--text);" data-i18n="nav_stats">Stats</span></button>
-      <button class="btn home-nav-btn" data-tab="profile" style="width:100%;flex-direction:column;gap:.2rem;color:var(--primary);"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg><span style="color:var(--text);" data-i18n="nav_profile">Profil</span></button>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v177</p></div></div>
+    <div class="home-quick-grid app-nav-grid" id="globalNavGrid">
+      <button class="btn home-nav-btn" data-tab="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span data-i18n="nav_home">Accueil</span></button>
+      <button class="btn home-nav-btn" data-tab="plan"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span data-i18n="nav_plan">Plan</span></button>
+      <button class="btn home-nav-btn" data-tab="training"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg><span data-i18n="nav_free">Libre</span></button>
+      <button class="btn home-nav-btn" data-tab="calendar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span data-i18n="nav_calendar">Calendrier</span></button>
+      <button class="btn home-nav-btn" data-tab="stats"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span data-i18n="nav_stats">Stats</span></button>
+      <button class="btn home-nav-btn" data-tab="profile"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg><span data-i18n="nav_profile">Profil</span></button>
     </div>
   </header>
   
@@ -232,7 +253,7 @@
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;gap:1rem;flex-wrap:wrap;">
         <div>
-          <div id="homeTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> <span data-i18n="training_pushups">pompes</span></span></div>
+          <div id="homeTodayBigNumber" style="font-size:2.1rem;font-weight:800;line-height:1;">0<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> <span data-i18n="training_pushups">pompes</span></span></div>
           <div id="homeTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
           <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
             <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span data-i18n="home_estimated_time">Temps estimé</span><br><strong id="homeTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
@@ -338,17 +359,17 @@
     <div style="display:flex;justify-content:space-around;align-items:flex-start;text-align:center;">
       <div style="flex:1;">
         <div style="color:var(--primary);"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" stroke="none"><path d="M3 15c0-3 1-5 3-6.5C7.5 7 9 6.5 10.5 6c.6-1.6 2-2.8 3.7-3 1.1-.1 1.8.9 1.3 1.9-.4.8-.6 1.4-.5 2.1 1.6.4 3 1.5 3.7 3 .5 1.1-.6 2.1-1.6 1.5-.5-.3-1-.4-1.4-.2-.5.3-.6 1-.2 1.6.8 1.2 1.2 2.6 1 4-.2 1.5-1.6 2.4-3 2-1.1-.3-1.9-1.2-2.9-1.7-1.3-.7-2.8-.7-4.1 0-.9.5-1.8-.5-1.5-1.5.3-1.1 1-2 1.6-3-1.2.3-2.3 1-3 2-.6.8-1.8.3-1.6-.7z"/></svg></div>
-        <strong id="totalCount" style="font-size:1.8rem;display:block;margin-top:.3rem;">0</strong>
+        <strong id="totalCount" style="font-size:1.8rem;display:block;margin-top:.05rem;">0</strong>
         <div style="color:var(--muted);font-size:.78rem;" data-i18n="training_pushups">pompes</div>
       </div>
       <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
         <div style="color:var(--primary);"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
-        <strong id="sessionSetsCount" style="font-size:1.8rem;display:block;margin-top:.3rem;">0</strong>
+        <strong id="sessionSetsCount" style="font-size:1.8rem;display:block;margin-top:.05rem;">0</strong>
         <div style="color:var(--muted);font-size:.78rem;" data-i18n="training_series_unit">séries</div>
       </div>
       <div style="flex:1;">
         <div style="color:var(--primary);"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-        <strong id="sessionDuration" style="font-size:1.8rem;display:block;margin-top:.3rem;">00:00</strong>
+        <strong id="sessionDuration" style="font-size:1.8rem;display:block;margin-top:.05rem;">00:00</strong>
       </div>
     </div>
   </section>
@@ -492,7 +513,7 @@
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;gap:1rem;flex-wrap:wrap;">
           <div>
-            <div id="planTodayBigNumber" style="font-size:2.6rem;font-weight:800;line-height:1;">0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> <span data-i18n="training_pushups">pompes</span></span></div>
+            <div id="planTodayBigNumber" style="font-size:2.1rem;font-weight:800;line-height:1;">0<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> <span data-i18n="training_pushups">pompes</span></span></div>
             <div id="planTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
             <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
               <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span data-i18n="home_estimated_time">Temps estimé</span><br><strong id="planTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
@@ -1651,7 +1672,7 @@ function renderPlanTab(){
     const startBtn=document.getElementById('planHomeStartBtn');
     const setCount = isTrainingDay ? (window.lastTodayPlanSnapshot ? window.lastTodayPlanSnapshot.sets.length : 0) : 0;
     const total = isTrainingDay ? displayTotal : 0;
-    if(bigNumEl) bigNumEl.innerHTML=`${total}<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> ${t('training_pushups')}</span>`;
+    if(bigNumEl) bigNumEl.innerHTML=`${total}<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> ${t('training_pushups')}</span>`;
     if(setsLabelEl) setsLabelEl.textContent = isTrainingDay ? `${setCount} ${t(setCount>1?'training_series_unit':'training_series_done_label')}` : t('calendar_rest_day');
     if(durationEl) durationEl.textContent = setCount ? `${Math.max(2,Math.round(setCount*1.4))} min` : '–';
     if(levelEl){
@@ -2246,13 +2267,13 @@ function renderHomeTab(){
     const snap=window.lastTodayPlanSnapshot;
     if(isRestDay || !snap || !snap.sets || !snap.sets.length){
       if(summaryEl) summaryEl.innerHTML=titleEl?titleEl.innerHTML:t('plan_no_session_today_short');
-      if(bigNumEl) bigNumEl.innerHTML=`0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> ${t('training_pushups')}</span>`;
+      if(bigNumEl) bigNumEl.innerHTML=`0<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> ${t('training_pushups')}</span>`;
       if(setsLabelEl) setsLabelEl.textContent='';
     } else {
       setCount=snap.sets.length;
       todayTotal=snap.total;
       if(summaryEl) summaryEl.textContent='';
-      if(bigNumEl) bigNumEl.innerHTML=`${todayTotal}<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> ${t('training_pushups')}</span>`;
+      if(bigNumEl) bigNumEl.innerHTML=`${todayTotal}<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> ${t('training_pushups')}</span>`;
       if(setsLabelEl) setsLabelEl.textContent=`${setCount} ${t(setCount>1?'training_series_unit':'training_series_done_label')}`;
     }
     if(durationEl) durationEl.textContent = setCount ? `${Math.max(2,Math.round(setCount*1.4))} min` : '–';
@@ -2266,7 +2287,7 @@ function renderHomeTab(){
     }
   } else {
     if(summaryEl) summaryEl.textContent=t('home_no_plan_yet');
-    if(bigNumEl) bigNumEl.innerHTML=`0<span style="font-size:1.1rem;font-weight:600;color:var(--muted);"> ${t('training_pushups')}</span>`;
+    if(bigNumEl) bigNumEl.innerHTML=`0<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> ${t('training_pushups')}</span>`;
     if(setsLabelEl) setsLabelEl.textContent='';
     if(durationEl) durationEl.textContent='–';
     if(levelEl) levelEl.textContent='–';
