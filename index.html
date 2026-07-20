@@ -1,4 +1,4 @@
-<!-- v179 -->
+<!-- v180 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -216,7 +216,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:calc(4.9rem + env(safe-area-inset-bottom));z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v179</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v180</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid">
       <button class="btn home-nav-btn" data-tab="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span data-i18n="nav_home">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span data-i18n="nav_plan">Plan</span></button>
@@ -303,7 +303,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
           <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;"><span data-i18n="home_sessions_completed">Séances complétées</span></div>
         </div>
         <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
-          <div><svg viewBox="0 0 24 24" width="22" height="22" fill="var(--primary)" stroke="none"><path d="M3 15c0-3 1-5 3-6.5C7.5 7 9 6.5 10.5 6c.6-1.6 2-2.8 3.7-3 1.1-.1 1.8.9 1.3 1.9-.4.8-.6 1.4-.5 2.1 1.6.4 3 1.5 3.7 3 .5 1.1-.6 2.1-1.6 1.5-.5-.3-1-.4-1.4-.2-.5.3-.6 1-.2 1.6.8 1.2 1.2 2.6 1 4-.2 1.5-1.6 2.4-3 2-1.1-.3-1.9-1.2-2.9-1.7-1.3-.7-2.8-.7-4.1 0-.9.5-1.8-.5-1.5-1.5.3-1.1 1-2 1.6-3-1.2.3-2.3 1-3 2-.6.8-1.8.3-1.6-.7z"/></svg></div>
+          <div><svg viewBox="0 0 24 24" width="22" height="22" fill="var(--primary)" stroke="none"><path d="M6.5 20c-1.2-2-1.5-4.3-.7-6.4-1.3-1-2-2.6-1.6-4.3.5-2.1 2.5-3.3 4.5-2.8.6-1.8 2.3-3 4.2-2.8 2.3.2 3.9 2.3 3.7 4.6-.1 1.1-.6 2-1.3 2.7 1.6.7 2.7 2.3 2.7 4.1 0 2.5-2 4.5-4.5 4.5-1.1 0-2.1-.4-2.9-1.1-1.1.8-2.6 1.2-4.1.7z"/></svg></div>
           <div id="homeWeekTotal" style="font-size:1.3rem;font-weight:800;">0</div>
           <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;"><span data-i18n="home_total_pushups">Pompes au total</span></div>
         </div>
@@ -361,7 +361,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
     <div style="color:var(--muted);font-size:.72rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;margin-bottom:.6rem;" data-i18n="training_session_summary">Résumé séance</div>
     <div style="display:flex;justify-content:space-around;align-items:flex-start;text-align:center;">
       <div style="flex:1;">
-        <div style="color:var(--primary);"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" stroke="none"><path d="M3 15c0-3 1-5 3-6.5C7.5 7 9 6.5 10.5 6c.6-1.6 2-2.8 3.7-3 1.1-.1 1.8.9 1.3 1.9-.4.8-.6 1.4-.5 2.1 1.6.4 3 1.5 3.7 3 .5 1.1-.6 2.1-1.6 1.5-.5-.3-1-.4-1.4-.2-.5.3-.6 1-.2 1.6.8 1.2 1.2 2.6 1 4-.2 1.5-1.6 2.4-3 2-1.1-.3-1.9-1.2-2.9-1.7-1.3-.7-2.8-.7-4.1 0-.9.5-1.8-.5-1.5-1.5.3-1.1 1-2 1.6-3-1.2.3-2.3 1-3 2-.6.8-1.8.3-1.6-.7z"/></svg></div>
+        <div style="color:var(--primary);"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" stroke="none"><path d="M6.5 20c-1.2-2-1.5-4.3-.7-6.4-1.3-1-2-2.6-1.6-4.3.5-2.1 2.5-3.3 4.5-2.8.6-1.8 2.3-3 4.2-2.8 2.3.2 3.9 2.3 3.7 4.6-.1 1.1-.6 2-1.3 2.7 1.6.7 2.7 2.3 2.7 4.1 0 2.5-2 4.5-4.5 4.5-1.1 0-2.1-.4-2.9-1.1-1.1.8-2.6 1.2-4.1.7z"/></svg></div>
         <strong id="totalCount" style="font-size:1.8rem;display:block;margin-top:.05rem;">0</strong>
         <div style="color:var(--muted);font-size:.78rem;" data-i18n="training_pushups">pompes</div>
       </div>
@@ -762,7 +762,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
           <strong style="font-size:1.6rem;display:block;" id="recordSession">0</strong>
         </div>
         <div style="flex:1;">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2c1 3-2 4-2 7 0 1.5 1 2.5 2 2.5s2-1 2-2.2c1.2 1 2 2.6 2 4.2 0 3-2.2 5.5-6 5.5s-6.5-2.7-6.5-6.2c0-4 2.5-6.3 4.5-9C8.5 4.5 10 3 12 2z" fill="var(--primary)"/></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="var(--primary)" stroke="none"><path d="M6.5 20c-1.2-2-1.5-4.3-.7-6.4-1.3-1-2-2.6-1.6-4.3.5-2.1 2.5-3.3 4.5-2.8.6-1.8 2.3-3 4.2-2.8 2.3.2 3.9 2.3 3.7 4.6-.1 1.1-.6 2-1.3 2.7 1.6.7 2.7 2.3 2.7 4.1 0 2.5-2 4.5-4.5 4.5-1.1 0-2.1-.4-2.9-1.1-1.1.8-2.6 1.2-4.1.7z"/></svg>
           <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" data-i18n="stats_cumulative_total">Total cumulé</div>
           <strong style="font-size:1.6rem;display:block;" id="totalCumulative">0</strong>
         </div>
