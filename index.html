@@ -1,4 +1,4 @@
-<!-- v203 -->
+<!-- v204 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -217,7 +217,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:calc(4.9rem + env(safe-area-inset-bottom));z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v203</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v204</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid">
       <button class="btn home-nav-btn" data-tab="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span data-i18n="nav_home">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span data-i18n="nav_plan">Plan</span></button>
@@ -259,12 +259,12 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
         <div>
           <div id="homeTodayBigNumber" style="font-size:2.1rem;font-weight:800;line-height:1;">0<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> <span data-i18n="training_pushups">pompes</span></span></div>
           <div id="homeTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
-          <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
+          <div id="homeTodayDetailsRow" style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
             <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span data-i18n="home_estimated_time">Temps estimé</span><br><strong id="homeTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
             <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"/></svg> <span data-i18n="home_level">Niveau</span><br><strong id="homeTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
           </div>
         </div>
-        <div style="position:relative;width:104px;height:104px;flex-shrink:0;">
+        <div id="homeTodayRingWrap" style="position:relative;width:104px;height:104px;flex-shrink:0;">
           <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
             <circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface2)" stroke-width="8"></circle>
             <circle id="homeRingProgress" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.4" stroke-dashoffset="276.4"></circle>
@@ -521,13 +521,13 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
           <div>
             <div id="planTodayBigNumber" style="font-size:2.1rem;font-weight:800;line-height:1;">0<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> <span data-i18n="training_pushups">pompes</span></span></div>
             <div id="planTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
-            <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
+            <div id="planTodayDetailsRow" style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
               <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span data-i18n="home_estimated_time">Temps estimé</span><br><strong id="planTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
               <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"/></svg> <span data-i18n="home_level">Niveau</span><br><strong id="planTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
               
             </div>
           </div>
-          <div style="position:relative;width:104px;height:104px;flex-shrink:0;">
+          <div id="planTodayRingWrap" style="position:relative;width:104px;height:104px;flex-shrink:0;">
             <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
               <circle cx="50" cy="50" r="44" fill="none" stroke="var(--surface2)" stroke-width="8"></circle>
               <circle id="planHomeRingProgress" cx="50" cy="50" r="44" fill="none" stroke="var(--primary)" stroke-width="8" stroke-linecap="round" stroke-dasharray="276.4" stroke-dashoffset="276.4"></circle>
@@ -1819,10 +1819,16 @@ function renderPlanTab(){
     const ringProgress=document.getElementById('planHomeRingProgress');
     const ringNumber=document.getElementById('planHomeRingNumber');
     const startBtn=document.getElementById('planHomeStartBtn');
+    const detailsRowEl=document.getElementById('planTodayDetailsRow');
+    const ringWrapEl=document.getElementById('planTodayRingWrap');
     const setCount = isTrainingDay ? (window.lastTodayPlanSnapshot ? window.lastTodayPlanSnapshot.sets.length : 0) : 0;
     const total = isTrainingDay ? displayTotal : 0;
-    if(bigNumEl) bigNumEl.innerHTML=`${total}<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> ${t('training_pushups')}</span>`;
-    if(setsLabelEl) setsLabelEl.textContent = isTrainingDay ? `${setCount} ${t(setCount>1?'training_series_unit':'training_series_done_label')}` : t('calendar_rest_day');
+    if(detailsRowEl) detailsRowEl.classList.toggle('hidden', !isTrainingDay);
+    if(ringWrapEl) ringWrapEl.classList.toggle('hidden', !isTrainingDay);
+    if(bigNumEl) bigNumEl.innerHTML = isTrainingDay
+      ? `${total}<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> ${t('training_pushups')}</span>`
+      : `<span style="font-size:1.5rem;">${t('calendar_rest_day')}</span>`;
+    if(setsLabelEl) setsLabelEl.textContent = isTrainingDay ? `${setCount} ${t(setCount>1?'training_series_unit':'training_series_done_label')}` : '';
     if(durationEl) durationEl.textContent = setCount ? `${Math.max(2,Math.round(setCount*1.4))} min` : '–';
     if(levelEl){
       if(isTrainingDay){
@@ -2459,11 +2465,15 @@ function renderHomeTab(){
   const ringProgress=document.getElementById('homeRingProgress');
   const ringNumber=document.getElementById('homeRingNumber');
   const startBtn=document.getElementById('homeStartSessionBtn');
+  const detailsRowEl=document.getElementById('homeTodayDetailsRow');
+  const ringWrapEl=document.getElementById('homeTodayRingWrap');
   let todayTotal=0, todayTarget=0, todayDone=0, isRestDay=false, setCount=0;
   if(planProfile){
     renderPlanTab();
     const titleEl=document.getElementById('planTodayTitle');
     isRestDay=titleEl && titleEl.textContent.trim()===t('calendar_rest_day');
+    if(detailsRowEl) detailsRowEl.classList.toggle('hidden', isRestDay);
+    if(ringWrapEl) ringWrapEl.classList.toggle('hidden', isRestDay);
     const snap=window.lastTodayPlanSnapshot;
     if(isRestDay || !snap || !snap.sets || !snap.sets.length){
       if(summaryEl) summaryEl.innerHTML=titleEl?titleEl.innerHTML:t('plan_no_session_today_short');
