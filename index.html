@@ -1,4 +1,7 @@
-<html lang="fr" data-theme="dark"><head>
+<!-- v194 -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
 
 <script>
 (async function () {
@@ -23,9 +26,9 @@
 })();
 </script>
 
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#01696f">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#01696f" />
   <title>Push-Up</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
   <link rel="apple-touch-icon" href="logo.jpg">
@@ -33,7 +36,7 @@
   <meta name="apple-mobile-web-app-title" content="Push-Up">
   <meta name="theme-color" content="#1c6e6e">
   <link rel="preconnect" href="https://api.fontshare.com">
-  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&amp;display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
   <style>
     :root,[data-theme="light"]{--bg:#f7f6f2;--surface:#f9f8f5;--surface2:#fbfbf9;--text:#28251d;--muted:#66645f;--inv:#f9f8f4;--primary:#01696f;--border:rgba(40,37,29,.1);--radius:1.2rem;--pill:999px}
     [data-theme="dark"]{--bg:#171614;--surface:#1c1b19;--surface2:#201f1d;--text:#ece9e3;--muted:#b4b1aa;--inv:#171614;--primary:#4f98a3;--border:rgba(236,233,227,.12)}
@@ -111,8 +114,7 @@
     /* Mise en page compacte : tient sur un seul écran, s'adapte à toutes les tailles iOS/Android */
     html,body{height:100%;}
     .app{max-width:430px;height:100dvh;display:flex;flex-direction:column;padding:max(env(safe-area-inset-top),1.6rem) .7rem calc(.5rem + env(safe-area-inset-bottom));box-sizing:border-box;overflow:hidden;}
-    body.is-android .app{padding-top:max(env(safe-area-inset-top),3.2rem) !important;}
-    body.is-android #globalNavGrid{padding-bottom:max(env(safe-area-inset-bottom),1.1rem) !important;}
+    body.is-android .app{padding-top:max(env(safe-area-inset-top),2.7rem) !important;}
     body.is-ios .app{padding-top:.5rem !important;}
     body.is-ios #globalNavGrid{padding-bottom:.55rem !important;}
     .topbar{margin-bottom:.4rem;}
@@ -196,7 +198,7 @@
 }
 </style>
 </head>
-<body class="is-ios home-active">
+<body>
 <script>if(/Android/i.test(navigator.userAgent)) document.body.classList.add('is-android');
 else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.add('is-ios');</script>
 <div id="splashScreen">
@@ -209,19 +211,19 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 <div id="landscapeBlock">
   <div style="font-size:3rem;">📱</div>
   <div style="font-weight:700;font-size:1.1rem;" data-i18n="landscape_rotate">Tournez votre téléphone</div>
-  <div style="color:var(--muted);font-size:.9rem;" data-i18n="landscape_sub">Push-up fonctionne uniquement en mode portrait.</div>
+  <div style="color:var(--muted);font-size:.9rem;" data-i18n="landscape_sub">Push-Up fonctionne uniquement en mode portrait.</div>
 </div>
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:calc(4.9rem + env(safe-area-inset-bottom));z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v201</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v194</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid">
-      <button class="btn home-nav-btn active" data-tab="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"></path><path d="M6 10v9h12v-9"></path></svg><span data-i18n="nav_home">Accueil</span></button>
-      <button class="btn home-nav-btn" data-tab="plan"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"></rect><path d="M9 8h6M9 12h6M9 16h4"></path></svg><span data-i18n="nav_plan">Plan</span></button>
-      <button class="btn home-nav-btn" data-tab="training"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6z"></path></svg><span data-i18n="nav_free">Libre</span></button>
-      <button class="btn home-nav-btn" data-tab="calendar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg><span data-i18n="nav_calendar">Calendrier</span></button>
-      <button class="btn home-nav-btn" data-tab="stats"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"></path></svg><span data-i18n="nav_stats">Stats</span></button>
-      <button class="btn home-nav-btn" data-tab="profile"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"></circle><path d="M4 20c0-4 4-6 8-6s8 2 8 6"></path></svg><span data-i18n="nav_profile">Profil</span></button>
+      <button class="btn home-nav-btn" data-tab="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span data-i18n="nav_home">Accueil</span></button>
+      <button class="btn home-nav-btn" data-tab="plan"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span data-i18n="nav_plan">Plan</span></button>
+      <button class="btn home-nav-btn" data-tab="training"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" stroke="none"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg><span data-i18n="nav_free">Libre</span></button>
+      <button class="btn home-nav-btn" data-tab="calendar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg><span data-i18n="nav_calendar">Calendrier</span></button>
+      <button class="btn home-nav-btn" data-tab="stats"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><span data-i18n="nav_stats">Stats</span></button>
+      <button class="btn home-nav-btn" data-tab="profile"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg><span data-i18n="nav_profile">Profil</span></button>
     </div>
   </header>
   
@@ -233,11 +235,11 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
           <div id="homeGreeting" style="font-size:1.3rem;font-weight:700;" data-i18n="home_greeting">Bonjour</div>
         </div>
         <div style="display:flex;align-items:center;gap:.35rem;margin-top:.15rem;">
-          <span id="homeGreetingFlame" style="display:none;"><svg viewBox="0 0 24 24" width="19" height="19" fill="var(--primary)" stroke="none"><path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c0-1-.5-1.5-.5-2.5 2 1 3.5 3 3.5 5.5a6 6 0 01-12 0c0-5 4-6 6-11z"></path></svg></span>
+          <span id="homeGreetingFlame" style="display:none;"><svg viewBox="0 0 24 24" width="19" height="19" fill="var(--primary)" stroke="none"><path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c0-1-.5-1.5-.5-2.5 2 1 3.5 3 3.5 5.5a6 6 0 01-12 0c0-5 4-6 6-11z"/></svg></span>
           <span id="homeGreetingStreakCount" style="font-size:1.05rem;font-weight:700;color:var(--text);"></span>
         </div>
       </div>
-      <span id="homeTodayDate" style="color:var(--muted);font-size:.85rem;white-space:nowrap;padding-top:.2rem;">21 juillet 2026</span>
+      <span id="homeTodayDate" style="color:var(--muted);font-size:.85rem;white-space:nowrap;padding-top:.2rem;"></span>
     </div>
 
     <!-- Citation de motivation masquée temporairement pour gagner de la place :
@@ -250,15 +252,15 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 
     <section class="panel" style="margin-top:.8rem;">
       <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></span><span data-i18n="home_today_session">Séance du jour</span>
+        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span data-i18n="home_today_session">Séance du jour</span>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;gap:1rem;flex-wrap:wrap;">
         <div>
-          <div id="homeTodayBigNumber" style="font-size:2.1rem;font-weight:800;line-height:1;">28<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> Pompes</span></div>
-          <div id="homeTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;">3 Séries</div>
+          <div id="homeTodayBigNumber" style="font-size:2.1rem;font-weight:800;line-height:1;">0<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> <span data-i18n="training_pushups">pompes</span></span></div>
+          <div id="homeTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
           <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
-            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg> <span data-i18n="home_estimated_time">Temps estimé</span><br><strong id="homeTodayDuration" style="color:var(--text);font-size:.9rem;">4 min</strong></div>
-            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"></path></svg> <span data-i18n="home_level">Niveau</span><br><strong id="homeTodayLevel" style="color:var(--text);font-size:.9rem;">Novice</strong></div>
+            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span data-i18n="home_estimated_time">Temps estimé</span><br><strong id="homeTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
+            <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"/></svg> <span data-i18n="home_level">Niveau</span><br><strong id="homeTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
           </div>
         </div>
         <div style="position:relative;width:104px;height:104px;flex-shrink:0;">
@@ -277,25 +279,25 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 
     <section class="panel" style="margin-top:.8rem;">
       <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M3 17l5-5 4 4 8-8M15 8h5v5"></path></svg></span><span data-i18n="home_plan_progress">Progression du plan</span>
+        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M3 17l5-5 4 4 8-8M15 8h5v5"/></svg></span><span data-i18n="home_plan_progress">Progression du plan</span>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:.5rem;">
-        <span id="homeProgressWeekLabel" style="font-size:.95rem;font-weight:600;">Semaine 1 sur 4 (cycle 1)</span>
+        <span id="homeProgressWeekLabel" style="font-size:.95rem;font-weight:600;">Semaine 1 sur 8</span>
         <span id="homeProgressPercent" style="font-weight:700;">0%</span>
       </div>
-      <div id="homeProgressBar" style="height: 6px; border-radius: 3px; background: var(--surface2); overflow: hidden;"><div style="height:100%;border-radius:3px;background:var(--primary);width:0%;transition:width .3s ease;"></div></div>
-      <div id="homeProgressBadges" style="display:flex;gap:1rem;margin-top:.6rem;flex-wrap:wrap;font-size:.78rem;color:var(--muted);"><span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><rect x="4" y="8" width="16" height="12" rx="2"></rect><path d="M12 8V4M9 4h6"></path><circle cx="9" cy="14" r="1"></circle><circle cx="15" cy="14" r="1"></circle></svg> Plan IA actif</span><span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h16"></path></svg> Rythme stable</span><span><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M5 20c0-8 6-14 14-14 0 8-6 14-14 14zM5 20c2-4 5-7 9-9"></path></svg> Reprise en douceur</span></div>
+      <div id="homeProgressBar" style="display:flex;gap:.25rem;margin-top:.5rem;"></div>
+      <div id="homeProgressBadges" style="display:flex;gap:1rem;margin-top:.6rem;flex-wrap:wrap;font-size:.78rem;color:var(--muted);"></div>
       <div id="homeProgressSummary" style="font-size:.85rem;color:var(--text);margin-top:.4rem;"></div>
     </section>
 
     <section class="panel" style="margin-top:.8rem;">
       <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none" style="flex-shrink:0;"><path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c0-1-.5-1.5-.5-2.5 2 1 3.5 3 3.5 5.5a6 6 0 01-12 0c0-5 4-6 6-11z"></path></svg></span><span data-i18n="home_this_week">Cette semaine</span>
+        <span><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" stroke="none" style="flex-shrink:0;"><path d="M12 2c1 3-3 4-3 8a3 3 0 006 0c0-1-.5-1.5-.5-2.5 2 1 3.5 3 3.5 5.5a6 6 0 01-12 0c0-5 4-6 6-11z"/></svg></span><span data-i18n="home_this_week">Cette semaine</span>
       </div>
       <div style="display:flex;justify-content:space-between;margin-top:.7rem;text-align:center;">
         <div style="flex:1;">
-          <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg></div>
-          <div id="homeWeekSessions" style="font-size:1.3rem;font-weight:800;">0/7</div>
+          <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></div>
+          <div id="homeWeekSessions" style="font-size:1.3rem;font-weight:800;">0/0</div>
           <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;"><span data-i18n="home_sessions_completed">Séances complétées</span></div>
         </div>
         <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
@@ -304,7 +306,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
           <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;"><span data-i18n="home_total_pushups">Pompes au total</span></div>
         </div>
         <div style="flex:1;">
-          <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M3 17l5-5 4 4 8-8M15 8h5v5"></path></svg></div>
+          <div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M3 17l5-5 4 4 8-8M15 8h5v5"/></svg></div>
           <div id="homeWeekProgress" style="font-size:1.3rem;font-weight:800;">–</div>
           <div style="font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;"><span data-i18n="home_vs_last_week">Vs semaine dernière</span></div>
         </div>
@@ -323,26 +325,26 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       <div style="position:relative;width:min(64vw,240px);aspect-ratio:1/1;margin:0 auto;">
         <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
           <circle cx="50" cy="50" r="46" fill="none" stroke="var(--surface2)" stroke-width="5"></circle>
-          <circle id="setProgressRing" cx="50" cy="50" r="46" fill="none" stroke="var(--primary)" stroke-width="5" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="289" style="transition: stroke-dashoffset 0.3s; stroke-dashoffset: 289;"></circle>
+          <circle id="setProgressRing" cx="50" cy="50" r="46" fill="none" stroke="var(--primary)" stroke-width="5" stroke-linecap="round" stroke-dasharray="289" stroke-dashoffset="289" style="transition:stroke-dashoffset .3s ease;"></circle>
         </svg>
         <div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;">
           <div class="counter" id="count" style="font-size:2.8rem;font-weight:800;line-height:1;">0</div>
-          <div style="color:var(--muted);font-size:1.1rem;font-weight:600;margin-top:.15rem;" data-i18n="training_pushups">Pompes</div>
+          <div style="color:var(--muted);font-size:1.1rem;font-weight:600;margin-top:.15rem;" data-i18n="training_pushups">pompes</div>
         </div>
       </div>
     </div>
     <div class="camera-shell" style="aspect-ratio:auto;height:auto;background:transparent;">
-      <video id="video" autoplay="" muted="" playsinline="" webkit-playsinline="" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
+      <video id="video" autoplay muted playsinline webkit-playsinline style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;"></video>
       <canvas id="work" style="display:none;"></canvas>
       <div class="camera-overlay" style="position:static;display:none;">
-        <div class="pill"><span class="dot" id="cameraDot"></span><span id="cameraStatus" data-i18n="training_camera_inactive">Chargement du modèle…</span></div>
-        <div class="pill"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg><span id="movementLabel">Pause en cours: 60 s</span></div>
+        <div class="pill"><span class="dot" id="cameraDot"></span><span id="cameraStatus" data-i18n="training_camera_inactive">Caméra inactive</span></div>
+        <div class="pill"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span id="movementLabel">Repos: 60 s</span></div>
       </div>
     </div>
     <div class="controls" style="margin-top:1rem;">
-      <button id="toggleSession" class="btn btn-primary" disabled="" style="grid-column:1/-1;" data-i18n="training_start_set">▶ Démarrer la série</button>
-      <button id="nextSet" class="btn hidden" disabled="" data-i18n="training_next_set">Série suivante</button>
-      <button id="finishWorkout" class="btn btn-danger hidden" disabled="" data-i18n="training_finish_workout">Fin entraînement</button>
+      <button id="toggleSession" class="btn btn-primary" disabled style="grid-column:1/-1;" data-i18n="training_start_set">▶ Démarrer la série</button>
+      <button id="nextSet" class="btn hidden" disabled data-i18n="training_next_set">Série suivante</button>
+      <button id="finishWorkout" class="btn btn-danger hidden" disabled data-i18n="training_finish_workout">Fin entraînement</button>
       <button id="resetCount" class="btn hidden" style="grid-column:1/-1" data-i18n="training_reset_set">Réinitialiser le set</button>
     </div>
   </section>
@@ -359,15 +361,15 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;">
         <div style="color:var(--primary);height:22px;display:flex;align-items:center;justify-content:center;"><span style="font-size:1.375rem;line-height:1;display:inline-block;">💪</span></div>
         <strong id="totalCount" style="font-size:1.8rem;display:block;margin-top:.3rem;">0</strong>
-        <div style="color:var(--muted);font-size:.78rem;margin-top:.1rem;" data-i18n="training_pushups">Pompes</div>
+        <div style="color:var(--muted);font-size:.78rem;margin-top:.1rem;" data-i18n="training_pushups">pompes</div>
       </div>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;border-left:1px solid var(--border);border-right:1px solid var(--border);">
-        <div style="color:var(--primary);height:22px;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></div>
+        <div style="color:var(--primary);height:22px;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></div>
         <strong id="sessionSetsCount" style="font-size:1.8rem;display:block;margin-top:.3rem;">0</strong>
-        <div style="color:var(--muted);font-size:.78rem;margin-top:.1rem;" data-i18n="training_series_unit">Séries</div>
+        <div style="color:var(--muted);font-size:.78rem;margin-top:.1rem;" data-i18n="training_series_unit">séries</div>
       </div>
       <div style="flex:1;display:flex;flex-direction:column;align-items:center;">
-        <div style="color:var(--primary);height:22px;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg></div>
+        <div style="color:var(--primary);height:22px;display:flex;align-items:center;justify-content:center;"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
         <strong id="sessionDuration" style="font-size:1.8rem;display:block;margin-top:.3rem;">00:00</strong>
         <div style="color:var(--muted);font-size:.78rem;margin-top:.1rem;" data-i18n="training_duration">Durée</div>
       </div>
@@ -379,7 +381,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
     <div style="text-align:center;">
       <input id="restSeconds" type="number" min="10" max="900" value="60" style="display:none;">
       <input id="targetReps" type="hidden" value="10">
-      <div style="font-size:2.2rem;font-weight:800;"><span id="restSecondsDisplay">60</span> <span style="font-size:1rem;color:var(--muted);font-weight:600;" data-i18n="training_seconds">Secondes</span></div>
+      <div style="font-size:2.2rem;font-weight:800;"><span id="restSecondsDisplay">60</span> <span style="font-size:1rem;color:var(--muted);font-weight:600;" data-i18n="training_seconds">secondes</span></div>
     </div>
     <div class="chips" style="margin-top:.8rem;"><button class="chip" data-rest="30">30 sec</button><button class="chip active" data-rest="60">1 min</button><button class="chip" data-rest="90">1 min 30</button><button class="chip" data-rest="120">2 min</button></div>
   </section>
@@ -390,7 +392,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       <div class="modal-count" id="validateCount">0</div>
       <div class="modal-stepper">
         <button id="decrementRep" class="icon-btn stepper-btn">−</button>
-        <span class="modal-count-label" data-i18n="training_pushups">Pompes</span>
+        <span class="modal-count-label" data-i18n="training_pushups">pompes</span>
         <button id="incrementRep" class="icon-btn stepper-btn">+</button>
       </div>
       <button id="confirmSet" class="btn btn-primary" style="width:100%;margin-top:1.2rem;" data-i18n="training_validate_rest">Valider et passer au repos</button>
@@ -416,7 +418,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       <div id="welcomeStep2" class="hidden">
         <div class="section-title" data-i18n="onboarding_q2">Question 2 sur 4</div>
         <h2 style="margin-top:.3rem;" data-i18n="onboarding_name_q">Comment souhaitez-vous être appelé ?</h2>
-        <input id="welcomeNicknameInput" type="text" maxlength="24" placeholder="Ex : alex" data-i18n-ph="onboarding_name_placeholder" style="margin-top:.8rem;">
+        <input id="welcomeNicknameInput" type="text" maxlength="24" placeholder="Ex : Alex" data-i18n-ph="onboarding_name_placeholder" style="margin-top:.8rem;">
         <button id="welcomeStep2Next" class="btn btn-primary" style="width:100%;margin-top:1.2rem;" data-i18n="onboarding_continue">Continuer</button>
       </div>
       <div id="welcomeStep3" class="hidden">
@@ -444,7 +446,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       <div id="welcomeStep5" class="hidden" style="text-align:center;">
         <div style="font-size:2.2rem;">👋</div>
         <h2 id="welcomeDoneTitle" style="margin-top:.4rem;" data-i18n="onboarding_hi">Enchanté !</h2>
-        <p style="color:var(--muted);font-size:.9rem;margin-top:.4rem;" data-i18n="onboarding_done_sub">Toutes ces informations peuvent être modifiées à tout moment dans la page profil.</p>
+        <p style="color:var(--muted);font-size:.9rem;margin-top:.4rem;" data-i18n="onboarding_done_sub">Toutes ces informations peuvent être modifiées à tout moment dans la page Profil.</p>
         <button id="welcomeStep5Close" class="btn btn-primary" style="width:100%;margin-top:1.2rem;" data-i18n="onboarding_lets_go">C'est parti !</button>
       </div>
     </div>
@@ -488,7 +490,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 
   
   <div id="tab-plan" class="tab-content hidden">
-    <div id="planOnboarding" class="hidden">
+    <div id="planOnboarding">
       <section class="panel">
         <h2 data-i18n="plan_create_title">Créer mon plan d'entraînement</h2>
         <label for="planMaxReps" data-i18n="plan_maxreps_label">Combien de pompes maximum pouvez-vous faire en une seule fois ?</label>
@@ -509,18 +511,18 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       <button id="createPlanBtn" class="btn btn-primary" style="width:100%;margin-top:.6rem;" data-i18n="plan_create_btn">Créer mon plan</button>
     </div>
 
-    <div id="planActive" class="">
+    <div id="planActive" class="hidden">
       <section class="panel" id="planTodaySummaryPanel">
         <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-          <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></span><span data-i18n="plan_today_session">Séance du jour</span>
+          <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span data-i18n="plan_today_session">Séance du jour</span>
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-top:.6rem;gap:1rem;flex-wrap:wrap;">
           <div>
-            <div id="planTodayBigNumber" style="font-size:2.1rem;font-weight:800;line-height:1;">28<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> Pompes</span></div>
-            <div id="planTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;">3 Séries</div>
+            <div id="planTodayBigNumber" style="font-size:2.1rem;font-weight:800;line-height:1;">0<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> <span data-i18n="training_pushups">pompes</span></span></div>
+            <div id="planTodaySetsLabel" style="color:var(--muted);font-size:.85rem;margin-top:.2rem;"></div>
             <div style="display:flex;gap:1rem;margin-top:.7rem;flex-wrap:wrap;">
-              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg> <span data-i18n="home_estimated_time">Temps estimé</span><br><strong id="planTodayDuration" style="color:var(--text);font-size:.9rem;">4 min</strong></div>
-              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"></path></svg> <span data-i18n="home_level">Niveau</span><br><strong id="planTodayLevel" style="color:var(--text);font-size:.9rem;">Novice</strong></div>
+              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> <span data-i18n="home_estimated_time">Temps estimé</span><br><strong id="planTodayDuration" style="color:var(--text);font-size:.9rem;">–</strong></div>
+              <div style="font-size:.78rem;color:var(--muted);"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 20V14M12 20V8M20 20v-9"/></svg> <span data-i18n="home_level">Niveau</span><br><strong id="planTodayLevel" style="color:var(--text);font-size:.9rem;">–</strong></div>
               
             </div>
           </div>
@@ -537,7 +539,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
         <button id="planHomeStartBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;display:flex;align-items:center;justify-content:center;gap:.4rem;" data-i18n="plan_start_session">▶ COMMENCER LA SÉANCE</button>
       </section>
       <section class="panel" style="text-align:center;">
-        <div id="planTodayTitle" class="">3 Séries · 28 Pompes Au total</div>
+        <div id="planTodayTitle" class="hidden">—</div>
         <div id="planSessionMetrics" class="hidden">
         <div style="position:relative;width:min(60vw,220px);aspect-ratio:1/1;margin:1rem auto 0;">
           <svg viewBox="0 0 100 100" style="width:100%;height:100%;transform:rotate(-90deg);">
@@ -562,220 +564,38 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
           <div class="metric" style="text-align:center;"><span data-i18n="plan_duration">Durée</span><strong id="planSessionDuration" style="font-size:1.8rem;">00:00</strong></div>
         </div>
         </div>
-        <div id="planTodaySets" style="margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;text-align:left;"><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem;">
-        <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--primary);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;">1</div>
-        <div style="flex:1;">
-          <div style="font-weight:700;font-size:.85rem;letter-spacing:.02em;text-transform:uppercase;">Série 1</div>
-          <div style="color:var(--muted);font-size:.78rem;">9 Pompes</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-weight:800;font-size:1rem;">0/9</div>
-          <div style="color:var(--muted);font-size:.7rem;">Pompes</div>
-        </div>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0;"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem;">
-        <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--primary);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;">2</div>
-        <div style="flex:1;">
-          <div style="font-weight:700;font-size:.85rem;letter-spacing:.02em;text-transform:uppercase;">Série 2</div>
-          <div style="color:var(--muted);font-size:.78rem;">10 Pompes</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-weight:800;font-size:1rem;">0/10</div>
-          <div style="color:var(--muted);font-size:.7rem;">Pompes</div>
-        </div>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0;"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.7rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem;">
-        <div style="width:28px;height:28px;border-radius:50%;border:2px solid var(--primary);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;flex-shrink:0;">3</div>
-        <div style="flex:1;">
-          <div style="font-weight:700;font-size:.85rem;letter-spacing:.02em;text-transform:uppercase;">Série 3</div>
-          <div style="color:var(--muted);font-size:.78rem;">9 Pompes</div>
-        </div>
-        <div style="text-align:right;">
-          <div style="font-weight:800;font-size:1rem;">0/9</div>
-          <div style="color:var(--muted);font-size:.7rem;">Pompes</div>
-        </div>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2" style="flex-shrink:0;"><path d="M9 6l6 6-6 6"></path></svg></div></div><section class="panel plan-dynamic-card" style="margin-top: 0.6rem;">
-      <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 3"></path></svg><span>Temps de repos</span>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:.8rem;margin-top:.6rem;">
-        <div>
-          <div style="font-size:2.2rem;font-weight:800;line-height:1;">60</div>
-          <div style="color:var(--muted);font-size:.8rem;">Secondes</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;">
-          <div style="position:relative;width:120px;height:66px;">
-            <svg viewBox="0 0 100 58" style="width:100%;height:100%;">
-              <path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="var(--surface2)" stroke-width="10" stroke-linecap="round"></path>
-              <path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="#22c55e" stroke-width="10" pathLength="100" stroke-dasharray="16.666666666666664 83.33333333333334" stroke-dashoffset="0" stroke-linecap="butt"></path><path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="var(--primary)" stroke-width="10" pathLength="100" stroke-dasharray="25 75" stroke-dashoffset="-16.666666666666664" stroke-linecap="butt"></path><path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="#22c55e" stroke-width="10" pathLength="100" stroke-dasharray="16.666666666666664 83.33333333333334" stroke-dashoffset="-41.666666666666664" stroke-linecap="butt"></path><path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="var(--primary)" stroke-width="10" pathLength="100" stroke-dasharray="25 75" stroke-dashoffset="-58.33333333333333" stroke-linecap="butt"></path><path d="M8,50 A42,42 0 0 1 92,50" fill="none" stroke="#22c55e" stroke-width="10" pathLength="100" stroke-dasharray="16.666666666666664 83.33333333333334" stroke-dashoffset="-83.33333333333333" stroke-linecap="butt"></path>
-            </svg>
-          </div>
-          <div style="display:flex;gap:.8rem;margin-top:.3rem;align-items:center;font-size:.68rem;color:var(--muted);">
-            <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#22c55e;margin-right:.25rem;"></span>Séries</span>
-            <span><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--primary);margin-right:.25rem;"></span>Pause</span>
-          </div>
-        </div>
-      </div>
-</section><section class="panel plan-dynamic-card" style="margin-top: 0.6rem;">
-      <div style="display:flex;justify-content:space-between;align-items:center;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-        <span>Historique récent</span><span style="color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;">Pompes</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;gap:.3rem;margin-top:.8rem;"><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
-        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
-        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
-          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--surface2);"></div>
-        </div>
-        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">15/07</div>
-      </div><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
-        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
-        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
-          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--surface2);"></div>
-        </div>
-        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">16/07</div>
-      </div><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
-        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
-        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
-          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--surface2);"></div>
-        </div>
-        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">17/07</div>
-      </div><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
-        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
-        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
-          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--surface2);"></div>
-        </div>
-        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">18/07</div>
-      </div><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
-        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
-        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
-          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--surface2);"></div>
-        </div>
-        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">19/07</div>
-      </div><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
-        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
-        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
-          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--surface2);"></div>
-        </div>
-        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">20/07</div>
-      </div><div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
-        <div style="font-size:.72rem;font-weight:700;color:var(--muted);min-height:1em;line-height:1;"></div>
-        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
-          <div style="width:100%;height:4px;border-radius:.4rem;background:var(--primary);"></div>
-        </div>
-        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">21/07</div>
-      </div></div></section>
+        <div id="planTodaySets" style="margin-top:1rem;display:flex;flex-direction:column;gap:.5rem;text-align:left;"></div>
       </section>
       <section id="planFuturePanel" class="panel" style="margin-top:.6rem;">
-        <h2 data-i18n="plan_next_7_days">7 Prochains jours</h2>
-        <div id="planFutureSessions" style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;"><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
-        <div style="flex:1;">
-          <div style="font-weight:700;font-size:.9rem;color:var(--primary);">Aujourd'hui</div>
-          <div style="color:var(--muted);font-size:.78rem;">3 Séries</div>
-        </div>
-        <strong style="color:var(--primary);font-size:.95rem;">28 Pompes</strong>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
-        <div style="flex:1;">
-          <div style="font-weight:700;font-size:.9rem;">Mercredi 22 Juil</div>
-          <div style="color:var(--muted);font-size:.78rem;">3 Séries</div>
-        </div>
-        <strong style="color:var(--primary);font-size:.95rem;">30 Pompes</strong>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
-        <div style="flex:1;">
-          <div style="font-weight:700;font-size:.9rem;">Jeudi 23 Juil</div>
-          <div style="color:var(--muted);font-size:.78rem;">4 Séries</div>
-        </div>
-        <strong style="color:var(--primary);font-size:.95rem;">39 Pompes</strong>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
-        <div style="flex:1;">
-          <div style="font-weight:700;font-size:.9rem;">Vendredi 24 Juil</div>
-          <div style="color:var(--muted);font-size:.78rem;">4 Séries</div>
-        </div>
-        <strong style="color:var(--primary);font-size:.95rem;">40 Pompes</strong>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
-        <div style="flex:1;">
-          <div style="font-weight:700;font-size:.9rem;">Samedi 25 Juil</div>
-          <div style="color:var(--muted);font-size:.78rem;">4 Séries</div>
-        </div>
-        <strong style="color:var(--primary);font-size:.95rem;">40 Pompes</strong>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
-        <div style="flex:1;">
-          <div style="font-weight:700;font-size:.9rem;">Dimanche 26 Juil</div>
-          <div style="color:var(--muted);font-size:.78rem;">4 Séries</div>
-        </div>
-        <strong style="color:var(--primary);font-size:.95rem;">44 Pompes</strong>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div><div style="display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 1rem; cursor: pointer;">
-        <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
-        <div style="flex:1;">
-          <div style="font-weight:700;font-size:.9rem;">Lundi 27 Juil</div>
-          <div style="color:var(--muted);font-size:.78rem;">4 Séries</div>
-        </div>
-        <strong style="color:var(--primary);font-size:.95rem;">31 Pompes</strong>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg></div></div>
+        <h2 data-i18n="plan_next_7_days">7 prochains jours</h2>
+        <div id="planFutureSessions" style="display:flex;flex-direction:column;gap:.5rem;margin-top:.5rem;"></div>
       </section>
     </div>
   </div>
 <div id="tab-profile" class="tab-content hidden">
-    <section class="panel" style="margin-top:.6rem;">
-      <h2 data-i18n="profile_title">Profil</h2>
-      <label for="userNicknameInput" data-i18n="profile_nickname_label">Prénom ou surnom</label>
-      <input id="userNicknameInput" type="text" maxlength="24" placeholder="Ex : alex" data-i18n-ph="onboarding_name_placeholder">
-      <div id="nicknameSavedHint" style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-size:.82rem;margin-top:.6rem;opacity:0;transition:opacity .3s ease;">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"></circle><path d="M8 12l3 3 5-6"></path></svg>
-        <span data-i18n="profile_autosaved">Enregistré automatiquement</span>
-      </div>
-    </section>
-
-    <section class="panel" style="margin-top:.6rem;">
-      <h2 data-i18n="profile_training_days">Jours d'entraînement</h2>
-      <div class="chips" id="planDaysChipsEdit">
-        <button class="chip active" data-day="1" data-i18n="day_mon">Lun</button>
-        <button class="chip active" data-day="2" data-i18n="day_tue">Mar</button>
-        <button class="chip active" data-day="3" data-i18n="day_wed">Mer</button>
-        <button class="chip active" data-day="4" data-i18n="day_thu">Jeu</button>
-        <button class="chip active" data-day="5" data-i18n="day_fri">Ven</button>
-        <button class="chip active" data-day="6" data-i18n="day_sat">Sam</button>
-        <button class="chip active" data-day="0" data-i18n="day_sun">Dim</button>
-      </div>
-      <div style="color:var(--muted);font-size:.78rem;margin-top:.5rem;" data-i18n="profile_days_used_for">Utilisé pour planifier votre programme</div>
-      <button id="savePlanSettingsBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;" data-i18n="profile_save_changes">Enregistrer les modifications</button>
-    </section>
-
-    <section class="panel" style="margin-top:.6rem;">
-      <h2 data-i18n="profile_preferences">Préférences</h2>
-      <div class="pref-row">
-        <div class="pref-icon"><span id="toggleSoundIcon" style="width:18px;height:18px;display:inline-flex;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H3v6h3l5 4V5z"></path><path d="M15.5 8.5a5 5 0 010 7M18.5 5.5a9 9 0 010 13"></path></svg></span></div>
-        <div class="pref-text">
-          <div class="pref-title" data-i18n="profile_session_sounds">Sons de séance</div>
-          <div class="pref-sub" data-i18n="profile_beep_desc">Bips de début et fin</div>
-        </div>
-        <div id="toggleSoundBtn" class="switch on" role="switch" aria-label="Sons de séance" data-i18n-aria="profile_session_sounds"><div class="switch-knob"></div></div>
-      </div>
-      <div class="pref-row">
-        <div class="pref-icon"><span id="toggleVibrationIcon" style="width:18px;height:18px;display:inline-flex;"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="4" width="10" height="16" rx="2"></rect><path d="M3 9v6M21 9v6"></path></svg></span></div>
-        <div class="pref-text">
-          <div class="pref-title" data-i18n="profile_vibrations">Vibrations</div>
-          <div class="pref-sub" data-i18n="profile_haptic_desc">Retour haptique pendant la séance</div>
-        </div>
-        <div id="toggleVibrationBtn" class="switch on" role="switch" aria-label="Vibrations" data-i18n-aria="profile_vibrations"><div class="switch-knob"></div></div>
-      </div>
-    </section>
-
     <section class="panel" style="display:flex;justify-content:space-between;align-items:center;">
       <h2 style="margin:0;" data-i18n="profile_appearance">Apparence</h2>
       <div style="display:flex;gap:.3rem;background:var(--surface2);border-radius:999px;padding:.25rem;">
         <button class="theme-opt" data-mode="dark" data-i18n="profile_dark">Sombre</button>
-        <button class="theme-opt active" data-mode="system" data-i18n="profile_system">Système</button>
+        <button class="theme-opt" data-mode="system" data-i18n="profile_system">Système</button>
         <button class="theme-opt" data-mode="light" data-i18n="profile_light">Clair</button>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:.6rem;">
+      <h2 data-i18n="profile_title">Profil</h2>
+      <label for="userNicknameInput" data-i18n="profile_nickname_label">Prénom ou surnom</label>
+      <input id="userNicknameInput" type="text" maxlength="24" placeholder="Ex : Alex" data-i18n-ph="onboarding_name_placeholder">
+      <div id="nicknameSavedHint" style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-size:.82rem;margin-top:.6rem;opacity:0;transition:opacity .3s ease;">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg>
+        <span data-i18n="profile_autosaved">Enregistré automatiquement</span>
       </div>
     </section>
 
     <section class="panel" style="margin-top:.6rem;">
       <h2 data-i18n="profile_language">Choix de la langue</h2>
       <div class="chips" id="profileLangChips" style="margin-top:.4rem;">
-        <button class="chip lang-choice-chip active" data-lang="fr">Français</button>
+        <button class="chip lang-choice-chip" data-lang="fr">Français</button>
         <button class="chip lang-choice-chip" data-lang="en">English</button>
         <button class="chip lang-choice-chip" data-lang="es">Español</button>
       </div>
@@ -784,38 +604,73 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
     <div id="profileEmptyState" class="hidden">
       <section class="panel" style="text-align:center;margin-top:.6rem;">
         <h2 data-i18n="profile_no_plan">Aucun plan actif</h2>
-        <p style="color:var(--muted);font-size:.9rem;margin:.6rem 0 1rem;" data-i18n="profile_no_plan_sub">Créez d'abord votre plan d'entraînement dans l'onglet plan : c'est là que vous indiquez votre nombre de pompes maximum et vos jours d'entraînement.</p>
-        <button id="goToPlanFromProfileBtn" class="btn btn-primary" style="width:100%;" data-i18n="profile_go_to_plan">Aller à l'onglet plan</button>
+        <p style="color:var(--muted);font-size:.9rem;margin:.6rem 0 1rem;" data-i18n="profile_no_plan_sub">Créez d'abord votre plan d'entraînement dans l'onglet Plan : c'est là que vous indiquez votre nombre de pompes maximum et vos jours d'entraînement.</p>
+        <button id="goToPlanFromProfileBtn" class="btn btn-primary" style="width:100%;" data-i18n="profile_go_to_plan">Aller à l'onglet Plan</button>
       </section>
     </div>
 
     <div id="profileFormWrap">
     <section class="panel" style="margin-top:.6rem;">
+      <h2 data-i18n="profile_training_days">Jours d'entraînement</h2>
+      <div class="chips" id="planDaysChipsEdit">
+        <button class="chip" data-day="1" data-i18n="day_mon">Lun</button>
+        <button class="chip" data-day="2" data-i18n="day_tue">Mar</button>
+        <button class="chip" data-day="3" data-i18n="day_wed">Mer</button>
+        <button class="chip" data-day="4" data-i18n="day_thu">Jeu</button>
+        <button class="chip" data-day="5" data-i18n="day_fri">Ven</button>
+        <button class="chip" data-day="6" data-i18n="day_sat">Sam</button>
+        <button class="chip" data-day="0" data-i18n="day_sun">Dim</button>
+      </div>
+      <div style="color:var(--muted);font-size:.78rem;margin-top:.5rem;" data-i18n="profile_days_used_for">Utilisé pour planifier votre programme</div>
+      <button id="savePlanSettingsBtn" class="btn btn-primary" style="width:100%;margin-top:.8rem;" data-i18n="profile_save_changes">Enregistrer les modifications</button>
+    </section>
+
+    <section class="panel" style="margin-top:.6rem;">
+      <h2 data-i18n="profile_preferences">Préférences</h2>
+      <div class="pref-row">
+        <div class="pref-icon"><span id="toggleSoundIcon" style="width:18px;height:18px;display:inline-flex;"></span></div>
+        <div class="pref-text">
+          <div class="pref-title" data-i18n="profile_session_sounds">Sons de séance</div>
+          <div class="pref-sub" data-i18n="profile_beep_desc">Bips de début et fin</div>
+        </div>
+        <div id="toggleSoundBtn" class="switch" role="switch" aria-label="Activer/désactiver le son" data-i18n-aria="profile_session_sounds"><div class="switch-knob"></div></div>
+      </div>
+      <div class="pref-row">
+        <div class="pref-icon"><span id="toggleVibrationIcon" style="width:18px;height:18px;display:inline-flex;"></span></div>
+        <div class="pref-text">
+          <div class="pref-title" data-i18n="profile_vibrations">Vibrations</div>
+          <div class="pref-sub" data-i18n="profile_haptic_desc">Retour haptique pendant la séance</div>
+        </div>
+        <div id="toggleVibrationBtn" class="switch" role="switch" aria-label="Activer/désactiver le vibreur" data-i18n-aria="profile_vibrations"><div class="switch-knob"></div></div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:.6rem;">
       <h2 data-i18n="profile_plan_section">Plan</h2>
       <button id="resetPlanBtn" class="pref-row" style="width:100%;background:none;border:none;text-align:left;cursor:pointer;padding:.7rem 0;color:var(--text);">
-        <div class="pref-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg></div>
+        <div class="pref-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></div>
         <div class="pref-text">
           <div class="pref-title" data-i18n="profile_reset_plan">Réinitialiser le plan</div>
           <div class="pref-sub" data-i18n="profile_reset_plan_sub">Supprime le programme actuel, conserve votre historique</div>
         </div>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
       </button>
     </section>
+    </div>
 
     <section class="panel" style="margin-top:.6rem;">
       <h2 style="color:#ef4444;" data-i18n="profile_full_reset">Réinitialisation complète</h2>
       <button id="fullResetBtn" class="pref-row" style="width:100%;background:none;border:none;text-align:left;cursor:pointer;padding:.7rem 0;">
         <div class="pref-icon" style="background:color-mix(in srgb, #ef4444 14%, transparent);color:#ef4444;">
-          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0l-1 14a1 1 0 01-1 1H7a1 1 0 01-1-1L5 6"></path></svg>
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 011-1h6a1 1 0 011 1v2m2 0l-1 14a1 1 0 01-1 1H7a1 1 0 01-1-1L5 6"/></svg>
         </div>
         <div class="pref-text">
           <div class="pref-title" style="color:#ef4444;" data-i18n="profile_delete_all">Supprimer toutes les données</div>
           <div class="pref-sub" data-i18n="profile_delete_all_sub">Efface définitivement vos séances, statistiques et préférences</div>
         </div>
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
       </button>
     </section>
-    </div>
     </div>
 
 <div id="tab-calendar" class="tab-content hidden">
@@ -823,7 +678,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       <div style="width:2.6rem;height:2.6rem;border-radius:50%;background:color-mix(in srgb, var(--primary) 16%, transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
         <div id="streakFlame" style="width:1.4rem;height:1.4rem;color:var(--primary);">
           <svg viewBox="0 0 24 24" fill="currentColor" style="width:100%;height:100%;">
-            <path d="M12 2c1 3-2 4-2 7 0 1.5 1 2.5 2 2.5s2-1 2-2.2c1.2 1 2 2.6 2 4.2 0 3-2.2 5.5-6 5.5s-6.5-2.7-6.5-6.2c0-4 2.5-6.3 4.5-9C8.5 4.5 10 3 12 2z"></path>
+            <path d="M12 2c1 3-2 4-2 7 0 1.5 1 2.5 2 2.5s2-1 2-2.2c1.2 1 2 2.6 2 4.2 0 3-2.2 5.5-6 5.5s-6.5-2.7-6.5-6.2c0-4 2.5-6.3 4.5-9C8.5 4.5 10 3 12 2z"/>
           </svg>
         </div>
       </div>
@@ -831,7 +686,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
         <div style="font-weight:700;"><span data-i18n="calendar_current_streak">Série actuelle : </span><span id="streakCount">0</span> <span id="streakUnit">semaine</span></div>
         <div style="color:var(--muted);font-size:.8rem;" data-i18n="calendar_at_least_one">Au moins une séance par semaine</div>
       </div>
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"></path></svg>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
     </section>
     <section class="panel" style="margin-top:.6rem;">
       <div class="cal-nav">
@@ -844,7 +699,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
     </section>
     <section class="panel" id="calDaySummaryPanel" style="margin-top:.6rem;display:flex;align-items:center;gap:.8rem;">
       <div style="width:2.4rem;height:2.4rem;border-radius:50%;background:color-mix(in srgb, var(--primary) 16%, transparent);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--primary);">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg>
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
       </div>
       <div style="flex:1;">
         <div id="calDaySummaryDate" style="font-weight:700;" data-i18n="calendar_today">Aujourd'hui</div>
@@ -856,8 +711,8 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
     <section class="panel" style="margin-top:.6rem;">
       <div style="font-weight:700;margin-bottom:.6rem;" data-i18n="calendar_data_backup">Données et sauvegarde</div>
       <div style="display:flex;gap:.5rem;">
-        <button id="exportDataBtn" class="btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 8l5-5 5 5M5 21h14"></path></svg><span data-i18n="calendar_export">Exporter</span></button>
-        <button id="importDataBtn" class="btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9M7 16l5 5 5-5M5 3h14"></path></svg><span data-i18n="calendar_import">Importer</span></button>
+        <button id="exportDataBtn" class="btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 8l5-5 5 5M5 21h14"/></svg><span data-i18n="calendar_export">Exporter</span></button>
+        <button id="importDataBtn" class="btn" style="flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9M7 16l5 5 5-5M5 3h14"/></svg><span data-i18n="calendar_import">Importer</span></button>
       </div>
     </section>
     <button id="resetCalendarBtn" class="btn btn-danger" style="width:100%;margin-top:.6rem;" data-i18n="calendar_reset">Réinitialiser le calendrier</button>
@@ -879,7 +734,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
         <div style="position:relative;">
           <button id="statsRangeBtn" class="chip active" style="border-radius:999px;display:flex;align-items:center;gap:.3rem;">
             <span id="statsChartRange">4 sem.</span>
-            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"></path></svg>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
           </button>
           <div id="statsRangeMenu" class="hidden" style="position:absolute;right:0;top:110%;background:var(--surface2);border:1px solid var(--border);border-radius:.6rem;overflow:hidden;z-index:5;min-width:90px;">
             <div class="stats-range-opt" data-weeks="4" style="padding:.5rem .8rem;font-size:.8rem;cursor:pointer;">4 semaines</div>
@@ -896,12 +751,12 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       <div style="font-weight:800;font-size:1.05rem;margin-bottom:.7rem;" data-i18n="stats_personal_records">Records personnels</div>
       <div style="display:flex;justify-content:space-around;text-align:center;">
         <div style="flex:1;">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0V4z"></path><path d="M7 6H4v2a3 3 0 003 3M17 6h3v2a3 3 0 01-3 3"></path></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 01-10 0V4z"/><path d="M7 6H4v2a3 3 0 003 3M17 6h3v2a3 3 0 01-3 3"/></svg>
           <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" data-i18n="stats_best_set">Meilleur set</div>
           <strong style="font-size:1.6rem;display:block;" id="recordSet">0</strong>
         </div>
         <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3-5.5-3-5.5 3 1-6.3L3 8.9 9 8z"></path></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3-5.5-3-5.5 3 1-6.3L3 8.9 9 8z"/></svg>
           <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" data-i18n="stats_best_session">Meilleure séance</div>
           <strong style="font-size:1.6rem;display:block;" id="recordSession">0</strong>
         </div>
@@ -927,17 +782,17 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       <div style="font-weight:800;font-size:1.05rem;margin-bottom:.7rem;" data-i18n="stats_general_stats">Statistiques générales</div>
       <div style="display:flex;justify-content:space-around;text-align:center;">
         <div style="flex:1;">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 9h18M8 3v4M16 3v4"></path></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>
           <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" data-i18n="stats_session_count">Nombre de séances</div>
           <strong style="font-size:1.4rem;display:block;" id="statSessionCount">0</strong>
         </div>
         <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"></path></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/></svg>
           <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" data-i18n="stats_avg_per_session">Moyenne par séance</div>
           <strong style="font-size:1.4rem;display:block;" id="statAverage">0</strong>
         </div>
         <div style="flex:1;">
-          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3-5.5-3-5.5 3 1-6.3L3 8.9 9 8z"></path></svg>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3-5.5-3-5.5 3 1-6.3L3 8.9 9 8z"/></svg>
           <div style="color:var(--muted);font-size:.78rem;margin-top:.3rem;" data-i18n="stats_best_day">Meilleur jour</div>
           <strong style="font-size:1.1rem;display:block;" id="statBestDay">—</strong>
         </div>
@@ -978,330 +833,330 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 const APP_I18N = {
 fr: {
  nav_home:"Accueil", nav_plan:"Plan", nav_free:"Libre", nav_calendar:"Calendrier", nav_stats:"Stats", nav_profile:"Profil",
- loading_text:"Chargement", landscape_rotate:"Tournez votre téléphone", landscape_sub:"Push-up fonctionne uniquement en mode portrait.",
- home_today_session:"Séance du jour", home_estimated_time:"Temps estimé", home_level:"Niveau", home_total:"Au total",
- home_start_session:"▶ COMMENCER LA SÉANCE", home_plan_progress:"Progression du plan", home_this_week:"Cette semaine",
- home_sessions_completed:"Séances complétées", home_total_pushups:"Pompes au total", home_vs_last_week:"Vs semaine dernière",
+ loading_text:"Chargement", landscape_rotate:"Tournez Votre Téléphone", landscape_sub:"Push-Up Fonctionne Uniquement En Mode Portrait.",
+ home_today_session:"Séance Du Jour", home_estimated_time:"Temps Estimé", home_level:"Niveau", home_total:"Au Total",
+ home_start_session:"▶ COMMENCER LA SÉANCE", home_plan_progress:"Progression Du Plan", home_this_week:"Cette Semaine",
+ home_sessions_completed:"Séances Complétées", home_total_pushups:"Pompes Au Total", home_vs_last_week:"Vs Semaine Dernière",
  home_greeting:"Bonjour",
- training_ready:"Prêt", training_pushups:"Pompes", training_camera_inactive:"Caméra inactive",
- training_start_set:"▶ Démarrer la série", training_next_set:"Série suivante", training_finish_workout:"Fin entraînement",
- training_reset_set:"Réinitialiser le set", training_rest_timer:"Minuteur de repos", training_rest_ongoing:"Pause en cours",
- training_catch_breath:"Reprenez votre souffle.", training_resume_now:"Reprendre maintenant", training_skip:"Ignorer",
- training_session_summary:"Résumé séance", training_total_session:"Total séance", training_series:"Séries", training_series_unit:"Séries",
- training_duration:"Durée", training_rest_settings:"Réglages de repos", training_seconds:"Secondes",
- training_series_done:"Série terminée", training_validate_rest:"Valider et passer au repos",
- onboarding_q1:"Question 1 sur 4", onboarding_lang_q:"Quelle langue souhaitez-vous utiliser ?",
+ training_ready:"Prêt", training_pushups:"Pompes", training_camera_inactive:"Caméra Inactive",
+ training_start_set:"▶ Démarrer La Série", training_next_set:"Série Suivante", training_finish_workout:"Fin Entraînement",
+ training_reset_set:"Réinitialiser Le Set", training_rest_timer:"Minuteur De Repos", training_rest_ongoing:"Pause En Cours",
+ training_catch_breath:"Reprenez Votre Souffle.", training_resume_now:"Reprendre Maintenant", training_skip:"Ignorer",
+ training_session_summary:"Résumé Séance", training_total_session:"Total Séance", training_series:"Séries", training_series_unit:"Séries",
+ training_duration:"Durée", training_rest_settings:"Réglages De Repos", training_seconds:"Secondes",
+ training_series_done:"Série Terminée", training_validate_rest:"Valider Et Passer Au Repos",
+ onboarding_q1:"Question 1 Sur 4", onboarding_lang_q:"Quelle Langue Souhaitez-vous Utiliser ?",
  onboarding_lang_note:"",
- onboarding_continue:"Continuer", onboarding_q2:"Question 2 sur 4", onboarding_name_q:"Comment souhaitez-vous être appelé ?",
- onboarding_q3:"Question 3 sur 4", onboarding_maxreps_q:"Combien de pompes pouvez-vous faire en une seule fois ?",
- onboarding_q4:"Question 4 sur 4", onboarding_days_q:"Quels jours voulez-vous vous entraîner ?",
- onboarding_done_sub:"Toutes ces informations peuvent être modifiées à tout moment dans la page profil.",
- onboarding_lets_go:"C'est parti !", onboarding_hi:"Enchanté !", onboarding_hi_name:"Enchanté {name} !",
- onboarding_name_placeholder:"Ex : alex", onboarding_maxreps_error:"Indiquez votre nombre maximum de pompes.", onboarding_days_error:"Sélectionnez au moins un jour d'entraînement.",
- onboarding_maxreps_unknown:"Vous ne savez pas ?", onboarding_maxreps_freetest:"Faire une séance libre pour le découvrir",
- onboarding_maxreps_freetest_hint:"Faites votre meilleure série de pompes, puis appuyez sur \"Fin Entraînement\". Le Résultat Remplira Automatiquement Votre Réponse.",
- toast_maxreps_filled:"Votre maximum a été rempli automatiquement : {max} pompes.", rest_before_set:"Repos avant le set {n}", camera_detection_unavailable:"Détection indisponible sur cet appareil", phase_up:"Haut", phase_down:"Bas", phase_goal_reached:"Objectif atteint", camera_position_yourself:"Placez-vous dans le cadre",
- modal_get_ready:"Préparez-vous", modal_free_autostart:"La séance libre démarre automatiquement.",
- modal_plan_autostart:"La séance plan démarre automatiquement.",
- modal_workout_done:"Séance terminée !", modal_total_pushups:"Pompes totales", modal_close:"Fermer", countdown_skip:"Passer",
- plan_create_title:"Créer mon plan d'entraînement", plan_maxreps_label:"Combien de pompes maximum pouvez-vous faire en une seule fois ?",
- plan_days_label:"Quels jours voulez-vous vous entraîner ?", plan_create_btn:"Créer mon plan",
- plan_today_session:"Séance du jour", plan_start_session:"▶ COMMENCER LA SÉANCE", plan_finish_training:"Terminer l'entraînement",
- plan_rest_ongoing:"Pause en cours", plan_rest_next:"Repos avant le prochain set.", plan_resume_now:"Reprendre maintenant",
- plan_session_pushups:"Pompes séance", plan_duration:"Durée", plan_next_7_days:"7 Prochains jours",
+ onboarding_continue:"Continuer", onboarding_q2:"Question 2 Sur 4", onboarding_name_q:"Comment Souhaitez-vous Être Appelé ?",
+ onboarding_q3:"Question 3 Sur 4", onboarding_maxreps_q:"Combien De Pompes Pouvez-vous Faire En Une Seule Fois ?",
+ onboarding_q4:"Question 4 Sur 4", onboarding_days_q:"Quels Jours Voulez-vous Vous Entraîner ?",
+ onboarding_done_sub:"Toutes Ces Informations Peuvent Être Modifiées À Tout Moment Dans La Page Profil.",
+ onboarding_lets_go:"C'est Parti !", onboarding_hi:"Enchanté !", onboarding_hi_name:"Enchanté {name} !",
+ onboarding_name_placeholder:"Ex : Alex", onboarding_maxreps_error:"Indiquez Votre Nombre Maximum De Pompes.", onboarding_days_error:"Sélectionnez Au Moins Un Jour D'entraînement.",
+ onboarding_maxreps_unknown:"Vous Ne Savez Pas ?", onboarding_maxreps_freetest:"Faire Une Séance Libre Pour Le Découvrir",
+ onboarding_maxreps_freetest_hint:"Faites Votre Meilleure Série De Pompes, Puis Appuyez Sur \"Fin Entraînement\". Le Résultat Remplira Automatiquement Votre Réponse.",
+ toast_maxreps_filled:"Votre Maximum A Été Rempli Automatiquement : {max} Pompes.", rest_before_set:"Repos Avant Le Set {n}",
+ modal_get_ready:"Préparez-vous", modal_free_autostart:"La Séance Libre Démarre Automatiquement.",
+ modal_plan_autostart:"La Séance Plan Démarre Automatiquement.",
+ modal_workout_done:"Séance Terminée !", modal_total_pushups:"Pompes Totales", modal_close:"Fermer", countdown_skip:"Passer",
+ plan_create_title:"Créer Mon Plan D'entraînement", plan_maxreps_label:"Combien De Pompes Maximum Pouvez-vous Faire En Une Seule Fois ?",
+ plan_days_label:"Quels Jours Voulez-vous Vous Entraîner ?", plan_create_btn:"Créer Mon Plan",
+ plan_today_session:"Séance Du Jour", plan_start_session:"▶ COMMENCER LA SÉANCE", plan_finish_training:"Terminer L'entraînement",
+ plan_rest_ongoing:"Pause En Cours", plan_rest_next:"Repos Avant Le Prochain Set.", plan_resume_now:"Reprendre Maintenant",
+ plan_session_pushups:"Pompes Séance", plan_duration:"Durée", plan_next_7_days:"7 Prochains Jours",
  profile_appearance:"Apparence", profile_dark:"Sombre", profile_system:"Système", profile_light:"Clair",
- profile_title:"Profil", profile_nickname_label:"Prénom ou surnom", profile_autosaved:"Enregistré automatiquement",
- profile_no_plan:"Aucun plan actif", profile_no_plan_sub:"Créez d'abord votre plan d'entraînement dans l'onglet plan : c'est là que vous indiquez votre nombre de pompes maximum et vos jours d'entraînement.",
- profile_go_to_plan:"Aller à l'onglet plan", profile_training_days:"Jours d'entraînement", profile_days_used_for:"Utilisé pour planifier votre programme",
- profile_save_changes:"Enregistrer les modifications", profile_preferences:"Préférences", profile_session_sounds:"Sons de séance",
- profile_beep_desc:"Bips de début et fin", profile_vibrations:"Vibrations", profile_haptic_desc:"Retour haptique pendant la séance",
- profile_plan_section:"Plan", profile_reset_plan:"Réinitialiser le plan", profile_reset_plan_sub:"Supprime le programme actuel, conserve votre historique",
- profile_full_reset:"Réinitialisation complète", profile_delete_all:"Supprimer toutes les données", profile_delete_all_sub:"Efface définitivement vos séances, statistiques et préférences",
- profile_language:"Choix de la langue", profile_language_note:"",
- calendar_current_streak:"Série actuelle : ", calendar_week_unit:"Semaine", calendar_at_least_one:"Au moins une séance par semaine",
- calendar_today:"Aujourd'hui", calendar_start_session:"▶ Commencer la séance", calendar_data_backup:"Données et sauvegarde",
- calendar_export:"Exporter", calendar_import:"Importer", calendar_reset:"Réinitialiser le calendrier", calendar_session:"Séance",
- stats_current_streak:"Série en cours", stats_best_streak:"Meilleure série : ", stats_progression:"Progression",
- stats_weekly_total:"Total pompes par semaine", stats_not_enough_data:"Pas encore assez de données pour afficher une tendance.",
- stats_personal_records:"Records personnels", stats_best_set:"Meilleur set", stats_best_session:"Meilleure séance",
- stats_cumulative_total:"Total cumulé", stats_badges:"Badges", stats_evolution:"Évolution (30 derniers jours)",
- stats_general_stats:"Statistiques générales", stats_session_count:"Nombre de séances", stats_avg_per_session:"Moyenne par séance",
- stats_best_day:"Meilleur jour",
+ profile_title:"Profil", profile_nickname_label:"Prénom Ou Surnom", profile_autosaved:"Enregistré Automatiquement",
+ profile_no_plan:"Aucun Plan Actif", profile_no_plan_sub:"Créez D'abord Votre Plan D'entraînement Dans L'onglet Plan : C'est Là Que Vous Indiquez Votre Nombre De Pompes Maximum Et Vos Jours D'entraînement.",
+ profile_go_to_plan:"Aller À L'onglet Plan", profile_training_days:"Jours D'entraînement", profile_days_used_for:"Utilisé Pour Planifier Votre Programme",
+ profile_save_changes:"Enregistrer Les Modifications", profile_preferences:"Préférences", profile_session_sounds:"Sons De Séance",
+ profile_beep_desc:"Bips De Début Et Fin", profile_vibrations:"Vibrations", profile_haptic_desc:"Retour Haptique Pendant La Séance",
+ profile_plan_section:"Plan", profile_reset_plan:"Réinitialiser Le Plan", profile_reset_plan_sub:"Supprime Le Programme Actuel, Conserve Votre Historique",
+ profile_full_reset:"Réinitialisation Complète", profile_delete_all:"Supprimer Toutes Les Données", profile_delete_all_sub:"Efface Définitivement Vos Séances, Statistiques Et Préférences",
+ profile_language:"Choix De La Langue", profile_language_note:"",
+ calendar_current_streak:"Série Actuelle : ", calendar_week_unit:"Semaine", calendar_at_least_one:"Au Moins Une Séance Par Semaine",
+ calendar_today:"Aujourd'hui", calendar_start_session:"▶ Commencer La Séance", calendar_data_backup:"Données Et Sauvegarde",
+ calendar_export:"Exporter", calendar_import:"Importer", calendar_reset:"Réinitialiser Le Calendrier", calendar_session:"Séance",
+ stats_current_streak:"Série En Cours", stats_best_streak:"Meilleure Série : ", stats_progression:"Progression",
+ stats_weekly_total:"Total Pompes Par Semaine", stats_not_enough_data:"Pas Encore Assez De Données Pour Afficher Une Tendance.",
+ stats_personal_records:"Records Personnels", stats_best_set:"Meilleur Set", stats_best_session:"Meilleure Séance",
+ stats_cumulative_total:"Total Cumulé", stats_badges:"Badges", stats_evolution:"Évolution (30 Derniers Jours)",
+ stats_general_stats:"Statistiques Générales", stats_session_count:"Nombre De Séances", stats_avg_per_session:"Moyenne Par Séance",
+ stats_best_day:"Meilleur Jour",
  confirm_cancel:"Annuler", confirm_confirm:"Confirmer",
- feedback_question:"Comment s'est passée cette séance ?", feedback_sub:"Ça aide à ajuster vos prochaines séances.",
- feedback_good:"Bien passée", feedback_hard:"Difficile (pauses supplémentaires)",
+ feedback_question:"Comment S'est Passée Cette Séance ?", feedback_sub:"Ça Aide À Ajuster Vos Prochaines Séances.",
+ feedback_good:"Bien Passée", feedback_hard:"Difficile (Pauses Supplémentaires)",
  day_mon:"Lun", day_tue:"Mar", day_wed:"Mer", day_thu:"Jeu", day_fri:"Ven", day_sat:"Sam", day_sun:"Dim",
  cal_wd_mon:"L", cal_wd_tue:"M", cal_wd_wed:"M", cal_wd_thu:"J", cal_wd_fri:"V", cal_wd_sat:"S", cal_wd_sun:"D",
- no_session_recorded:"Aucune séance enregistrée",
- badge_3_days:"3 Jours de suite", badge_1_week:"1 Semaine de suite", badge_2_weeks:"2 Semaines de suite",
- badge_1_month:"1 Mois de suite", badge_2_months:"2 Mois de suite", badge_100_days:"100 Jours de suite",
+ no_session_recorded:"Aucune Séance Enregistrée",
+ badge_3_days:"3 Jours De Suite", badge_1_week:"1 Semaine De Suite", badge_2_weeks:"2 Semaines De Suite",
+ badge_1_month:"1 Mois De Suite", badge_2_months:"2 Mois De Suite", badge_100_days:"100 Jours De Suite",
  day_singular:"Jour", day_plural:"Jours", calendar_week_unit_plural:"Semaines",
- confirm_cycle_done:"Vous avez terminé {weeks} semaines de plan ! faites un maximum de pompes en une série pour recalibrer votre niveau et générer un nouveau plan adapté.",
- confirm_reset_plan:"Réinitialiser votre plan et recommencer le questionnaire ?",
- confirm_delete_session:"Supprimer définitivement cette séance ?",
- confirm_reset_calendar:"Réinitialiser tout le calendrier ? cette action supprime toutes les séances enregistrées.",
- confirm_import:"Importer {count} séance(s) ? cela remplacera vos données actuelles.",
- confirm_stop_training:"Arrêter l'entraînement maintenant ? {count} pompes seront enregistrées.",
- phase_paused:"Pause", phase_in_progress:"En cours", phase_start_short:"Démarrer", phase_reposition:"Repositionnez-vous",
- calendar_rest_day:"Jour de repos",
- toast_session_lock:"Terminez ou arrêtez la séance en cours avant de changer d'onglet.",
- toast_reposition_camera:"Placez-vous bien dans le cadre 1 à 2 secondes puis réessayez.",
- toast_camera_unavailable:"Caméra indisponible : passage en mode manuel. utilisez les boutons +/- pour compter vos pompes.",
- toast_plan_updated:"Plan mis à jour.", toast_plan_session_done:"Séance plan terminée.",
- toast_session_updated:"Séance mise à jour.", toast_session_deleted:"Séance supprimée.",
- toast_max_reps_test:"Faites votre maximum de pompes en une série. le résultat mettra automatiquement à jour votre plan.",
- toast_level_updated:"Niveau mis à jour : {prev} → {max} pompes max. génération du nouveau plan...",
- plan_set_info_default:"Série 1 / 1", training_series_done_label:"Série", plan_pushups_done_in_set:"Pompes faites dans ce set",
- toast_plan_session_started:"Séance plan lancée : {target} pompes pour le set 1.",
- home_week_label:"Semaine {n} sur {total} (cycle {cycle})",
- calendar_session_done:"Séance terminée", calendar_session_planned:"Séance planifiée", calendar_no_session_that_day:"Aucune séance ce jour-là",
- plan_ai_active:"Plan IA actif", plan_pace_up:"Rythme accéléré · plus de volume aujourd'hui", plan_pace_down:"Rythme allégé · reprise en douceur", plan_pace_stable:"Rythme stable · volume habituel",
- plan_no_session_today:"Aucune séance planifiée aujourd'hui. profitez du repos, ou faites une séance libre si vous en avez envie.",
- plan_session_done_label:"Séance effectuée", plan_rest_time:"Temps de repos", plan_recent_history:"Historique récent",
+ confirm_cycle_done:"Vous Avez Terminé {weeks} Semaines De Plan ! Faites Un Maximum De Pompes En Une Série Pour Recalibrer Votre Niveau Et Générer Un Nouveau Plan Adapté.",
+ confirm_reset_plan:"Réinitialiser Votre Plan Et Recommencer Le Questionnaire ?",
+ confirm_delete_session:"Supprimer Définitivement Cette Séance ?",
+ confirm_reset_calendar:"Réinitialiser Tout Le Calendrier ? Cette Action Supprime Toutes Les Séances Enregistrées.",
+ confirm_import:"Importer {count} Séance(s) ? Cela Remplacera Vos Données Actuelles.",
+ confirm_stop_training:"Arrêter L'entraînement Maintenant ? {count} Pompes Seront Enregistrées.",
+ phase_paused:"Pause", phase_in_progress:"En Cours", phase_start_short:"Démarrer", phase_reposition:"Repositionnez-vous",
+ calendar_rest_day:"Jour De Repos",
+ toast_session_lock:"Terminez Ou Arrêtez La Séance En Cours Avant De Changer D'onglet.",
+ toast_reposition_camera:"Placez-vous Bien Dans Le Cadre 1 À 2 Secondes Puis Réessayez.",
+ toast_camera_unavailable:"Caméra Indisponible : Passage En Mode Manuel. Utilisez Les Boutons +/- Pour Compter Vos Pompes.",
+ toast_plan_updated:"Plan Mis À Jour.", toast_plan_session_done:"Séance Plan Terminée.",
+ toast_session_updated:"Séance Mise À Jour.", toast_session_deleted:"Séance Supprimée.",
+ toast_max_reps_test:"Faites Votre Maximum De Pompes En Une Série. Le Résultat Mettra Automatiquement À Jour Votre Plan.",
+ toast_level_updated:"Niveau Mis À Jour : {prev} → {max} Pompes Max. Génération Du Nouveau Plan...",
+ plan_set_info_default:"Série 1 / 1", training_series_done_label:"Série", plan_pushups_done_in_set:"Pompes Faites Dans Ce Set",
+ toast_plan_session_started:"Séance Plan Lancée : {target} Pompes Pour Le Set 1.",
+ home_week_label:"Semaine {n} Sur {total} (Cycle {cycle})",
+ calendar_session_done:"Séance Terminée", calendar_session_planned:"Séance Planifiée", calendar_no_session_that_day:"Aucune Séance Ce Jour-là",
+ plan_ai_active:"Plan IA Actif", plan_pace_up:"Rythme Accéléré · Plus De Volume Aujourd'hui", plan_pace_down:"Rythme Allégé · Reprise En Douceur", plan_pace_stable:"Rythme Stable · Volume Habituel",
+ plan_no_session_today:"Aucune Séance Planifiée Aujourd'hui. Profitez Du Repos, Ou Faites Une Séance Libre Si Vous En Avez Envie.",
+ plan_session_done_label:"Séance Effectuée", plan_rest_time:"Temps De Repos", plan_recent_history:"Historique Récent",
  level_beginner:"Débutant", level_novice:"Novice", level_intermediate:"Intermédiaire", level_advanced:"Avancé", level_confirmed:"Confirmé", level_elite:"Élite",
  day_full_sun:"Dimanche", day_full_mon:"Lundi", day_full_tue:"Mardi", day_full_wed:"Mercredi", day_full_thu:"Jeudi", day_full_fri:"Vendredi", day_full_sat:"Samedi",
  month_short_0:"Jan", month_short_1:"Fév", month_short_2:"Mar", month_short_3:"Avr", month_short_4:"Mai", month_short_5:"Juin",
  month_short_6:"Juil", month_short_7:"Août", month_short_8:"Sep", month_short_9:"Oct", month_short_10:"Nov", month_short_11:"Déc",
- plan_no_session_today_short:"Aucune séance planifiée aujourd'hui.", home_no_plan_yet:"Aucun plan actif pour le moment. créez votre plan dans l'onglet plan.",
- home_create_plan_to_track:"Créez votre plan pour suivre votre progression.", plan_adjusted_default:"Ajusté selon vos séances",
- badge_pace_light:"Rythme allégé", badge_pace_fast:"Rythme accéléré", badge_pace_stable:"Rythme stable", badge_easing_in:"Reprise en douceur",
+ plan_no_session_today_short:"Aucune Séance Planifiée Aujourd'hui.", home_no_plan_yet:"Aucun Plan Actif Pour Le Moment. Créez Votre Plan Dans L'onglet Plan.",
+ home_create_plan_to_track:"Créez Votre Plan Pour Suivre Votre Progression.", plan_adjusted_default:"Ajusté Selon Vos Séances",
+ badge_pace_light:"Rythme Allégé", badge_pace_fast:"Rythme Accéléré", badge_pace_stable:"Rythme Stable", badge_easing_in:"Reprise En Douceur",
  month_full_0:"Janvier", month_full_1:"Février", month_full_2:"Mars", month_full_3:"Avril", month_full_4:"Mai", month_full_5:"Juin",
  month_full_6:"Juillet", month_full_7:"Août", month_full_8:"Septembre", month_full_9:"Octobre", month_full_10:"Novembre", month_full_11:"Décembre",
- calendar_details_coming:"Détails à venir",
- toast_camera_activating:"Activation de la caméra...", camera_calibrated:"Calibré", camera_no_pose:"Aucune pose détectée",
- camera_press_start:"Appuyez sur démarrer", camera_pose_detected:"Pose détectée", camera_loading_model:"Chargement du modèle…",
- camera_active:"Caméra active", camera_access_denied:"Accès refusé", camera_manual_mode:"Mode manuel (sans caméra)",
- training_rest_over:"Pause terminée", toast_no_pushup_recorded:"Aucune pompe enregistrée. appuyez sur démarrer pour reprendre.",
- toast_plan_generating:"Génération du plan... (le serveur peut prendre jusqu'à 1 min à démarrer)",
- toast_server_unavailable:"Serveur indisponible, plan généré localement.",
- plan_note_skipped:"Volume réduit après jour sauté", plan_note_hard:"Volume réduit après une séance difficile",
- plan_note_ahead:"Ajusté après une séance réalisée en avance", plan_note_extra:"Ajusté suite à des pompes supplémentaires réalisées",
- plan_note_progressive:"Adaptation progressive", toast_camera_denied:"Impossible d'activer la caméra. autorisez l'accès puis réessayez.",
- toast_plan_created:"Plan créé avec succès !", toast_create_plan_first:"Créez d'abord votre plan dans l'onglet plan.",
- toast_days_updated:"Jours d'entraînement mis à jour.",
- confirm_full_reset:"Réinitialisation complète : toutes vos données (plan, historique, séances, préférences) seront définitivement supprimées et l'application redémarrera comme neuve. continuer ?",
- toast_calendar_reset:"Calendrier réinitialisé.", toast_data_exported:"Données exportées.",
- toast_data_imported:"Données importées avec succès.", toast_invalid_file:"Fichier invalide, import annulé.",
- toast_plan_finished:"Plan terminé : {count} pompes enregistrées !", toast_session_stopped:"Séance arrêtée : {count} pompes enregistrées.",
- phase_done:"Terminé", training_sets_completed:"Set(s) réalisé(s)", training_validate_finish:"Valider et terminer l'entraînement", training_series_label:"SÉRIE"
+ calendar_details_coming:"Détails À Venir",
+ toast_camera_activating:"Activation De La Caméra...", camera_calibrated:"Calibré", camera_no_pose:"Aucune Pose Détectée",
+ camera_press_start:"Appuyez Sur Démarrer", camera_pose_detected:"Pose Détectée", camera_loading_model:"Chargement Du Modèle…",
+ camera_active:"Caméra Active", camera_access_denied:"Accès Refusé", camera_manual_mode:"Mode Manuel (Sans Caméra)",
+ training_rest_over:"Pause Terminée", toast_no_pushup_recorded:"Aucune Pompe Enregistrée. Appuyez Sur Démarrer Pour Reprendre.",
+ toast_plan_generating:"Génération Du Plan... (Le Serveur Peut Prendre Jusqu'à 1 Min À Démarrer)",
+ toast_server_unavailable:"Serveur Indisponible, Plan Généré Localement.",
+ plan_note_skipped:"Volume Réduit Après Jour Sauté", plan_note_hard:"Volume Réduit Après Une Séance Difficile",
+ plan_note_ahead:"Ajusté Après Une Séance Réalisée En Avance", plan_note_extra:"Ajusté Suite À Des Pompes Supplémentaires Réalisées",
+ plan_note_progressive:"Adaptation Progressive", toast_camera_denied:"Impossible D'activer La Caméra. Autorisez L'accès Puis Réessayez.",
+ toast_plan_created:"Plan Créé Avec Succès !", toast_create_plan_first:"Créez D'abord Votre Plan Dans L'onglet Plan.",
+ toast_days_updated:"Jours D'entraînement Mis À Jour.",
+ confirm_full_reset:"Réinitialisation Complète : Toutes Vos Données (Plan, Historique, Séances, Préférences) Seront Définitivement Supprimées Et L'application Redémarrera Comme Neuve. Continuer ?",
+ toast_calendar_reset:"Calendrier Réinitialisé.", toast_data_exported:"Données Exportées.",
+ toast_data_imported:"Données Importées Avec Succès.", toast_invalid_file:"Fichier Invalide, Import Annulé.",
+ toast_plan_finished:"Plan Terminé : {count} Pompes Enregistrées !", toast_session_stopped:"Séance Arrêtée : {count} Pompes Enregistrées.",
+ phase_done:"Terminé", training_sets_completed:"Set(s) Réalisé(s)", training_validate_finish:"Valider Et Terminer L'entraînement", training_series_label:"SÉRIE"
 },
 en: {
  nav_home:"Home", nav_plan:"Plan", nav_free:"Free", nav_calendar:"Calendar", nav_stats:"Stats", nav_profile:"Profile",
- loading_text:"Loading", landscape_rotate:"Turn your phone", landscape_sub:"Push-up only works in portrait mode.",
- home_today_session:"Today's session", home_estimated_time:"Estimated time", home_level:"Level", home_total:"Total",
- home_start_session:"▶ START SESSION", home_plan_progress:"Plan progress", home_this_week:"This week",
- home_sessions_completed:"Sessions completed", home_total_pushups:"Total push-ups", home_vs_last_week:"Vs last week",
+ loading_text:"Loading", landscape_rotate:"Turn Your Phone", landscape_sub:"Push-Up Only Works In Portrait Mode.",
+ home_today_session:"Today's Session", home_estimated_time:"Estimated Time", home_level:"Level", home_total:"Total",
+ home_start_session:"▶ START SESSION", home_plan_progress:"Plan Progress", home_this_week:"This Week",
+ home_sessions_completed:"Sessions Completed", home_total_pushups:"Total Push-ups", home_vs_last_week:"Vs Last Week",
  home_greeting:"Hello",
- training_ready:"Ready", training_pushups:"Push-ups", training_camera_inactive:"Camera inactive",
- training_start_set:"▶ Start set", training_next_set:"Next set", training_finish_workout:"End workout",
- training_reset_set:"Reset set", training_rest_timer:"Rest timer", training_rest_ongoing:"Resting",
- training_catch_breath:"Catch your breath.", training_resume_now:"Resume now", training_skip:"Skip",
- training_session_summary:"Session summary", training_total_session:"Session total", training_series:"Sets", training_series_unit:"Sets",
- training_duration:"Duration", training_rest_settings:"Rest settings", training_seconds:"Seconds",
- training_series_done:"Set complete", training_validate_rest:"Confirm and rest",
- onboarding_q1:"Question 1 of 4", onboarding_lang_q:"Which language would you like to use?",
+ training_ready:"Ready", training_pushups:"Push-ups", training_camera_inactive:"Camera Inactive",
+ training_start_set:"▶ Start Set", training_next_set:"Next Set", training_finish_workout:"End Workout",
+ training_reset_set:"Reset Set", training_rest_timer:"Rest Timer", training_rest_ongoing:"Resting",
+ training_catch_breath:"Catch Your Breath.", training_resume_now:"Resume Now", training_skip:"Skip",
+ training_session_summary:"Session Summary", training_total_session:"Session Total", training_series:"Sets", training_series_unit:"Sets",
+ training_duration:"Duration", training_rest_settings:"Rest Settings", training_seconds:"Seconds",
+ training_series_done:"Set Complete", training_validate_rest:"Confirm And Rest",
+ onboarding_q1:"Question 1 Of 4", onboarding_lang_q:"Which Language Would You Like To Use?",
  onboarding_lang_note:"",
- onboarding_continue:"Continue", onboarding_q2:"Question 2 of 4", onboarding_name_q:"What would you like to be called?",
- onboarding_q3:"Question 3 of 4", onboarding_maxreps_q:"How many push-ups can you do in one set?",
- onboarding_q4:"Question 4 of 4", onboarding_days_q:"Which days do you want to train?",
- onboarding_done_sub:"All of this can be changed anytime in the profile tab.",
- onboarding_lets_go:"Let's go!", onboarding_hi:"Nice to meet you!", onboarding_hi_name:"Nice to meet you, {name}!",
- onboarding_name_placeholder:"E.g. alex", onboarding_maxreps_error:"Enter your maximum number of push-ups.", onboarding_days_error:"Select at least one training day.",
- onboarding_maxreps_unknown:"Not sure?", onboarding_maxreps_freetest:"Do a free session to find out",
- onboarding_maxreps_freetest_hint:"Do your best set of push-ups, then tap \"End Workout\". The Result Will Automatically Fill In Your Answer.",
- toast_maxreps_filled:"Your maximum was filled in automatically: {max} push-ups.", rest_before_set:"Rest before set {n}", camera_detection_unavailable:"Detection unavailable on this device", phase_up:"Up", phase_down:"Down", phase_goal_reached:"Goal reached", camera_position_yourself:"Position yourself in the frame",
- modal_get_ready:"Get ready", modal_free_autostart:"The free session starts automatically.",
- modal_plan_autostart:"The plan session starts automatically.",
- modal_workout_done:"Workout complete!", modal_total_pushups:"Total push-ups", modal_close:"Close", countdown_skip:"Skip",
- plan_create_title:"Create my training plan", plan_maxreps_label:"What's the maximum number of push-ups you can do in one set?",
- plan_days_label:"Which days do you want to train?", plan_create_btn:"Create my plan",
- plan_today_session:"Today's session", plan_start_session:"▶ START SESSION", plan_finish_training:"End workout",
- plan_rest_ongoing:"Resting", plan_rest_next:"Rest before the next set.", plan_resume_now:"Resume now",
- plan_session_pushups:"Session push-ups", plan_duration:"Duration", plan_next_7_days:"Next 7 days",
+ onboarding_continue:"Continue", onboarding_q2:"Question 2 Of 4", onboarding_name_q:"What Would You Like To Be Called?",
+ onboarding_q3:"Question 3 Of 4", onboarding_maxreps_q:"How Many Push-ups Can You Do In One Set?",
+ onboarding_q4:"Question 4 Of 4", onboarding_days_q:"Which Days Do You Want To Train?",
+ onboarding_done_sub:"All Of This Can Be Changed Anytime In The Profile Tab.",
+ onboarding_lets_go:"Let's Go!", onboarding_hi:"Nice To Meet You!", onboarding_hi_name:"Nice To Meet You, {name}!",
+ onboarding_name_placeholder:"E.g. Alex", onboarding_maxreps_error:"Enter Your Maximum Number Of Push-ups.", onboarding_days_error:"Select At Least One Training Day.",
+ onboarding_maxreps_unknown:"Not Sure?", onboarding_maxreps_freetest:"Do A Free Session To Find Out",
+ onboarding_maxreps_freetest_hint:"Do Your Best Set Of Push-ups, Then Tap \"End Workout\". The Result Will Automatically Fill In Your Answer.",
+ toast_maxreps_filled:"Your Maximum Was Filled In Automatically: {max} Push-ups.", rest_before_set:"Rest Before Set {n}",
+ modal_get_ready:"Get Ready", modal_free_autostart:"The Free Session Starts Automatically.",
+ modal_plan_autostart:"The Plan Session Starts Automatically.",
+ modal_workout_done:"Workout Complete!", modal_total_pushups:"Total Push-ups", modal_close:"Close", countdown_skip:"Skip",
+ plan_create_title:"Create My Training Plan", plan_maxreps_label:"What's The Maximum Number Of Push-ups You Can Do In One Set?",
+ plan_days_label:"Which Days Do You Want To Train?", plan_create_btn:"Create My Plan",
+ plan_today_session:"Today's Session", plan_start_session:"▶ START SESSION", plan_finish_training:"End Workout",
+ plan_rest_ongoing:"Resting", plan_rest_next:"Rest Before The Next Set.", plan_resume_now:"Resume Now",
+ plan_session_pushups:"Session Push-ups", plan_duration:"Duration", plan_next_7_days:"Next 7 Days",
  profile_appearance:"Appearance", profile_dark:"Dark", profile_system:"System", profile_light:"Light",
- profile_title:"Profile", profile_nickname_label:"First name or nickname", profile_autosaved:"Saved automatically",
- profile_no_plan:"No active plan", profile_no_plan_sub:"First create your training plan in the plan tab — that's where you set your maximum push-ups and training days.",
- profile_go_to_plan:"Go to the plan tab", profile_training_days:"Training days", profile_days_used_for:"Used to schedule your program",
- profile_save_changes:"Save changes", profile_preferences:"Preferences", profile_session_sounds:"Session sounds",
- profile_beep_desc:"Start and end beeps", profile_vibrations:"Vibration", profile_haptic_desc:"Haptic feedback during the session",
- profile_plan_section:"Plan", profile_reset_plan:"Reset plan", profile_reset_plan_sub:"Deletes the current program, keeps your history",
- profile_full_reset:"Full reset", profile_delete_all:"Delete all data", profile_delete_all_sub:"Permanently erases your sessions, stats, and preferences",
+ profile_title:"Profile", profile_nickname_label:"First Name Or Nickname", profile_autosaved:"Saved Automatically",
+ profile_no_plan:"No Active Plan", profile_no_plan_sub:"First Create Your Training Plan In The Plan Tab — That's Where You Set Your Maximum Push-ups And Training Days.",
+ profile_go_to_plan:"Go To The Plan Tab", profile_training_days:"Training Days", profile_days_used_for:"Used To Schedule Your Program",
+ profile_save_changes:"Save Changes", profile_preferences:"Preferences", profile_session_sounds:"Session Sounds",
+ profile_beep_desc:"Start And End Beeps", profile_vibrations:"Vibration", profile_haptic_desc:"Haptic Feedback During The Session",
+ profile_plan_section:"Plan", profile_reset_plan:"Reset Plan", profile_reset_plan_sub:"Deletes The Current Program, Keeps Your History",
+ profile_full_reset:"Full Reset", profile_delete_all:"Delete All Data", profile_delete_all_sub:"Permanently Erases Your Sessions, Stats, And Preferences",
  profile_language:"Language", profile_language_note:"",
- calendar_current_streak:"Current streak: ", calendar_week_unit:"Week", calendar_at_least_one:"At least one session per week",
- calendar_today:"Today", calendar_start_session:"▶ Start session", calendar_data_backup:"Data & backup",
- calendar_export:"Export", calendar_import:"Import", calendar_reset:"Reset calendar", calendar_session:"Session",
- stats_current_streak:"Current streak", stats_best_streak:"Best streak: ", stats_progression:"Progress",
- stats_weekly_total:"Total push-ups per week", stats_not_enough_data:"Not enough data yet to show a trend.",
- stats_personal_records:"Personal records", stats_best_set:"Best set", stats_best_session:"Best session",
- stats_cumulative_total:"Cumulative total", stats_badges:"Badges", stats_evolution:"Progress (last 30 days)",
- stats_general_stats:"General stats", stats_session_count:"Number of sessions", stats_avg_per_session:"Average per session",
- stats_best_day:"Best day",
+ calendar_current_streak:"Current Streak: ", calendar_week_unit:"Week", calendar_at_least_one:"At Least One Session Per Week",
+ calendar_today:"Today", calendar_start_session:"▶ Start Session", calendar_data_backup:"Data & Backup",
+ calendar_export:"Export", calendar_import:"Import", calendar_reset:"Reset Calendar", calendar_session:"Session",
+ stats_current_streak:"Current Streak", stats_best_streak:"Best Streak: ", stats_progression:"Progress",
+ stats_weekly_total:"Total Push-ups Per Week", stats_not_enough_data:"Not Enough Data Yet To Show A Trend.",
+ stats_personal_records:"Personal Records", stats_best_set:"Best Set", stats_best_session:"Best Session",
+ stats_cumulative_total:"Cumulative Total", stats_badges:"Badges", stats_evolution:"Progress (Last 30 Days)",
+ stats_general_stats:"General Stats", stats_session_count:"Number Of Sessions", stats_avg_per_session:"Average Per Session",
+ stats_best_day:"Best Day",
  confirm_cancel:"Cancel", confirm_confirm:"Confirm",
- feedback_question:"How did this session go?", feedback_sub:"This helps fine-tune your next sessions.",
- feedback_good:"Went well", feedback_hard:"Hard (needed extra rest)",
+ feedback_question:"How Did This Session Go?", feedback_sub:"This Helps Fine-tune Your Next Sessions.",
+ feedback_good:"Went Well", feedback_hard:"Hard (Needed Extra Rest)",
  day_mon:"Mon", day_tue:"Tue", day_wed:"Wed", day_thu:"Thu", day_fri:"Fri", day_sat:"Sat", day_sun:"Sun",
  cal_wd_mon:"M", cal_wd_tue:"T", cal_wd_wed:"W", cal_wd_thu:"T", cal_wd_fri:"F", cal_wd_sat:"S", cal_wd_sun:"S",
- no_session_recorded:"No session recorded",
- badge_3_days:"3-Day streak", badge_1_week:"1-Week streak", badge_2_weeks:"2-Week streak",
- badge_1_month:"1-Month streak", badge_2_months:"2-Month streak", badge_100_days:"100-Day streak",
+ no_session_recorded:"No Session Recorded",
+ badge_3_days:"3-Day Streak", badge_1_week:"1-Week Streak", badge_2_weeks:"2-Week Streak",
+ badge_1_month:"1-Month Streak", badge_2_months:"2-Month Streak", badge_100_days:"100-Day Streak",
  day_singular:"Day", day_plural:"Days", calendar_week_unit_plural:"Weeks",
- confirm_cycle_done:"You've completed {weeks} weeks of your plan! do as many push-ups as you can in one set to recalibrate your level and generate a new tailored plan.",
- confirm_reset_plan:"Reset your plan and start the questionnaire again?",
- confirm_delete_session:"Permanently delete this session?",
- confirm_reset_calendar:"Reset the whole calendar? this will delete all recorded sessions.",
- confirm_import:"Import {count} session(s)? this will replace your current data.",
- confirm_stop_training:"Stop the workout now? {count} push-ups will be recorded.",
- phase_paused:"Paused", phase_in_progress:"In progress", phase_start_short:"Start", phase_reposition:"Reposition yourself",
- calendar_rest_day:"Rest day",
- toast_session_lock:"Finish or stop the current session before switching tabs.",
- toast_reposition_camera:"Stand in frame for 1–2 seconds then try again.",
- toast_camera_unavailable:"Camera unavailable: switching to manual mode. use the +/- buttons to count your push-ups.",
- toast_plan_updated:"Plan updated.", toast_plan_session_done:"Plan session complete.",
- toast_session_updated:"Session updated.", toast_session_deleted:"Session deleted.",
- toast_max_reps_test:"Do as many push-ups as you can in one set. the result will automatically update your plan.",
- toast_level_updated:"Level updated: {prev} → {max} max push-ups. generating your new plan...",
- plan_set_info_default:"Set 1 / 1", training_series_done_label:"Set", plan_pushups_done_in_set:"Push-ups done in this set",
- toast_plan_session_started:"Plan session started: {target} push-ups for set 1.",
- home_week_label:"Week {n} of {total} (cycle {cycle})",
- calendar_session_done:"Session complete", calendar_session_planned:"Session planned", calendar_no_session_that_day:"No session that day",
- plan_ai_active:"AI plan active", plan_pace_up:"Faster pace · more volume today", plan_pace_down:"Lighter pace · easing back in", plan_pace_stable:"Steady pace · usual volume",
- plan_no_session_today:"No session planned today. enjoy the rest, or do a free session if you feel like it.",
- plan_session_done_label:"Session done", plan_rest_time:"Rest time", plan_recent_history:"Recent history",
+ confirm_cycle_done:"You've Completed {weeks} Weeks Of Your Plan! Do As Many Push-ups As You Can In One Set To Recalibrate Your Level And Generate A New Tailored Plan.",
+ confirm_reset_plan:"Reset Your Plan And Start The Questionnaire Again?",
+ confirm_delete_session:"Permanently Delete This Session?",
+ confirm_reset_calendar:"Reset The Whole Calendar? This Will Delete All Recorded Sessions.",
+ confirm_import:"Import {count} Session(s)? This Will Replace Your Current Data.",
+ confirm_stop_training:"Stop The Workout Now? {count} Push-ups Will Be Recorded.",
+ phase_paused:"Paused", phase_in_progress:"In Progress", phase_start_short:"Start", phase_reposition:"Reposition Yourself",
+ calendar_rest_day:"Rest Day",
+ toast_session_lock:"Finish Or Stop The Current Session Before Switching Tabs.",
+ toast_reposition_camera:"Stand In Frame For 1–2 Seconds Then Try Again.",
+ toast_camera_unavailable:"Camera Unavailable: Switching To Manual Mode. Use The +/- Buttons To Count Your Push-ups.",
+ toast_plan_updated:"Plan Updated.", toast_plan_session_done:"Plan Session Complete.",
+ toast_session_updated:"Session Updated.", toast_session_deleted:"Session Deleted.",
+ toast_max_reps_test:"Do As Many Push-ups As You Can In One Set. The Result Will Automatically Update Your Plan.",
+ toast_level_updated:"Level Updated: {prev} → {max} Max Push-ups. Generating Your New Plan...",
+ plan_set_info_default:"Set 1 / 1", training_series_done_label:"Set", plan_pushups_done_in_set:"Push-ups Done In This Set",
+ toast_plan_session_started:"Plan Session Started: {target} Push-ups For Set 1.",
+ home_week_label:"Week {n} Of {total} (Cycle {cycle})",
+ calendar_session_done:"Session Complete", calendar_session_planned:"Session Planned", calendar_no_session_that_day:"No Session That Day",
+ plan_ai_active:"AI Plan Active", plan_pace_up:"Faster Pace · More Volume Today", plan_pace_down:"Lighter Pace · Easing Back In", plan_pace_stable:"Steady Pace · Usual Volume",
+ plan_no_session_today:"No Session Planned Today. Enjoy The Rest, Or Do A Free Session If You Feel Like It.",
+ plan_session_done_label:"Session Done", plan_rest_time:"Rest Time", plan_recent_history:"Recent History",
  level_beginner:"Beginner", level_novice:"Novice", level_intermediate:"Intermediate", level_advanced:"Advanced", level_confirmed:"Proficient", level_elite:"Elite",
  day_full_sun:"Sunday", day_full_mon:"Monday", day_full_tue:"Tuesday", day_full_wed:"Wednesday", day_full_thu:"Thursday", day_full_fri:"Friday", day_full_sat:"Saturday",
  month_short_0:"Jan", month_short_1:"Feb", month_short_2:"Mar", month_short_3:"Apr", month_short_4:"May", month_short_5:"Jun",
  month_short_6:"Jul", month_short_7:"Aug", month_short_8:"Sep", month_short_9:"Oct", month_short_10:"Nov", month_short_11:"Dec",
- plan_no_session_today_short:"No session planned today.", home_no_plan_yet:"No active plan yet. create your plan in the plan tab.",
- home_create_plan_to_track:"Create your plan to track your progress.", plan_adjusted_default:"Adjusted based on your sessions",
- badge_pace_light:"Lighter pace", badge_pace_fast:"Faster pace", badge_pace_stable:"Steady pace", badge_easing_in:"Easing back in",
+ plan_no_session_today_short:"No Session Planned Today.", home_no_plan_yet:"No Active Plan Yet. Create Your Plan In The Plan Tab.",
+ home_create_plan_to_track:"Create Your Plan To Track Your Progress.", plan_adjusted_default:"Adjusted Based On Your Sessions",
+ badge_pace_light:"Lighter Pace", badge_pace_fast:"Faster Pace", badge_pace_stable:"Steady Pace", badge_easing_in:"Easing Back In",
  month_full_0:"January", month_full_1:"February", month_full_2:"March", month_full_3:"April", month_full_4:"May", month_full_5:"June",
  month_full_6:"July", month_full_7:"August", month_full_8:"September", month_full_9:"October", month_full_10:"November", month_full_11:"December",
- calendar_details_coming:"Details coming soon",
- toast_camera_activating:"Activating camera...", camera_calibrated:"Calibrated", camera_no_pose:"No pose detected",
- camera_press_start:"Press start", camera_pose_detected:"Pose detected", camera_loading_model:"Loading model…",
- camera_active:"Camera active", camera_access_denied:"Access denied", camera_manual_mode:"Manual mode (no camera)",
- training_rest_over:"Rest over", toast_no_pushup_recorded:"No push-up recorded. press start to resume.",
- toast_plan_generating:"Generating your plan... (the server can take up to 1 minute to start)",
- toast_server_unavailable:"Server unavailable, plan generated locally.",
- plan_note_skipped:"Reduced volume after a skipped day", plan_note_hard:"Reduced volume after a hard session",
- plan_note_ahead:"Adjusted after a session done ahead of schedule", plan_note_extra:"Adjusted after extra push-ups were done",
- plan_note_progressive:"Progressive adjustment", toast_camera_denied:"Couldn't activate the camera. allow access then try again.",
- toast_plan_created:"Plan created successfully!", toast_create_plan_first:"First create your plan in the plan tab.",
- toast_days_updated:"Training days updated.",
- confirm_full_reset:"Full reset: all your data (plan, history, sessions, preferences) will be permanently deleted and the app will restart fresh. continue?",
- toast_calendar_reset:"Calendar reset.", toast_data_exported:"Data exported.",
- toast_data_imported:"Data imported successfully.", toast_invalid_file:"Invalid file, import cancelled.",
- toast_plan_finished:"Plan complete: {count} push-ups recorded!", toast_session_stopped:"Session stopped: {count} push-ups recorded.",
- phase_done:"Done", training_sets_completed:"Set(s) completed", training_validate_finish:"Confirm and finish workout", training_series_label:"SET"
+ calendar_details_coming:"Details Coming Soon",
+ toast_camera_activating:"Activating Camera...", camera_calibrated:"Calibrated", camera_no_pose:"No Pose Detected",
+ camera_press_start:"Press Start", camera_pose_detected:"Pose Detected", camera_loading_model:"Loading Model…",
+ camera_active:"Camera Active", camera_access_denied:"Access Denied", camera_manual_mode:"Manual Mode (No Camera)",
+ training_rest_over:"Rest Over", toast_no_pushup_recorded:"No Push-up Recorded. Press Start To Resume.",
+ toast_plan_generating:"Generating Your Plan... (The Server Can Take Up To 1 Minute To Start)",
+ toast_server_unavailable:"Server Unavailable, Plan Generated Locally.",
+ plan_note_skipped:"Reduced Volume After A Skipped Day", plan_note_hard:"Reduced Volume After A Hard Session",
+ plan_note_ahead:"Adjusted After A Session Done Ahead Of Schedule", plan_note_extra:"Adjusted After Extra Push-ups Were Done",
+ plan_note_progressive:"Progressive Adjustment", toast_camera_denied:"Couldn't Activate The Camera. Allow Access Then Try Again.",
+ toast_plan_created:"Plan Created Successfully!", toast_create_plan_first:"First Create Your Plan In The Plan Tab.",
+ toast_days_updated:"Training Days Updated.",
+ confirm_full_reset:"Full Reset: All Your Data (Plan, History, Sessions, Preferences) Will Be Permanently Deleted And The App Will Restart Fresh. Continue?",
+ toast_calendar_reset:"Calendar Reset.", toast_data_exported:"Data Exported.",
+ toast_data_imported:"Data Imported Successfully.", toast_invalid_file:"Invalid File, Import Cancelled.",
+ toast_plan_finished:"Plan Complete: {count} Push-ups Recorded!", toast_session_stopped:"Session Stopped: {count} Push-ups Recorded.",
+ phase_done:"Done", training_sets_completed:"Set(s) Completed", training_validate_finish:"Confirm And Finish Workout", training_series_label:"SET"
 },
 es: {
  nav_home:"Inicio", nav_plan:"Plan", nav_free:"Libre", nav_calendar:"Calendario", nav_stats:"Stats", nav_profile:"Perfil",
- loading_text:"Cargando", landscape_rotate:"Gira tu teléfono", landscape_sub:"Push-up solo funciona en modo vertical.",
- home_today_session:"Sesión de hoy", home_estimated_time:"Tiempo estimado", home_level:"Nivel", home_total:"En total",
- home_start_session:"▶ EMPEZAR SESIÓN", home_plan_progress:"Progreso del plan", home_this_week:"Esta semana",
- home_sessions_completed:"Sesiones completadas", home_total_pushups:"Flexiones totales", home_vs_last_week:"Vs semana pasada",
+ loading_text:"Cargando", landscape_rotate:"Gira Tu Teléfono", landscape_sub:"Push-Up Solo Funciona En Modo Vertical.",
+ home_today_session:"Sesión De Hoy", home_estimated_time:"Tiempo Estimado", home_level:"Nivel", home_total:"En Total",
+ home_start_session:"▶ EMPEZAR SESIÓN", home_plan_progress:"Progreso Del Plan", home_this_week:"Esta Semana",
+ home_sessions_completed:"Sesiones Completadas", home_total_pushups:"Flexiones Totales", home_vs_last_week:"Vs Semana Pasada",
  home_greeting:"Hola",
- training_ready:"Listo", training_pushups:"Flexiones", training_camera_inactive:"Cámara inactiva",
- training_start_set:"▶ Iniciar serie", training_next_set:"Siguiente serie", training_finish_workout:"Terminar entrenamiento",
- training_reset_set:"Reiniciar serie", training_rest_timer:"Temporizador de descanso", training_rest_ongoing:"Descansando",
- training_catch_breath:"Recupera el aliento.", training_resume_now:"Reanudar ahora", training_skip:"Omitir",
- training_session_summary:"Resumen de la sesión", training_total_session:"Total de la sesión", training_series:"Series", training_series_unit:"Series",
- training_duration:"Duración", training_rest_settings:"Ajustes de descanso", training_seconds:"Segundos",
- training_series_done:"Serie completada", training_validate_rest:"Confirmar y descansar",
- onboarding_q1:"Pregunta 1 de 4", onboarding_lang_q:"¿Qué idioma quieres usar?",
+ training_ready:"Listo", training_pushups:"Flexiones", training_camera_inactive:"Cámara Inactiva",
+ training_start_set:"▶ Iniciar Serie", training_next_set:"Siguiente Serie", training_finish_workout:"Terminar Entrenamiento",
+ training_reset_set:"Reiniciar Serie", training_rest_timer:"Temporizador De Descanso", training_rest_ongoing:"Descansando",
+ training_catch_breath:"Recupera El Aliento.", training_resume_now:"Reanudar Ahora", training_skip:"Omitir",
+ training_session_summary:"Resumen De La Sesión", training_total_session:"Total De La Sesión", training_series:"Series", training_series_unit:"Series",
+ training_duration:"Duración", training_rest_settings:"Ajustes De Descanso", training_seconds:"Segundos",
+ training_series_done:"Serie Completada", training_validate_rest:"Confirmar Y Descansar",
+ onboarding_q1:"Pregunta 1 De 4", onboarding_lang_q:"¿Qué Idioma Quieres Usar?",
  onboarding_lang_note:"",
- onboarding_continue:"Continuar", onboarding_q2:"Pregunta 2 de 4", onboarding_name_q:"¿Cómo quieres que te llamemos?",
- onboarding_q3:"Pregunta 3 de 4", onboarding_maxreps_q:"¿Cuántas flexiones puedes hacer en una sola serie?",
- onboarding_q4:"Pregunta 4 de 4", onboarding_days_q:"¿Qué días quieres entrenar?",
- onboarding_done_sub:"Todo esto se puede cambiar en cualquier momento en la pestaña perfil.",
- onboarding_lets_go:"¡Vamos!", onboarding_hi:"¡Encantado de conocerte!", onboarding_hi_name:"¡Encantado de conocerte, {name}!",
- onboarding_name_placeholder:"Ej: alex", onboarding_maxreps_error:"Indica tu número máximo de flexiones.", onboarding_days_error:"Selecciona al menos un día de entrenamiento.",
- onboarding_maxreps_unknown:"¿No lo sabes?", onboarding_maxreps_freetest:"Haz una sesión libre para descubrirlo",
- onboarding_maxreps_freetest_hint:"Haz tu mejor serie de flexiones y luego pulsa \"Terminar Entrenamiento\". El Resultado Rellenará Tu Respuesta Automáticamente.",
- toast_maxreps_filled:"Tu máximo se rellenó automáticamente: {max} flexiones.", rest_before_set:"Descanso antes de la serie {n}", camera_detection_unavailable:"Detección no disponible en este dispositivo", phase_up:"Arriba", phase_down:"Abajo", phase_goal_reached:"Objetivo alcanzado", camera_position_yourself:"Colócate dentro del encuadre",
- modal_get_ready:"Prepárate", modal_free_autostart:"La sesión libre empieza automáticamente.",
- modal_plan_autostart:"La sesión del plan empieza automáticamente.",
- modal_workout_done:"¡Sesión terminada!", modal_total_pushups:"Flexiones totales", modal_close:"Cerrar", countdown_skip:"Omitir",
- plan_create_title:"Crear mi plan de entrenamiento", plan_maxreps_label:"¿Cuál es el número máximo de flexiones que puedes hacer en una sola serie?",
- plan_days_label:"¿Qué días quieres entrenar?", plan_create_btn:"Crear mi plan",
- plan_today_session:"Sesión de hoy", plan_start_session:"▶ EMPEZAR SESIÓN", plan_finish_training:"Terminar entrenamiento",
- plan_rest_ongoing:"Descansando", plan_rest_next:"Descanso antes de la siguiente serie.", plan_resume_now:"Reanudar ahora",
- plan_session_pushups:"Flexiones de la sesión", plan_duration:"Duración", plan_next_7_days:"Próximos 7 días",
+ onboarding_continue:"Continuar", onboarding_q2:"Pregunta 2 De 4", onboarding_name_q:"¿Cómo Quieres Que Te Llamemos?",
+ onboarding_q3:"Pregunta 3 De 4", onboarding_maxreps_q:"¿Cuántas Flexiones Puedes Hacer En Una Sola Serie?",
+ onboarding_q4:"Pregunta 4 De 4", onboarding_days_q:"¿Qué Días Quieres Entrenar?",
+ onboarding_done_sub:"Todo Esto Se Puede Cambiar En Cualquier Momento En La Pestaña Perfil.",
+ onboarding_lets_go:"¡Vamos!", onboarding_hi:"¡Encantado De Conocerte!", onboarding_hi_name:"¡Encantado De Conocerte, {name}!",
+ onboarding_name_placeholder:"Ej: Alex", onboarding_maxreps_error:"Indica Tu Número Máximo De Flexiones.", onboarding_days_error:"Selecciona Al Menos Un Día De Entrenamiento.",
+ onboarding_maxreps_unknown:"¿No Lo Sabes?", onboarding_maxreps_freetest:"Haz Una Sesión Libre Para Descubrirlo",
+ onboarding_maxreps_freetest_hint:"Haz Tu Mejor Serie De Flexiones Y Luego Pulsa \"Terminar Entrenamiento\". El Resultado Rellenará Tu Respuesta Automáticamente.",
+ toast_maxreps_filled:"Tu Máximo Se Rellenó Automáticamente: {max} Flexiones.", rest_before_set:"Descanso Antes De La Serie {n}",
+ modal_get_ready:"Prepárate", modal_free_autostart:"La Sesión Libre Empieza Automáticamente.",
+ modal_plan_autostart:"La Sesión Del Plan Empieza Automáticamente.",
+ modal_workout_done:"¡Sesión Terminada!", modal_total_pushups:"Flexiones Totales", modal_close:"Cerrar", countdown_skip:"Omitir",
+ plan_create_title:"Crear Mi Plan De Entrenamiento", plan_maxreps_label:"¿Cuál Es El Número Máximo De Flexiones Que Puedes Hacer En Una Sola Serie?",
+ plan_days_label:"¿Qué Días Quieres Entrenar?", plan_create_btn:"Crear Mi Plan",
+ plan_today_session:"Sesión De Hoy", plan_start_session:"▶ EMPEZAR SESIÓN", plan_finish_training:"Terminar Entrenamiento",
+ plan_rest_ongoing:"Descansando", plan_rest_next:"Descanso Antes De La Siguiente Serie.", plan_resume_now:"Reanudar Ahora",
+ plan_session_pushups:"Flexiones De La Sesión", plan_duration:"Duración", plan_next_7_days:"Próximos 7 Días",
  profile_appearance:"Apariencia", profile_dark:"Oscuro", profile_system:"Sistema", profile_light:"Claro",
- profile_title:"Perfil", profile_nickname_label:"Nombre o apodo", profile_autosaved:"Guardado automáticamente",
- profile_no_plan:"Ningún plan activo", profile_no_plan_sub:"Primero crea tu plan de entrenamiento en la pestaña plan: ahí indicas tu número máximo de flexiones y tus días de entrenamiento.",
- profile_go_to_plan:"Ir a la pestaña plan", profile_training_days:"Días de entrenamiento", profile_days_used_for:"Se usa para planificar tu programa",
- profile_save_changes:"Guardar cambios", profile_preferences:"Preferencias", profile_session_sounds:"Sonidos de la sesión",
- profile_beep_desc:"Pitidos de inicio y fin", profile_vibrations:"Vibración", profile_haptic_desc:"Vibración durante la sesión",
- profile_plan_section:"Plan", profile_reset_plan:"Reiniciar el plan", profile_reset_plan_sub:"Elimina el programa actual, conserva tu historial",
- profile_full_reset:"Restablecimiento completo", profile_delete_all:"Eliminar todos los datos", profile_delete_all_sub:"Borra permanentemente tus sesiones, estadísticas y preferencias",
+ profile_title:"Perfil", profile_nickname_label:"Nombre O Apodo", profile_autosaved:"Guardado Automáticamente",
+ profile_no_plan:"Ningún Plan Activo", profile_no_plan_sub:"Primero Crea Tu Plan De Entrenamiento En La Pestaña Plan: Ahí Indicas Tu Número Máximo De Flexiones Y Tus Días De Entrenamiento.",
+ profile_go_to_plan:"Ir A La Pestaña Plan", profile_training_days:"Días De Entrenamiento", profile_days_used_for:"Se Usa Para Planificar Tu Programa",
+ profile_save_changes:"Guardar Cambios", profile_preferences:"Preferencias", profile_session_sounds:"Sonidos De La Sesión",
+ profile_beep_desc:"Pitidos De Inicio Y Fin", profile_vibrations:"Vibración", profile_haptic_desc:"Vibración Durante La Sesión",
+ profile_plan_section:"Plan", profile_reset_plan:"Reiniciar El Plan", profile_reset_plan_sub:"Elimina El Programa Actual, Conserva Tu Historial",
+ profile_full_reset:"Restablecimiento Completo", profile_delete_all:"Eliminar Todos Los Datos", profile_delete_all_sub:"Borra Permanentemente Tus Sesiones, Estadísticas Y Preferencias",
  profile_language:"Idioma", profile_language_note:"",
- calendar_current_streak:"Racha actual: ", calendar_week_unit:"Semana", calendar_at_least_one:"Al menos una sesión por semana",
- calendar_today:"Hoy", calendar_start_session:"▶ Empezar sesión", calendar_data_backup:"Datos y copia de seguridad",
- calendar_export:"Exportar", calendar_import:"Importar", calendar_reset:"Reiniciar calendario", calendar_session:"Sesión",
- stats_current_streak:"Racha actual", stats_best_streak:"Mejor racha: ", stats_progression:"Progreso",
- stats_weekly_total:"Total de flexiones por semana", stats_not_enough_data:"Aún no hay suficientes datos para mostrar una tendencia.",
- stats_personal_records:"Récords personales", stats_best_set:"Mejor serie", stats_best_session:"Mejor sesión",
- stats_cumulative_total:"Total acumulado", stats_badges:"Insignias", stats_evolution:"Progreso (últimos 30 días)",
- stats_general_stats:"Estadísticas generales", stats_session_count:"Número de sesiones", stats_avg_per_session:"Promedio por sesión",
- stats_best_day:"Mejor día",
+ calendar_current_streak:"Racha Actual: ", calendar_week_unit:"Semana", calendar_at_least_one:"Al Menos Una Sesión Por Semana",
+ calendar_today:"Hoy", calendar_start_session:"▶ Empezar Sesión", calendar_data_backup:"Datos Y Copia De Seguridad",
+ calendar_export:"Exportar", calendar_import:"Importar", calendar_reset:"Reiniciar Calendario", calendar_session:"Sesión",
+ stats_current_streak:"Racha Actual", stats_best_streak:"Mejor Racha: ", stats_progression:"Progreso",
+ stats_weekly_total:"Total De Flexiones Por Semana", stats_not_enough_data:"Aún No Hay Suficientes Datos Para Mostrar Una Tendencia.",
+ stats_personal_records:"Récords Personales", stats_best_set:"Mejor Serie", stats_best_session:"Mejor Sesión",
+ stats_cumulative_total:"Total Acumulado", stats_badges:"Insignias", stats_evolution:"Progreso (Últimos 30 Días)",
+ stats_general_stats:"Estadísticas Generales", stats_session_count:"Número De Sesiones", stats_avg_per_session:"Promedio Por Sesión",
+ stats_best_day:"Mejor Día",
  confirm_cancel:"Cancelar", confirm_confirm:"Confirmar",
- feedback_question:"¿Cómo fue esta sesión?", feedback_sub:"Esto ayuda a ajustar tus próximas sesiones.",
- feedback_good:"Bien", feedback_hard:"Difícil (descansos adicionales)",
+ feedback_question:"¿Cómo Fue Esta Sesión?", feedback_sub:"Esto Ayuda A Ajustar Tus Próximas Sesiones.",
+ feedback_good:"Bien", feedback_hard:"Difícil (Descansos Adicionales)",
  day_mon:"Lun", day_tue:"Mar", day_wed:"Mié", day_thu:"Jue", day_fri:"Vie", day_sat:"Sáb", day_sun:"Dom",
  cal_wd_mon:"L", cal_wd_tue:"M", cal_wd_wed:"X", cal_wd_thu:"J", cal_wd_fri:"V", cal_wd_sat:"S", cal_wd_sun:"D",
- no_session_recorded:"Ninguna sesión registrada",
- badge_3_days:"Racha de 3 días", badge_1_week:"Racha de 1 semana", badge_2_weeks:"Racha de 2 semanas",
- badge_1_month:"Racha de 1 mes", badge_2_months:"Racha de 2 meses", badge_100_days:"Racha de 100 días",
+ no_session_recorded:"Ninguna Sesión Registrada",
+ badge_3_days:"Racha De 3 Días", badge_1_week:"Racha De 1 Semana", badge_2_weeks:"Racha De 2 Semanas",
+ badge_1_month:"Racha De 1 Mes", badge_2_months:"Racha De 2 Meses", badge_100_days:"Racha De 100 Días",
  day_singular:"Día", day_plural:"Días", calendar_week_unit_plural:"Semanas",
- confirm_cycle_done:"¡Has completado {weeks} semanas de tu plan! haz el máximo de flexiones posible en una serie para recalibrar tu nivel y generar un nuevo plan adaptado.",
- confirm_reset_plan:"¿Reiniciar tu plan y volver a empezar el cuestionario?",
- confirm_delete_session:"¿Eliminar esta sesión de forma permanente?",
- confirm_reset_calendar:"¿Reiniciar todo el calendario? esto eliminará todas las sesiones registradas.",
- confirm_import:"¿Importar {count} sesión(es)? esto reemplazará tus datos actuales.",
- confirm_stop_training:"¿Detener el entrenamiento ahora? se registrarán {count} flexiones.",
- phase_paused:"Pausa", phase_in_progress:"En curso", phase_start_short:"Empezar", phase_reposition:"Vuelve a colocarte",
- calendar_rest_day:"Día de descanso",
- toast_session_lock:"Termina o detén la sesión en curso antes de cambiar de pestaña.",
- toast_reposition_camera:"Colócate bien dentro del encuadre durante 1-2 segundos y vuelve a intentarlo.",
- toast_camera_unavailable:"Cámara no disponible: cambiando a modo manual. usa los botones +/- para contar tus flexiones.",
- toast_plan_updated:"Plan actualizado.", toast_plan_session_done:"Sesión del plan completada.",
- toast_session_updated:"Sesión actualizada.", toast_session_deleted:"Sesión eliminada.",
- toast_max_reps_test:"Haz el máximo de flexiones posible en una serie. el resultado actualizará tu plan automáticamente.",
- toast_level_updated:"Nivel actualizado: {prev} → {max} flexiones máx. generando tu nuevo plan...",
- plan_set_info_default:"Serie 1 / 1", training_series_done_label:"Serie", plan_pushups_done_in_set:"Flexiones hechas en esta serie",
- toast_plan_session_started:"Sesión del plan iniciada: {target} flexiones para la serie 1.",
- home_week_label:"Semana {n} de {total} (ciclo {cycle})",
- calendar_session_done:"Sesión completada", calendar_session_planned:"Sesión planificada", calendar_no_session_that_day:"Ninguna sesión ese día",
- plan_ai_active:"Plan IA activo", plan_pace_up:"Ritmo más rápido · más volumen hoy", plan_pace_down:"Ritmo más ligero · retomando con calma", plan_pace_stable:"Ritmo estable · volumen habitual",
- plan_no_session_today:"No hay ninguna sesión planificada hoy. disfruta del descanso, o haz una sesión libre si te apetece.",
- plan_session_done_label:"Sesión completada", plan_rest_time:"Tiempo de descanso", plan_recent_history:"Historial reciente",
+ confirm_cycle_done:"¡Has Completado {weeks} Semanas De Tu Plan! Haz El Máximo De Flexiones Posible En Una Serie Para Recalibrar Tu Nivel Y Generar Un Nuevo Plan Adaptado.",
+ confirm_reset_plan:"¿Reiniciar Tu Plan Y Volver A Empezar El Cuestionario?",
+ confirm_delete_session:"¿Eliminar Esta Sesión De Forma Permanente?",
+ confirm_reset_calendar:"¿Reiniciar Todo El Calendario? Esto Eliminará Todas Las Sesiones Registradas.",
+ confirm_import:"¿Importar {count} Sesión(es)? Esto Reemplazará Tus Datos Actuales.",
+ confirm_stop_training:"¿Detener El Entrenamiento Ahora? Se Registrarán {count} Flexiones.",
+ phase_paused:"Pausa", phase_in_progress:"En Curso", phase_start_short:"Empezar", phase_reposition:"Vuelve A Colocarte",
+ calendar_rest_day:"Día De Descanso",
+ toast_session_lock:"Termina O Detén La Sesión En Curso Antes De Cambiar De Pestaña.",
+ toast_reposition_camera:"Colócate Bien Dentro Del Encuadre Durante 1-2 Segundos Y Vuelve A Intentarlo.",
+ toast_camera_unavailable:"Cámara No Disponible: Cambiando A Modo Manual. Usa Los Botones +/- Para Contar Tus Flexiones.",
+ toast_plan_updated:"Plan Actualizado.", toast_plan_session_done:"Sesión Del Plan Completada.",
+ toast_session_updated:"Sesión Actualizada.", toast_session_deleted:"Sesión Eliminada.",
+ toast_max_reps_test:"Haz El Máximo De Flexiones Posible En Una Serie. El Resultado Actualizará Tu Plan Automáticamente.",
+ toast_level_updated:"Nivel Actualizado: {prev} → {max} Flexiones Máx. Generando Tu Nuevo Plan...",
+ plan_set_info_default:"Serie 1 / 1", training_series_done_label:"Serie", plan_pushups_done_in_set:"Flexiones Hechas En Esta Serie",
+ toast_plan_session_started:"Sesión Del Plan Iniciada: {target} Flexiones Para La Serie 1.",
+ home_week_label:"Semana {n} De {total} (Ciclo {cycle})",
+ calendar_session_done:"Sesión Completada", calendar_session_planned:"Sesión Planificada", calendar_no_session_that_day:"Ninguna Sesión Ese Día",
+ plan_ai_active:"Plan IA Activo", plan_pace_up:"Ritmo Más Rápido · Más Volumen Hoy", plan_pace_down:"Ritmo Más Ligero · Retomando Con Calma", plan_pace_stable:"Ritmo Estable · Volumen Habitual",
+ plan_no_session_today:"No Hay Ninguna Sesión Planificada Hoy. Disfruta Del Descanso, O Haz Una Sesión Libre Si Te Apetece.",
+ plan_session_done_label:"Sesión Completada", plan_rest_time:"Tiempo De Descanso", plan_recent_history:"Historial Reciente",
  level_beginner:"Principiante", level_novice:"Novato", level_intermediate:"Intermedio", level_advanced:"Avanzado", level_confirmed:"Competente", level_elite:"Élite",
  day_full_sun:"Domingo", day_full_mon:"Lunes", day_full_tue:"Martes", day_full_wed:"Miércoles", day_full_thu:"Jueves", day_full_fri:"Viernes", day_full_sat:"Sábado",
  month_short_0:"Ene", month_short_1:"Feb", month_short_2:"Mar", month_short_3:"Abr", month_short_4:"May", month_short_5:"Jun",
  month_short_6:"Jul", month_short_7:"Ago", month_short_8:"Sep", month_short_9:"Oct", month_short_10:"Nov", month_short_11:"Dic",
- plan_no_session_today_short:"No hay ninguna sesión planificada hoy.", home_no_plan_yet:"Todavía no tienes un plan activo. crea tu plan en la pestaña plan.",
- home_create_plan_to_track:"Crea tu plan para seguir tu progreso.", plan_adjusted_default:"Ajustado según tus sesiones",
- badge_pace_light:"Ritmo más ligero", badge_pace_fast:"Ritmo más rápido", badge_pace_stable:"Ritmo estable", badge_easing_in:"Retomando con calma",
+ plan_no_session_today_short:"No Hay Ninguna Sesión Planificada Hoy.", home_no_plan_yet:"Todavía No Tienes Un Plan Activo. Crea Tu Plan En La Pestaña Plan.",
+ home_create_plan_to_track:"Crea Tu Plan Para Seguir Tu Progreso.", plan_adjusted_default:"Ajustado Según Tus Sesiones",
+ badge_pace_light:"Ritmo Más Ligero", badge_pace_fast:"Ritmo Más Rápido", badge_pace_stable:"Ritmo Estable", badge_easing_in:"Retomando Con Calma",
  month_full_0:"Enero", month_full_1:"Febrero", month_full_2:"Marzo", month_full_3:"Abril", month_full_4:"Mayo", month_full_5:"Junio",
  month_full_6:"Julio", month_full_7:"Agosto", month_full_8:"Septiembre", month_full_9:"Octubre", month_full_10:"Noviembre", month_full_11:"Diciembre",
- calendar_details_coming:"Detalles próximamente",
- toast_camera_activating:"Activando la cámara...", camera_calibrated:"", camera_no_pose:"No se detecta ninguna postura",
- camera_press_start:"Pulsa empezar", camera_pose_detected:"Postura detectada", camera_loading_model:"Cargando el modelo…",
- camera_active:"", camera_access_denied:"Acceso denegado", camera_manual_mode:"Modo manual (sin cámara)",
- training_rest_over:"Descanso terminado", toast_no_pushup_recorded:"No se registró ninguna flexión. pulsa empezar para reanudar.",
- toast_plan_generating:"Generando tu plan... (el servidor puede tardar hasta 1 minuto en arrancar)",
- toast_server_unavailable:"Servidor no disponible, plan generado localmente.",
- plan_note_skipped:"Volumen reducido tras un día saltado", plan_note_hard:"Volumen reducido tras una sesión difícil",
- plan_note_ahead:"Ajustado tras una sesión realizada antes de tiempo", plan_note_extra:"Ajustado tras flexiones extra realizadas",
- plan_note_progressive:"Ajuste progresivo", toast_camera_denied:"No se pudo activar la cámara. permite el acceso y vuelve a intentarlo.",
- toast_plan_created:"¡Plan creado con éxito!", toast_create_plan_first:"Primero crea tu plan en la pestaña plan.",
- toast_days_updated:"Días de entrenamiento actualizados.",
- confirm_full_reset:"Restablecimiento completo: todos tus datos (plan, historial, sesiones, preferencias) se eliminarán permanentemente y la app se reiniciará desde cero. ¿continuar?",
- toast_calendar_reset:"Calendario reiniciado.", toast_data_exported:"Datos exportados.",
- toast_data_imported:"Datos importados con éxito.", toast_invalid_file:"Archivo no válido, importación cancelada.",
- toast_plan_finished:"Plan completado: ¡{count} flexiones registradas!", toast_session_stopped:"Sesión detenida: {count} flexiones registradas.",
- phase_done:"Terminado", training_sets_completed:"Serie(s) completada(s)", training_validate_finish:"Confirmar y terminar entrenamiento", training_series_label:"SERIE"
+ calendar_details_coming:"Detalles Próximamente",
+ toast_camera_activating:"Activando La Cámara...", camera_calibrated:"", camera_no_pose:"No Se Detecta Ninguna Postura",
+ camera_press_start:"Pulsa Empezar", camera_pose_detected:"Postura Detectada", camera_loading_model:"Cargando El Modelo…",
+ camera_active:"", camera_access_denied:"Acceso Denegado", camera_manual_mode:"Modo Manual (Sin Cámara)",
+ training_rest_over:"Descanso Terminado", toast_no_pushup_recorded:"No Se Registró Ninguna Flexión. Pulsa Empezar Para Reanudar.",
+ toast_plan_generating:"Generando Tu Plan... (El Servidor Puede Tardar Hasta 1 Minuto En Arrancar)",
+ toast_server_unavailable:"Servidor No Disponible, Plan Generado Localmente.",
+ plan_note_skipped:"Volumen Reducido Tras Un Día Saltado", plan_note_hard:"Volumen Reducido Tras Una Sesión Difícil",
+ plan_note_ahead:"Ajustado Tras Una Sesión Realizada Antes De Tiempo", plan_note_extra:"Ajustado Tras Flexiones Extra Realizadas",
+ plan_note_progressive:"Ajuste Progresivo", toast_camera_denied:"No Se Pudo Activar La Cámara. Permite El Acceso Y Vuelve A Intentarlo.",
+ toast_plan_created:"¡Plan Creado Con Éxito!", toast_create_plan_first:"Primero Crea Tu Plan En La Pestaña Plan.",
+ toast_days_updated:"Días De Entrenamiento Actualizados.",
+ confirm_full_reset:"Restablecimiento Completo: Todos Tus Datos (Plan, Historial, Sesiones, Preferencias) Se Eliminarán Permanentemente Y La App Se Reiniciará Desde Cero. ¿Continuar?",
+ toast_calendar_reset:"Calendario Reiniciado.", toast_data_exported:"Datos Exportados.",
+ toast_data_imported:"Datos Importados Con Éxito.", toast_invalid_file:"Archivo No Válido, Importación Cancelada.",
+ toast_plan_finished:"Plan Completado: ¡{count} Flexiones Registradas!", toast_session_stopped:"Sesión Detenida: {count} Flexiones Registradas.",
+ phase_done:"Terminado", training_sets_completed:"Serie(s) Completada(s)", training_validate_finish:"Confirmar Y Terminar Entrenamiento", training_series_label:"SERIE"
 }
 };
 let appLang = localStorage.getItem('app_language') || 'fr';
@@ -1478,8 +1333,6 @@ const DETECT_INTERVAL=300; // ms — bon compromis fluidité/fiabilité
 let setCount=0,totalCount=0,currentSet=1,completedSets=[],restTimer=null,restRemaining=0;
 let sessionStartTime=null,sessionTimerInterval=null;
 let baseline=null,state='up',downFrames=0,upFrames=0,lastRepAt=0,poseWasDetected=false,poseVisible=true,poseLostAt=0,pendingReps=0,trackingMode=null;
-let missedFrames=0,firstMissedAt=0;
-const REQUIRED_MISSED_FRAMES=2; // tolère une frame de détection ratée avant de considérer la pose comme perdue
 let recentWidths=[],approachConfirmed=true;
 let lastDebugInfo={};
 const storageOk=typeof localStorage!=='undefined';const workouts=storageOk?JSON.parse(localStorage.getItem('pompes-workouts')||'[]'):[];
@@ -1954,12 +1807,8 @@ function renderPlanTab(){
     if(setsLabelEl) setsLabelEl.textContent = isTrainingDay ? `${setCount} ${t(setCount>1?'training_series_unit':'training_series_done_label')}` : t('calendar_rest_day');
     if(durationEl) durationEl.textContent = setCount ? `${Math.max(2,Math.round(setCount*1.4))} min` : '–';
     if(levelEl){
-      if(isTrainingDay){
-        const mx=planProfile.maxReps||0;
-        levelEl.textContent = mx<12?t('level_beginner'):(mx<25?t('level_novice'):(mx<45?t('level_intermediate'):(mx<70?t('level_advanced'):(mx<110?t('level_confirmed'):t('level_elite')))));
-      } else {
-        levelEl.textContent='–';
-      }
+      const mx=planProfile.maxReps||0;
+      levelEl.textContent = mx<12?t('level_beginner'):(mx<25?t('level_novice'):(mx<45?t('level_intermediate'):(mx<70?t('level_advanced'):(mx<110?t('level_confirmed'):t('level_elite')))));
     }
     if(restEl){
       const aiDay=getAIPlanForDate(toLocalDateStr(new Date()));
@@ -1967,17 +1816,12 @@ function renderPlanTab(){
     }
     if(ringProgress && ringNumber){
       const circumference=276.4;
-      if(!isTrainingDay){
-        ringProgress.setAttribute('stroke-dashoffset', String(circumference));
-        ringNumber.textContent='–%';
-      } else {
-        const snap2=window.lastTodayPlanSnapshot;
-        const target = snap2 ? snap2.target : 0;
-        const done = (snap2 && snap2.completed) ? snap2.total : 0;
-        const pct = target>0 ? Math.min(100, Math.round((done/target)*100)) : 0;
-        ringProgress.setAttribute('stroke-dashoffset', String(circumference-(circumference*pct/100)));
-        ringNumber.textContent=`${pct}%`;
-      }
+      const snap2=window.lastTodayPlanSnapshot;
+      const target = snap2 ? snap2.target : 0;
+      const done = (snap2 && snap2.completed) ? snap2.total : 0;
+      const pct = target>0 ? Math.min(100, Math.round((done/target)*100)) : 0;
+      ringProgress.setAttribute('stroke-dashoffset', String(circumference-(circumference*pct/100)));
+      ringNumber.textContent=`${pct}%`;
     }
     if(startBtn){
       startBtn.style.display = isTrainingDay ? 'flex' : 'none';
@@ -2596,7 +2440,7 @@ function renderHomeTab(){
     const snap=window.lastTodayPlanSnapshot;
     if(isRestDay || !snap || !snap.sets || !snap.sets.length){
       if(summaryEl) summaryEl.innerHTML=titleEl?titleEl.innerHTML:t('plan_no_session_today_short');
-      if(bigNumEl) bigNumEl.innerHTML = isRestDay ? `<span style="font-size:1.5rem;">${t('calendar_rest_day')}</span>` : `0<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> ${t('training_pushups')}</span>`;
+      if(bigNumEl) bigNumEl.innerHTML=`0<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> ${t('training_pushups')}</span>`;
       if(setsLabelEl) setsLabelEl.textContent='';
     } else {
       setCount=snap.sets.length;
@@ -2609,12 +2453,8 @@ function renderHomeTab(){
     }
     if(durationEl) durationEl.textContent = setCount ? `${Math.max(2,Math.round(setCount*1.4))} min` : '–';
     if(levelEl){
-      if(isRestDay){
-        levelEl.textContent='–';
-      } else {
-        const mx=planProfile.maxReps||0;
-        levelEl.textContent = mx<12?t('level_beginner'):(mx<25?t('level_novice'):(mx<45?t('level_intermediate'):(mx<70?t('level_advanced'):(mx<110?t('level_confirmed'):t('level_elite')))));
-      }
+      const mx=planProfile.maxReps||0;
+      levelEl.textContent = mx<12?t('level_beginner'):(mx<25?t('level_novice'):(mx<45?t('level_intermediate'):(mx<70?t('level_advanced'):(mx<110?t('level_confirmed'):t('level_elite')))));
     }
     if(startBtn){
       startBtn.style.display = isRestDay ? 'none' : 'flex';
@@ -2630,14 +2470,9 @@ function renderHomeTab(){
   }
   if(ringProgress && ringNumber){
     const circumference=276.4;
-    if(isRestDay){
-      ringProgress.setAttribute('stroke-dashoffset', String(circumference));
-      ringNumber.textContent='–%';
-    } else {
-      const pct = todayTarget>0 ? Math.min(100, Math.round((todayDone/todayTarget)*100)) : 0;
-      ringProgress.setAttribute('stroke-dashoffset', String(circumference-(circumference*pct/100)));
-      ringNumber.textContent=`${pct}%`;
-    }
+    const pct = todayTarget>0 ? Math.min(100, Math.round((todayDone/todayTarget)*100)) : 0;
+    ringProgress.setAttribute('stroke-dashoffset', String(circumference-(circumference*pct/100)));
+    ringNumber.textContent=`${pct}%`;
   }
   const weekLabelEl=document.getElementById('homeProgressWeekLabel');
   const percentEl=document.getElementById('homeProgressPercent');
@@ -3318,22 +3153,16 @@ function processRep(metrics){
   // haut = pose visible, bas = visage/corps souvent hors champ, haut = retour.
   if(!metrics){
     if(poseVisible){
-      if(missedFrames===0) firstMissedAt=now;
-      missedFrames++;
-      if(missedFrames>=REQUIRED_MISSED_FRAMES){
-        poseVisible=false;
-        poseLostAt=firstMissedAt;
-        downFrames=1;
-        upFrames=0;
-        missedFrames=0;
-        phaseEl.textContent=t('phase_down');
-      }
+      poseVisible=false;
+      poseLostAt=now;
+      downFrames=1;
+      upFrames=0;
+      phaseEl.textContent='Bas';
     } else if(downFrames>0){
       downFrames++;
     }
     return;
   }
-  missedFrames=0;
 
   const returned=!poseVisible;
   poseVisible=true;
@@ -3359,13 +3188,13 @@ function processRep(metrics){
       state='up';
       downFrames=0;
       upFrames=0;
-      phaseEl.textContent=t('phase_up');
+      phaseEl.textContent='Haut';
 
       if(sessionActive){
         setCount++;
         totalCount++;
         refreshHeader();
-        if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent=t('phase_goal_reached');
+        if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent='Objectif atteint';
       }
       if(planSessionActive) finishPlanRep();
       beep();
@@ -3383,13 +3212,13 @@ function processRep(metrics){
   }
 
   // Pose stable en haut : aucune action. Cette version ne dépend pas des angles.
-  phaseEl.textContent=t('phase_up');
+  phaseEl.textContent='Haut';
   lastDebugInfo={mode:metrics.mode,state:'up',info:'pose détectée'};
 }
 function renderDebug(keypoints, detected){
   const inSession = sessionActive || planSessionActive;
   if(!keypoints || !detected){
-    if(!inSession && !calibrated) movementLabel.textContent=t('camera_position_yourself');
+    if(!inSession && !calibrated) movementLabel.textContent='Placez-vous dans le cadre';
     else if(!inSession && calibrated) movementLabel.textContent=t('camera_calibrated');
     else if(inSession) movementLabel.textContent=t('camera_no_pose');
     return;
@@ -3453,14 +3282,8 @@ async function startCamera(){
   if(stream) return;
   try{
     cameraStatus.textContent=t('camera_loading_model');
-    try{
-      await tf.setBackend('webgl');
-      await tf.ready();
-    }catch(webglErr){
-      console.error('WebGL backend failed, falling back to CPU backend', webglErr && webglErr.message ? webglErr.message : String(webglErr));
-      await tf.setBackend('cpu');
-      await tf.ready();
-    }
+    await tf.setBackend('webgl');
+    await tf.ready();
     if(!detector) detector=await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet,{modelType:poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING});
     stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
     video.setAttribute('playsinline',true); video.setAttribute('webkit-playsinline',true); video.srcObject=stream; await video.play();
@@ -3468,10 +3291,7 @@ async function startCamera(){
     toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent=t('training_ready');
     if(!rafId) rafId=requestAnimationFrame(detectLoop);
   }catch(e){
-    console.error('startCamera error', e && e.name ? e.name : '', e && e.message ? e.message : String(e));
-    const isPermissionError = e && (e.name==='NotAllowedError' || e.name==='PermissionDeniedError' || e.name==='SecurityError');
-    cameraStatus.textContent = isPermissionError ? t('camera_access_denied') : t('camera_detection_unavailable');
-    cameraDot.className='dot warn';
+    cameraStatus.textContent=t('camera_access_denied');cameraDot.className='dot warn';
     stopCameraResources();
     manualMode=true;
     toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent=t('training_ready');
@@ -3479,7 +3299,7 @@ async function startCamera(){
     showToast(t('toast_camera_unavailable'),4500);
   }
 }
-function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;missedFrames=0;firstMissedAt=0;phaseEl.textContent=t('training_ready');}
+function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;phaseEl.textContent=t('training_ready');}
 function formatRest(s){const m=String(Math.floor(s/60)).padStart(2,'0');const sec=String(s%60).padStart(2,'0');return `${m}:${sec}`;}
 
 
@@ -4032,6 +3852,5 @@ function warmUpBackend() {
 window.addEventListener('load', warmUpBackend);
 </script>
 
-
-
-</body></html>
+</body>
+</html>
