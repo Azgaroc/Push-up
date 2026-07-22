@@ -1196,27 +1196,39 @@ function triggerVibration(){
   if(!vibrationEnabled) return;
   try{ if(navigator.vibrate) navigator.vibrate(80); }catch(e){}
 }
-let iosSilentSwitchUnlocked=false;
+let iosSilentAudioCreated=false;
 function unlockIOSSilentSwitch(){
-  if(iosSilentSwitchUnlocked) return;
-  iosSilentSwitchUnlocked=true;
   try{
     if(navigator.audioSession) navigator.audioSession.type='playback';
   }catch(e){}
   try{
-    const silentAudioSrc='data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCA////////////////////////////////////////////////////////////////////8AAAA5TEFNRTMuMTAwAqUAAAAAAAAAABQgJAUHQQAB9AAAAnGuOfCngAAAAAAAAAAAAAAAAAAAAAA=';
-    const audioEl=document.createElement('audio');
-    audioEl.setAttribute('x-webkit-airplay','deny');
-    audioEl.preload='auto';
-    audioEl.loop=true;
-    audioEl.src=silentAudioSrc;
-    audioEl.volume=0.01;
-    audioEl.play().catch(()=>{});
-    window.__iosSilentAudioEl=audioEl;
+    if(!iosSilentAudioCreated){
+      iosSilentAudioCreated=true;
+      const silentAudioSrc='data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCA////////////////////////////////////////////////////////////////////8AAAA5TEFNRTMuMTAwAqUAAAAAAAAAABQgJAUHQQAB9AAAAnGuOfCngAAAAAAAAAAAAAAAAAAAAAA=';
+      const audioEl=document.createElement('audio');
+      audioEl.setAttribute('x-webkit-airplay','deny');
+      audioEl.preload='auto';
+      audioEl.loop=true;
+      audioEl.src=silentAudioSrc;
+      audioEl.volume=0.01;
+      window.__iosSilentAudioEl=audioEl;
+    }
+    // Sur iOS, l'app en arrière-plan met souvent cet élément en pause : on le
+    // relance à chaque geste réel (contrairement à visibilitychange, un tap
+    // compte comme une interaction utilisateur valide pour l'autoplay policy).
+    const audioEl=window.__iosSilentAudioEl;
+    if(audioEl && audioEl.paused) audioEl.play().catch(()=>{});
+  }catch(e){}
+  // Un retour d'arrière-plan (visibilitychange) ne suffit pas à relancer un
+  // AudioContext suspendu par iOS ; un vrai tap, si, donc on retente ici.
+  try{
+    if(audioCtx && (audioCtx.state==='suspended' || audioCtx.state==='interrupted')){
+      audioCtx.resume().catch(()=>{});
+    }
   }catch(e){}
 }
 ['touchstart','mousedown','click'].forEach(evt=>{
-  document.addEventListener(evt, unlockIOSSilentSwitch, {once:true, passive:true});
+  document.addEventListener(evt, unlockIOSSilentSwitch, {passive:true});
 });
 function beep(freq=880,duration=150){
   triggerVibration();
@@ -2158,6 +2170,10 @@ function advancePlanSetAfterRest(){
   document.getElementById('planCurrentSetInfo').textContent = `${t('training_series_done_label')} ${planSessionIndex+1} / ${sets.length}`;
   updatePlanSessionUI();
 }
+document.getElementById('planCurrentRepValue').addEventListener('click',()=>{
+  if(!planSessionActive || planRestActive) return;
+  if(finishPlanRep()){ beep(); triggerVibration(); }
+});
 
 document.querySelectorAll('#planDaysChips .chip').forEach(ch=>{
   ch.addEventListener('click',()=>ch.classList.toggle('active'));
@@ -3165,6 +3181,14 @@ function updatePlanProgressRing(){
   ring.style.strokeDashoffset=String(circumference*(1-pct));
 }
 function setChipsActive(v){document.querySelectorAll('.chip[data-rest]').forEach(ch=>ch.classList.toggle('active',Number(ch.dataset.rest)===Number(v)));const rd=document.getElementById('restSecondsDisplay');if(rd)rd.textContent=v;const ml=document.getElementById('movementLabel');if(ml)ml.textContent=`${t('training_rest_ongoing')}: ${v} s`;} refreshHeader(); setChipsActive(restSecondsInput.value);
+countEl.style.cursor='pointer'; countEl.style.userSelect='none';
+countEl.addEventListener('click',()=>{
+  if(!sessionActive || restActive) return;
+  setCount++; totalCount++;
+  refreshHeader();
+  if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent=t('phase_goal_reached');
+  beep(); triggerVibration();
+});
 document.querySelectorAll('.chip[data-rest]').forEach(ch=>ch.addEventListener('click',()=>{restSecondsInput.value=ch.dataset.rest;setChipsActive(ch.dataset.rest)})); restSecondsInput.addEventListener('input',()=>setChipsActive(restSecondsInput.value));
 function angle(a,b,c){const ab=[a.x-b.x,a.y-b.y],cb=[c.x-b.x,c.y-b.y];const dot=ab[0]*cb[0]+ab[1]*cb[1];const mag1=Math.hypot(...ab),mag2=Math.hypot(...cb);if(!mag1||!mag2)return null;return Math.acos(Math.max(-1,Math.min(1,dot/(mag1*mag2))))*180/Math.PI;}
 function kp(list,name){const p=list.find(k=>k.name===name);return (p&&p.score>=0.35)?{x:p.x/video.videoWidth,y:p.y/video.videoHeight,visibility:p.score}:null;}
