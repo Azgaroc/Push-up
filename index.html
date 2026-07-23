@@ -2371,7 +2371,7 @@ if(toggleVibrationBtn){
 // ===== Notifications push d'entraînement =====
 // IMPORTANT : remplace cette clé par ta propre clé publique VAPID (générée avec
 // `npx web-push generate-vapid-keys` côté serveur). Voir NOTIFICATIONS_SETUP.md.
-const PUSH_VAPID_PUBLIC_KEY = "REPLACE_WITH_YOUR_VAPID_PUBLIC_KEY";
+const PUSH_VAPID_PUBLIC_KEY = "BJ2RqgTy0IVRdrTtHpMFf7DjNW5qUd1jX9FRpBEohzR-oJ6IQEuB7I8eQ-RsZ0DJJJqin5lBiKBdkbLI-GS_HNg";
 const NOTIF_API_ORIGIN = (()=>{ try{ return new URL(AI_PLAN_API_URL).origin; }catch(e){ return 'https://pushup-plan-api.onrender.com'; } })();
 const NOTIF_SUBSCRIBE_URL = NOTIF_API_ORIGIN + '/api/notifications/subscribe';
 const NOTIF_UNSUBSCRIBE_URL = NOTIF_API_ORIGIN + '/api/notifications/unsubscribe';
