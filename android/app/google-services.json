@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "539552775124",
+    "project_id": "push-up-5071b",
+    "storage_bucket": "push-up-5071b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:539552775124:android:ae515b9595c3753d983441",
+        "android_client_info": {
+          "package_name": "com.pushup.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYAcZA-jP_RSD2_WMnRQsp2TFuXAV4ZZg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
