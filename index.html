@@ -1,4 +1,4 @@
-<!-- v215 -->
+<!-- v216 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -216,7 +216,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:calc(4.9rem + env(safe-area-inset-bottom));z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v215</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v216</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid">
       <button class="btn home-nav-btn" data-tab="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span data-i18n="nav_home">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span data-i18n="nav_plan">Plan</span></button>
@@ -2377,6 +2377,13 @@ const PUSH_VAPID_PUBLIC_KEY = "BJ2RqgTy0IVRdrTtHpMFf7DjNW5qUd1jX9FRpBEohzR-oJ6IQ
 const NOTIF_API_ORIGIN = (()=>{ try{ return new URL(AI_PLAN_API_URL).origin; }catch(e){ return 'https://pushup-plan-api.onrender.com'; } })();
 const NOTIF_SUBSCRIBE_URL = NOTIF_API_ORIGIN + '/api/notifications/subscribe';
 const NOTIF_UNSUBSCRIBE_URL = NOTIF_API_ORIGIN + '/api/notifications/unsubscribe';
+const NOTIF_FCM_SUBSCRIBE_URL = NOTIF_API_ORIGIN + '/api/notifications/subscribe-fcm';
+const NOTIF_FCM_UNSUBSCRIBE_URL = NOTIF_API_ORIGIN + '/api/notifications/unsubscribe-fcm';
+
+// true quand l'app tourne dans l'APK Capacitor (pas dans un navigateur classique).
+// Dans ce cas on utilise Firebase Cloud Messaging (natif) au lieu du Web Push,
+// car la WebView Android ne supporte pas l'API PushManager du navigateur.
+const IS_NATIVE_APP = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
 
 let pushNotifEnabled = localStorage.getItem('pref_push_notif')==='on';
 let pushNotifTime = localStorage.getItem('pref_push_notif_time') || '08:00';
@@ -2397,20 +2404,25 @@ async function getExistingPushSubscription(){
   return await reg.pushManager.getSubscription();
 }
 
-async function syncPushSubscriptionToServer(subscription){
-  if(!subscription) return;
+// Renvoie au serveur les préférences actuelles (heure, jours, langue), sur le
+// bon canal selon qu'on est dans le navigateur (Web Push) ou l'APK (FCM).
+async function syncPushPreferencesToServer(){
+  const payload = {
+    time: pushNotifTime,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    days: planProfile ? planProfile.days : [],
+    lang: appLang
+  };
   try{
-    await fetch(NOTIF_SUBSCRIBE_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        subscription,
-        time: pushNotifTime,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        days: planProfile ? planProfile.days : [],
-        lang: appLang
-      })
-    });
+    if(IS_NATIVE_APP){
+      const tok = localStorage.getItem('pref_push_fcm_token');
+      if(!tok) return;
+      await fetch(NOTIF_FCM_SUBSCRIBE_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload, token: tok})});
+    } else {
+      const sub = await getExistingPushSubscription();
+      if(!sub) return;
+      await fetch(NOTIF_SUBSCRIBE_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...payload, subscription: sub})});
+    }
   }catch(e){ /* échec silencieux : la synchro reprendra au prochain changement */ }
 }
 
@@ -2426,8 +2438,8 @@ function updateNotifBtnUI(){
   if(timeInput) timeInput.value=pushNotifTime;
 }
 
-async function enablePushNotifications(){
-  if(!planProfile){ showToast(t('toast_notif_need_plan')); return false; }
+// ---- Chemin navigateur (Web Push / VAPID) ----
+async function enablePushNotificationsWeb(){
   if(!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)){
     showToast(t('toast_notif_unsupported')); return false;
   }
@@ -2443,16 +2455,16 @@ async function enablePushNotifications(){
         applicationServerKey: urlBase64ToUint8Array(PUSH_VAPID_PUBLIC_KEY)
       });
     }
-    await syncPushSubscriptionToServer(sub);
+    await syncPushPreferencesToServer();
     return true;
   }catch(e){
-    console.error('[push] enablePushNotifications failed:', e);
+    console.error('[push] enablePushNotificationsWeb failed:', e);
     showToast(t('toast_notif_error') + ' — ' + (e && e.message ? e.message : String(e)), 5000);
     return false;
   }
 }
 
-async function disablePushNotifications(){
+async function disablePushNotificationsWeb(){
   try{
     const sub = await getExistingPushSubscription();
     if(sub){
@@ -2466,6 +2478,63 @@ async function disablePushNotifications(){
       await sub.unsubscribe();
     }
   }catch(e){}
+}
+
+// ---- Chemin APK natif (Firebase Cloud Messaging via Capacitor) ----
+async function enablePushNotificationsNative(){
+  try{
+    const PN = window.Capacitor.Plugins.PushNotifications;
+    const permStatus = await PN.requestPermissions();
+    if(permStatus.receive !== 'granted'){ showToast(t('toast_notif_denied')); return false; }
+    return await new Promise((resolve)=>{
+      let settled=false;
+      PN.addListener('registration', async (token)=>{
+        if(settled) return; settled=true;
+        localStorage.setItem('pref_push_fcm_token', token.value);
+        await syncPushPreferencesToServer();
+        resolve(true);
+      });
+      PN.addListener('registrationError', (err)=>{
+        if(settled) return; settled=true;
+        console.error('[push] FCM registration error:', err);
+        showToast(t('toast_notif_error') + ' — ' + (err && err.error ? err.error : JSON.stringify(err)), 5000);
+        resolve(false);
+      });
+      PN.register();
+    });
+  }catch(e){
+    console.error('[push] enablePushNotificationsNative failed:', e);
+    showToast(t('toast_notif_error') + ' — ' + (e && e.message ? e.message : String(e)), 5000);
+    return false;
+  }
+}
+
+async function disablePushNotificationsNative(){
+  try{
+    const tok = localStorage.getItem('pref_push_fcm_token');
+    if(tok){
+      try{
+        await fetch(NOTIF_FCM_UNSUBSCRIBE_URL,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({token: tok})
+        });
+      }catch(e){}
+    }
+    const PN = window.Capacitor.Plugins.PushNotifications;
+    if(PN.removeAllListeners) await PN.removeAllListeners();
+    if(PN.unregister) await PN.unregister();
+    localStorage.removeItem('pref_push_fcm_token');
+  }catch(e){}
+}
+
+// ---- Point d'entrée commun (choisit le bon canal selon la plateforme) ----
+async function enablePushNotifications(){
+  if(!planProfile){ showToast(t('toast_notif_need_plan')); return false; }
+  return IS_NATIVE_APP ? await enablePushNotificationsNative() : await enablePushNotificationsWeb();
+}
+async function disablePushNotifications(){
+  return IS_NATIVE_APP ? await disablePushNotificationsNative() : await disablePushNotificationsWeb();
 }
 
 const toggleNotifBtn=document.getElementById('toggleNotifBtn');
@@ -2493,16 +2562,13 @@ if(pushNotifTimeInput){
   pushNotifTimeInput.addEventListener('change', async ()=>{
     pushNotifTime = pushNotifTimeInput.value || '08:00';
     localStorage.setItem('pref_push_notif_time', pushNotifTime);
-    if(pushNotifEnabled){
-      const sub = await getExistingPushSubscription();
-      if(sub) await syncPushSubscriptionToServer(sub);
-    }
+    if(pushNotifEnabled) await syncPushPreferencesToServer();
   });
 }
 // Repère si l'utilisateur a révoqué la permission depuis les réglages du système
 // sans passer par notre interrupteur, pour garder le toggle synchronisé.
 (async function checkNotifPermissionDrift(){
-  if(pushNotifEnabled && 'Notification' in window && Notification.permission!=='granted'){
+  if(pushNotifEnabled && !IS_NATIVE_APP && 'Notification' in window && Notification.permission!=='granted'){
     pushNotifEnabled=false;
     localStorage.setItem('pref_push_notif','off');
     updateNotifBtnUI();
