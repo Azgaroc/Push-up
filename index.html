@@ -221,7 +221,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:calc(4.9rem + env(safe-area-inset-bottom));z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v222</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v223</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid">
       <button class="btn home-nav-btn" data-tab="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span data-i18n="nav_home">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span data-i18n="nav_plan">Plan</span></button>
@@ -1413,6 +1413,7 @@ const countEl=$('count'),totalCountEl=$('totalCount'),setInfoEl=$('setInfo'),pha
 const toggleSessionBtn=$('toggleSession'),nextSetBtn=$('nextSet'),finishWorkoutBtn=$('finishWorkout'),resetBtn=$('resetCount');
 const targetRepsInput=$('targetReps'),restSecondsInput=$('restSeconds'),restPanel=$('restPanel'),restDisplay=$('restDisplay'),restText=$('restText'),skipRestBtn=$('skipRest'),resumeAfterRestBtn=$('resumeAfterRest'),historyList=$('historyList');
 let detector=null,lastKeypoints=null,cameraReady=false,manualMode=false,sessionActive=false,restActive=false,calibrated=false,processing=false,rafId=null,stream=null,lastDetectAt=0;
+let awaitingFirstPosition=true; // true = la prochaine pose vue = "je me mets en place", ne doit jamais compter comme une pompe
 const DETECT_INTERVAL=300; // ms — bon compromis fluidité/fiabilité
 let setCount=0,totalCount=0,currentSet=1,completedSets=[],restTimer=null,restRemaining=0;
 let sessionStartTime=null,sessionTimerInterval=null;
@@ -3591,8 +3592,11 @@ function processRep(metrics){
   poseVisible=true;
   poseWasDetected=true;
 
-  // Première pose de séance : calibration uniquement.
-  if(!calibrated){
+  // Première pose après une reprise (début de séance ou fin de repos) : on
+  // établit juste la position, on ne compte jamais cette pose comme une pompe,
+  // même si la caméra était déjà "calibrée" avant (ce n'est pas la même chose).
+  if(awaitingFirstPosition || !calibrated){
+    awaitingFirstPosition=false;
     calibrated=true;
     state='up';
     downFrames=0;
@@ -3727,7 +3731,7 @@ async function startCamera(){
     showToast(t('toast_camera_unavailable'),4500);
   }
 }
-function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;phaseEl.textContent=t('training_ready');}
+function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;awaitingFirstPosition=true;phaseEl.textContent=t('training_ready');}
 function formatRest(s){const m=String(Math.floor(s/60)).padStart(2,'0');const sec=String(s%60).padStart(2,'0');return `${m}:${sec}`;}
 
 
@@ -4044,6 +4048,7 @@ function stopPlanRest(){
   planRestTimer=null;
   planRestTargetTime=null;
   planRestActive=false;
+  resetTracking();
   const panel=document.getElementById('planRestPanel');
   if(panel) panel.classList.add('hidden');
 }
