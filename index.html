@@ -1,4 +1,4 @@
-<!-- v223 -->
+<!-- v224 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -221,7 +221,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:calc(4.9rem + env(safe-area-inset-bottom));z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v223</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v224</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid">
       <button class="btn home-nav-btn" data-tab="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span data-i18n="nav_home">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span data-i18n="nav_plan">Plan</span></button>
@@ -637,6 +637,14 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
           </div>
           <div id="toggleVibrationBtn" class="switch" role="switch" aria-label="Activer/désactiver le vibreur" data-i18n-aria="profile_vibrations"><div class="switch-knob"></div></div>
         </div>
+        <div class="pref-row">
+          <div class="pref-icon"><span id="toggleVoiceIcon" style="width:18px;height:18px;display:inline-flex;"></span></div>
+          <div class="pref-text">
+            <div class="pref-title" data-i18n="profile_voice_announce">Annonces vocales</div>
+            <div class="pref-sub" data-i18n="profile_voice_desc">Annonce les séries et le repos à voix haute</div>
+          </div>
+          <div id="toggleVoiceBtn" class="switch" role="switch" aria-label="Activer/désactiver les annonces vocales" data-i18n-aria="profile_voice_announce"><div class="switch-knob"></div></div>
+        </div>
       </div>
     </section>
 
@@ -933,6 +941,8 @@ fr: {
  toast_notif_unsupported:"Notifications non prises en charge sur cet appareil", toast_notif_error:"Erreur lors de l'activation des notifications", toast_notif_need_plan:"Crée d'abord ton plan d'entraînement",
  profile_save_changes:"Enregistrer les modifications", profile_preferences:"Préférences", profile_session_sounds:"Sons de séance",
  profile_beep_desc:"Bips de début et fin", profile_vibrations:"Vibrations", profile_haptic_desc:"Retour haptique pendant la séance",
+ profile_voice_announce:"Annonces vocales", profile_voice_desc:"Annonce les séries et le repos à voix haute",
+ voice_set_start:"Série {n}, c'est parti !", voice_rest_start:"Repos, {n} secondes", voice_rest_over_speech:"Repos terminé", voice_workout_done:"Bravo, séance terminée !",
  profile_plan_section:"Plan", profile_reset_plan:"Réinitialiser le plan", profile_reset_plan_sub:"Supprime le programme actuel, conserve votre historique",
  profile_full_reset:"Réinitialisation complète", profile_delete_all:"Supprimer toutes les données", profile_delete_all_sub:"Efface définitivement vos séances, statistiques et préférences",
  profile_language:"Choix de la langue", profile_language_note:"",
@@ -1045,6 +1055,8 @@ en: {
  toast_notif_unsupported:"Notifications aren't supported on this device", toast_notif_error:"Error while enabling notifications", toast_notif_need_plan:"Create your workout plan first",
  profile_save_changes:"Save changes", profile_preferences:"Preferences", profile_session_sounds:"Session sounds",
  profile_beep_desc:"Start and end beeps", profile_vibrations:"Vibration", profile_haptic_desc:"Haptic feedback during the session",
+ profile_voice_announce:"Voice announcements", profile_voice_desc:"Announce sets and rest out loud",
+ voice_set_start:"Set {n}, let's go!", voice_rest_start:"Rest, {n} seconds", voice_rest_over_speech:"Rest over", voice_workout_done:"Great job, workout complete!",
  profile_plan_section:"Plan", profile_reset_plan:"Reset plan", profile_reset_plan_sub:"Deletes the current program, keeps your history",
  profile_full_reset:"Full reset", profile_delete_all:"Delete all data", profile_delete_all_sub:"Permanently erases your sessions, stats, and preferences",
  profile_language:"Language", profile_language_note:"",
@@ -1157,6 +1169,8 @@ es: {
  toast_notif_unsupported:"Notificaciones no compatibles con este dispositivo", toast_notif_error:"Error al activar las notificaciones", toast_notif_need_plan:"Crea primero tu plan de entrenamiento",
  profile_save_changes:"Guardar cambios", profile_preferences:"Preferencias", profile_session_sounds:"Sonidos de la sesión",
  profile_beep_desc:"Pitidos de inicio y fin", profile_vibrations:"Vibración", profile_haptic_desc:"Vibración durante la sesión",
+ profile_voice_announce:"Anuncios de voz", profile_voice_desc:"Anuncia las series y el descanso en voz alta",
+ voice_set_start:"¡Serie {n}, vamos!", voice_rest_start:"Descanso, {n} segundos", voice_rest_over_speech:"Descanso terminado", voice_workout_done:"¡Bien hecho, entrenamiento terminado!",
  profile_plan_section:"Plan", profile_reset_plan:"Reiniciar el plan", profile_reset_plan_sub:"Elimina el programa actual, conserva tu historial",
  profile_full_reset:"Restablecimiento completo", profile_delete_all:"Eliminar todos los datos", profile_delete_all_sub:"Borra permanentemente tus sesiones, estadísticas y preferencias",
  profile_language:"Idioma", profile_language_note:"",
@@ -1291,6 +1305,16 @@ function unlockIOSSilentSwitch(){
   try{
     if(audioCtx && (audioCtx.state==='suspended' || audioCtx.state==='interrupted')){
       audioCtx.resume().catch(()=>{});
+    }
+  }catch(e){}
+  // Amorce aussi la synthèse vocale sur un vrai geste, pour qu'iOS l'autorise
+  // plus tard sans nouveau tap (même logique que pour l'audio ci-dessus).
+  try{
+    if('speechSynthesis' in window && !window.__speechPrimed){
+      window.__speechPrimed=true;
+      const primer=new SpeechSynthesisUtterance(' ');
+      primer.volume=0;
+      window.speechSynthesis.speak(primer);
     }
   }catch(e){}
 }
@@ -2433,6 +2457,36 @@ if(toggleVibrationBtn){
     localStorage.setItem('pref_vibration', vibrationEnabled?'on':'off');
     updateVibrationBtnUI();
     if(vibrationEnabled) triggerVibration();
+  });
+}
+
+// ===== Annonces vocales (en complément des bips, pas à la place) =====
+let voiceAnnounceEnabled = localStorage.getItem('pref_voice_announce')==='on';
+function updateVoiceBtnUI(){
+  const btn=document.getElementById('toggleVoiceBtn');
+  const icon=document.getElementById('toggleVoiceIcon');
+  if(!btn) return;
+  if(icon) icon.innerHTML = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a3 3 0 00-3 3v6a3 3 0 006 0V6a3 3 0 00-3-3z"/><path d="M19 11a7 7 0 01-14 0M12 18v3"/></svg>`;
+  btn.classList.toggle('on', voiceAnnounceEnabled);
+}
+function speak(text){
+  if(!voiceAnnounceEnabled) return;
+  if(!('speechSynthesis' in window)) return;
+  try{
+    const utt=new SpeechSynthesisUtterance(text);
+    utt.lang = appLang==='en' ? 'en-US' : appLang==='es' ? 'es-ES' : 'fr-FR';
+    utt.rate = 1;
+    window.speechSynthesis.speak(utt); // la file d'attente native enchaîne les annonces successives
+  }catch(e){}
+}
+const toggleVoiceBtn=document.getElementById('toggleVoiceBtn');
+if(toggleVoiceBtn){
+  updateVoiceBtnUI();
+  toggleVoiceBtn.addEventListener('click',()=>{
+    voiceAnnounceEnabled=!voiceAnnounceEnabled;
+    localStorage.setItem('pref_voice_announce', voiceAnnounceEnabled?'on':'off');
+    updateVoiceBtnUI();
+    if(voiceAnnounceEnabled) speak(t('profile_voice_announce'));
   });
 }
 
@@ -3768,6 +3822,7 @@ function startRest(){
   restPanel.classList.remove('hidden');
   clearInterval(restTimer);
   restTimer=setInterval(restTick,250);
+  speak(t('voice_rest_start').replace('{n}',restRemaining));
 }
 function restTick(){
   if(!restTargetTime) return;
@@ -3787,6 +3842,7 @@ function restTick(){
     restTargetTime=null;
     restText.textContent=t('training_rest_over');
     notifyLocalIfHidden('Push-Up', t('training_rest_over'));
+    speak(t('voice_rest_over_speech'));
     autoResumeAfterRest();
   }
 }
@@ -3806,6 +3862,7 @@ function autoResumeAfterRest(){
       sessionActive=true;
       toggleSessionBtn.textContent=t('phase_paused');
       phaseEl.textContent=t('phase_in_progress');
+      speak(t('voice_set_start').replace('{n}',currentSet));
     } else {
       phaseEl.textContent=t('training_ready');
     }
@@ -3854,6 +3911,7 @@ async function startPlanTraining(){
   updatePlanScreenState();
   updatePlanSessionUI();
   showToast(t('toast_plan_session_started').replace('{target}',planSessionRepTarget),3000); updatePlanScreenState();
+  speak(t('voice_set_start').replace('{n}',(planSessionIndex||0)+1));
 }
 
 async function finishPlanTraining(completed){
@@ -3880,6 +3938,7 @@ async function finishPlanTraining(completed){
     workout.difficulty=difficulty;
     try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
     regeneratePlanFromAI(difficulty==='hard' ? 'was_hard' : 'extra_reps').catch(()=>{});
+    speak(t('voice_workout_done'));
   }
   syncPlanUI();
   applyPlanModeUI();
@@ -4023,6 +4082,7 @@ function startPlanRest(seconds, nextLabel){
   if(text) text.textContent=nextLabel || t('plan_rest_next');
   clearInterval(planRestTimer);
   planRestTimer=setInterval(planRestTick,250);
+  speak(t('voice_rest_start').replace('{n}',seconds));
 }
 function planRestTick(){
   if(!planRestTargetTime) return;
@@ -4040,7 +4100,9 @@ function planRestTick(){
   }
   if(remainingMs<=0){
     notifyLocalIfHidden('Push-Up', t('training_rest_over'));
+    speak(t('voice_rest_over_speech'));
     stopPlanRest();
+    speak(t('voice_set_start').replace('{n}',planSessionIndex+1));
   }
 }
 function stopPlanRest(){
@@ -4128,7 +4190,7 @@ function runPlanCountdown(onComplete){
   },1000);
 }
 
-toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(toggleSessionBtn.dataset.countdownDone!=='1'){runFreeCountdown(()=>{toggleSessionBtn.dataset.countdownDone='1';toggleSessionBtn.click();});return;}delete toggleSessionBtn.dataset.countdownDone;if(cameraReady&&!autoCalibrate()){showToast(t('toast_reposition_camera'));return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent=t('phase_paused');phaseEl.textContent=t('phase_in_progress');nextSetBtn.classList.remove('hidden');finishWorkoutBtn.classList.remove('hidden');resetBtn.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});}else{sessionActive=false;toggleSessionBtn.textContent=t('phase_start_short');phaseEl.textContent=t('phase_paused');}});
+toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(toggleSessionBtn.dataset.countdownDone!=='1'){runFreeCountdown(()=>{toggleSessionBtn.dataset.countdownDone='1';toggleSessionBtn.click();});return;}delete toggleSessionBtn.dataset.countdownDone;if(cameraReady&&!autoCalibrate()){showToast(t('toast_reposition_camera'));return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent=t('phase_paused');phaseEl.textContent=t('phase_in_progress');nextSetBtn.classList.remove('hidden');finishWorkoutBtn.classList.remove('hidden');resetBtn.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});speak(t('voice_set_start').replace('{n}',currentSet));}else{sessionActive=false;toggleSessionBtn.textContent=t('phase_start_short');phaseEl.textContent=t('phase_paused');}});
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
@@ -4187,6 +4249,7 @@ function finalizeWorkout(finalSetReps){
   movementLabel.textContent=t('camera_press_start');
   phaseEl.textContent=t('phase_done');
   nextSetBtn.classList.add('hidden');finishWorkoutBtn.classList.add('hidden');resetBtn.classList.add('hidden');
+  speak(t('voice_workout_done'));
 
   if(window.pendingOnboardingMaxTest){
     window.pendingOnboardingMaxTest=false;
