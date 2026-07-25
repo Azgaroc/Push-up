@@ -1,4 +1,4 @@
-<!-- v220 -->
+<!-- v222 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -221,7 +221,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:calc(4.9rem + env(safe-area-inset-bottom));z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v220</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v222</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid">
       <button class="btn home-nav-btn" data-tab="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span data-i18n="nav_home">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span data-i18n="nav_plan">Plan</span></button>
@@ -698,8 +698,8 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       </section>
     </div>
 
-    <div id="profileFormWrap">
-    <section class="panel accordion-panel" style="margin-top:.6rem;">
+    <div id="profileFormWrap" style="margin-top:.6rem;">
+    <section class="panel accordion-panel">
       <button class="accordion-toggle" type="button" aria-expanded="false">
         <h2 data-i18n="profile_reset_title">Réinitialisation</h2>
         <svg class="accordion-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
@@ -823,9 +823,14 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       </div>
     </section>
 
-    <section class="panel hidden" style="margin-top:.6rem;">
-      <h2 data-i18n="stats_badges">Badges</h2>
-      <div id="badgesGrid" style="display:flex;gap:.6rem;margin-top:.6rem;overflow-x:auto;padding-bottom:.2rem;"></div>
+    <section class="panel" style="margin-top:.6rem;">
+      <h2 data-i18n="stats_trophies">Trophées</h2>
+      <div style="color:var(--muted);font-size:.78rem;margin-top:.6rem;" data-i18n="stats_trophies_streak">Série de jours</div>
+      <div id="streakBadgesGrid" style="display:flex;gap:.6rem;margin-top:.4rem;overflow-x:auto;padding-bottom:.2rem;"></div>
+      <div style="color:var(--muted);font-size:.78rem;margin-top:.8rem;" data-i18n="stats_trophies_total_reps">Pompes totales</div>
+      <div id="badgesGrid" style="display:flex;gap:.6rem;margin-top:.4rem;overflow-x:auto;padding-bottom:.2rem;"></div>
+      <div style="color:var(--muted);font-size:.78rem;margin-top:.8rem;" data-i18n="stats_trophies_sessions">Séances complétées</div>
+      <div id="sessionBadgesGrid" style="display:flex;gap:.6rem;margin-top:.4rem;overflow-x:auto;padding-bottom:.2rem;"></div>
     </section>
 
     <section class="panel" style="margin-top:.6rem;">
@@ -937,7 +942,7 @@ fr: {
  stats_current_streak:"Série en cours", stats_best_streak:"Meilleure série : ", stats_progression:"Progression",
  stats_weekly_total:"Total pompes par semaine", stats_not_enough_data:"Pas encore assez de données pour afficher une tendance.",
  stats_personal_records:"Records personnels", stats_best_set:"Meilleur set", stats_best_session:"Meilleure séance",
- stats_cumulative_total:"Total cumulé", stats_badges:"Badges", stats_evolution:"Évolution (30 derniers jours)",
+ stats_cumulative_total:"Total cumulé", stats_badges:"Badges", stats_evolution:"Évolution (30 derniers jours)", stats_trophies:"Trophées", stats_trophies_streak:"Série de jours", stats_trophies_total_reps:"Pompes totales", stats_trophies_sessions:"Séances complétées",
  stats_general_stats:"Statistiques générales", stats_session_count:"Nombre de séances", stats_avg_per_session:"Moyenne par séance",
  stats_best_day:"Meilleur jour",
  confirm_cancel:"Annuler", confirm_confirm:"Confirmer",
@@ -1049,7 +1054,7 @@ en: {
  stats_current_streak:"Current streak", stats_best_streak:"Best streak: ", stats_progression:"Progress",
  stats_weekly_total:"Total push-ups per week", stats_not_enough_data:"Not enough data yet to show a trend.",
  stats_personal_records:"Personal records", stats_best_set:"Best set", stats_best_session:"Best session",
- stats_cumulative_total:"Cumulative total", stats_badges:"Badges", stats_evolution:"Progress (last 30 days)",
+ stats_cumulative_total:"Cumulative total", stats_badges:"Badges", stats_evolution:"Progress (last 30 days)", stats_trophies:"Trophies", stats_trophies_streak:"Day streak", stats_trophies_total_reps:"Total push-ups", stats_trophies_sessions:"Completed sessions",
  stats_general_stats:"General stats", stats_session_count:"Number of sessions", stats_avg_per_session:"Average per session",
  stats_best_day:"Best day",
  confirm_cancel:"Cancel", confirm_confirm:"Confirm",
@@ -1161,7 +1166,7 @@ es: {
  stats_current_streak:"Racha actual", stats_best_streak:"Mejor racha: ", stats_progression:"Progreso",
  stats_weekly_total:"Total de flexiones por semana", stats_not_enough_data:"Aún no hay suficientes datos para mostrar una tendencia.",
  stats_personal_records:"Récords personales", stats_best_set:"Mejor serie", stats_best_session:"Mejor sesión",
- stats_cumulative_total:"Total acumulado", stats_badges:"Insignias", stats_evolution:"Progreso (últimos 30 días)",
+ stats_cumulative_total:"Total acumulado", stats_badges:"Insignias", stats_evolution:"Progreso (últimos 30 días)", stats_trophies:"Trofeos", stats_trophies_streak:"Racha de días", stats_trophies_total_reps:"Flexiones totales", stats_trophies_sessions:"Sesiones completadas",
  stats_general_stats:"Estadísticas generales", stats_session_count:"Número de sesiones", stats_avg_per_session:"Promedio por sesión",
  stats_best_day:"Mejor día",
  confirm_cancel:"Cancelar", confirm_confirm:"Confirmar",
@@ -2650,10 +2655,20 @@ document.querySelectorAll('.app-nav-grid .home-nav-btn').forEach(btn=>{
   });
 });
 
+function closeProfileAccordion(){
+  document.querySelectorAll('#tab-profile .accordion-panel.open').forEach(p=>{
+    p.classList.remove('open');
+    const body=p.querySelector('.accordion-body');
+    if(body) body.classList.add('hidden');
+    const toggle=p.querySelector('.accordion-toggle');
+    if(toggle) toggle.setAttribute('aria-expanded','false');
+  });
+}
 function goToTab(tabName){
   const targetBtn=document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
   const targetContent=document.getElementById('tab-'+tabName);
   if(!targetContent) return;
+  closeProfileAccordion();
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.add('hidden'));
   if(targetBtn) targetBtn.classList.add('active');
@@ -3199,6 +3214,7 @@ function computeStreak(){
 }
 
 const BADGE_LEVELS=[100,500,1000,2500,5000,10000];
+const SESSION_BADGE_LEVELS=[10,25,50,100,250,500];
 function computeStats(){
   const totalCumulative=workouts.reduce((a,w)=>a+(w.total||0),0);
   const recordSession=workouts.length?Math.max(...workouts.map(w=>w.total||0)):0;
@@ -3306,6 +3322,30 @@ function renderStats(){
     badge.innerHTML=`<div style="width:48px;height:48px;border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">${unlocked?'🏆':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">${level}</div>`;
     badgesGrid.appendChild(badge);
   });
+
+  const streakBadgesGrid=document.getElementById('streakBadgesGrid');
+  if(streakBadgesGrid){
+    streakBadgesGrid.innerHTML='';
+    STREAK_BADGE_LEVELS.forEach(level=>{
+      const unlocked=streak.best>=level.days;
+      const badge=document.createElement('div');
+      badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.35};`;
+      badge.innerHTML=`<div style="width:48px;height:48px;border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">${unlocked?level.icon:'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">${level.days}</div>`;
+      streakBadgesGrid.appendChild(badge);
+    });
+  }
+
+  const sessionBadgesGrid=document.getElementById('sessionBadgesGrid');
+  if(sessionBadgesGrid){
+    sessionBadgesGrid.innerHTML='';
+    SESSION_BADGE_LEVELS.forEach(level=>{
+      const unlocked=stats.sessionCount>=level;
+      const badge=document.createElement('div');
+      badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.35};`;
+      badge.innerHTML=`<div style="width:48px;height:48px;border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">${unlocked?'🥇':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">${level}</div>`;
+      sessionBadgesGrid.appendChild(badge);
+    });
+  }
 
   renderProgressChart(stats.byDay);
   }catch(e){
