@@ -1,4 +1,4 @@
-<!-- v225 -->
+<!-- v226 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -221,7 +221,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:calc(4.9rem + env(safe-area-inset-bottom));z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v225</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v226</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid">
       <button class="btn home-nav-btn" data-tab="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span data-i18n="nav_home">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span data-i18n="nav_plan">Plan</span></button>
@@ -986,6 +986,7 @@ fr: {
  calendar_session_done:"Séance terminée", calendar_session_planned:"Séance planifiée", calendar_no_session_that_day:"Aucune séance ce jour-là",
  plan_ai_active:"Plan IA actif", plan_pace_up:"Rythme accéléré · plus de volume aujourd'hui", plan_pace_down:"Rythme allégé · reprise en douceur", plan_pace_stable:"Rythme stable · volume habituel",
  plan_no_session_today:"Aucune séance planifiée aujourd'hui. profitez du repos, ou faites une séance libre si vous en avez envie.",
+ plan_coach_forced_rest:"Ton coach IA a décidé d'imposer un repos aujourd'hui, même si c'est un jour d'entraînement prévu — récupération nécessaire d'après tes dernières séances.", plan_coach_forced_rest_short:"Repos imposé par le coach",
  plan_session_done_label:"Séance effectuée", plan_rest_time:"Temps de repos", plan_recent_history:"Historique récent",
  level_beginner:"Débutant", level_novice:"Novice", level_intermediate:"Intermédiaire", level_advanced:"Avancé", level_confirmed:"Confirmé", level_elite:"Élite",
  day_full_sun:"Dimanche", day_full_mon:"Lundi", day_full_tue:"Mardi", day_full_wed:"Mercredi", day_full_thu:"Jeudi", day_full_fri:"Vendredi", day_full_sat:"Samedi",
@@ -1100,6 +1101,7 @@ en: {
  calendar_session_done:"Session complete", calendar_session_planned:"Session planned", calendar_no_session_that_day:"No session that day",
  plan_ai_active:"AI plan active", plan_pace_up:"Faster pace · more volume today", plan_pace_down:"Lighter pace · easing back in", plan_pace_stable:"Steady pace · usual volume",
  plan_no_session_today:"No session planned today. enjoy the rest, or do a free session if you feel like it.",
+ plan_coach_forced_rest:"Your AI coach decided to enforce a rest day today, even though it's a scheduled training day — recovery needed based on your recent sessions.", plan_coach_forced_rest_short:"Rest enforced by coach",
  plan_session_done_label:"Session done", plan_rest_time:"Rest time", plan_recent_history:"Recent history",
  level_beginner:"Beginner", level_novice:"Novice", level_intermediate:"Intermediate", level_advanced:"Advanced", level_confirmed:"Proficient", level_elite:"Elite",
  day_full_sun:"Sunday", day_full_mon:"Monday", day_full_tue:"Tuesday", day_full_wed:"Wednesday", day_full_thu:"Thursday", day_full_fri:"Friday", day_full_sat:"Saturday",
@@ -1214,6 +1216,7 @@ es: {
  calendar_session_done:"Sesión completada", calendar_session_planned:"Sesión planificada", calendar_no_session_that_day:"Ninguna sesión ese día",
  plan_ai_active:"Plan IA activo", plan_pace_up:"Ritmo más rápido · más volumen hoy", plan_pace_down:"Ritmo más ligero · retomando con calma", plan_pace_stable:"Ritmo estable · volumen habitual",
  plan_no_session_today:"No hay ninguna sesión planificada hoy. disfruta del descanso, o haz una sesión libre si te apetece.",
+ plan_coach_forced_rest:"Tu coach IA ha decidido imponer un descanso hoy, aunque sea un día de entrenamiento previsto — recuperación necesaria según tus últimas sesiones.", plan_coach_forced_rest_short:"Descanso impuesto por el coach",
  plan_session_done_label:"Sesión completada", plan_rest_time:"Tiempo de descanso", plan_recent_history:"Historial reciente",
  level_beginner:"Principiante", level_novice:"Novato", level_intermediate:"Intermedio", level_advanced:"Avanzado", level_confirmed:"Competente", level_elite:"Élite",
  day_full_sun:"Domingo", day_full_mon:"Lunes", day_full_tue:"Martes", day_full_wed:"Miércoles", day_full_thu:"Jueves", day_full_fri:"Viernes", day_full_sat:"Sábado",
@@ -1560,8 +1563,14 @@ function getAIPlanForDate(dateIso){
 function applyAIPlanForToday(baseSets, ratio, targetDateIso){
   const isoDate=targetDateIso || toLocalDateStr(new Date());
   const aiDay=getAIPlanForDate(isoDate);
-  if(aiDay && aiDay.sets.length) return {sets: aiDay.sets, restSeconds: aiDay.restSeconds || 60, note: aiDay.note || '', ai:true};
-  return {sets: baseSets, restSeconds: 60, note: '', ai:false};
+  if(aiDay && Array.isArray(aiDay.sets) && aiDay.sets.length===0){
+    // Le coach IA impose explicitement un repos ce jour-là, même si l'utilisateur
+    // a choisi de s'entraîner ce jour de la semaine — à ne pas confondre avec
+    // une absence de données IA (cas géré juste en dessous).
+    return {sets: [], restSeconds: 0, note: aiDay.note || '', ai:true, forcedRest:true};
+  }
+  if(aiDay && aiDay.sets && aiDay.sets.length) return {sets: aiDay.sets, restSeconds: aiDay.restSeconds || 60, note: aiDay.note || '', ai:true, forcedRest:false};
+  return {sets: baseSets, restSeconds: 60, note: '', ai:false, forcedRest:false};
 }
 
 function recordSkippedPlanDay(){
@@ -1807,7 +1816,15 @@ function renderPlanTab(){
   syncPlanUI();
 
   const todayDow=new Date().getDay();
-  const isTrainingDay=planProfile.days.includes(todayDow);
+  let isTrainingDay=planProfile.days.includes(todayDow);
+  let coachForcedRestToday=false;
+  if(isTrainingDay){
+    const aiDayCheck=getAIPlanForDate(toLocalDateStr(new Date()));
+    if(aiDayCheck && Array.isArray(aiDayCheck.sets) && aiDayCheck.sets.length===0){
+      isTrainingDay=false;
+      coachForcedRestToday=true;
+    }
+  }
   const weekNumber=getPlanWeekNumber();
   const adjustment=computeDailyPlanAdjustment();
   const ratio=adjustment.ratio;
@@ -1971,7 +1988,7 @@ function renderPlanTab(){
     if(ringWrapEl) ringWrapEl.classList.toggle('hidden', !isTrainingDay);
     if(restMessageEl){
       restMessageEl.classList.toggle('hidden', isTrainingDay);
-      if(!isTrainingDay) restMessageEl.textContent=t('plan_no_session_today');
+      if(!isTrainingDay) restMessageEl.textContent = coachForcedRestToday ? t('plan_coach_forced_rest') : t('plan_no_session_today');
     }
     if(bigNumEl) bigNumEl.innerHTML = isTrainingDay
       ? `${total}<span style="font-size:1.3rem;font-weight:700;color:var(--muted);"> ${t('training_pushups')}</span>`
@@ -2020,7 +2037,9 @@ function renderPlanTab(){
     const svgChevron='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>';
     nextDates.forEach((d,idx)=>{
       const isToday = idx===0;
-      const isTrainingDayRow = planProfile.days.includes(d.getDay());
+      const aiDayRow=getAIPlanForDate(toLocalDateStr(d));
+      const coachForcedRestRow = planProfile.days.includes(d.getDay()) && aiDayRow && Array.isArray(aiDayRow.sets) && aiDayRow.sets.length===0;
+      const isTrainingDayRow = planProfile.days.includes(d.getDay()) && !coachForcedRestRow;
       const label = isToday ? t('calendar_today') : `${dayNames[d.getDay()]} ${d.getDate()} ${monthShort(d.getMonth())}`;
       const row=document.createElement('div');
       row.style.cssText='display:flex;align-items:center;gap:.7rem;padding:.75rem .8rem;background:var(--surface2);border:1px solid var(--border);border-radius:1rem;';
@@ -2029,7 +2048,7 @@ function renderPlanTab(){
           <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;">${svgCal}</div>
           <div style="flex:1;">
             <div style="font-weight:700;font-size:.9rem;">${label}</div>
-            <div style="color:var(--muted);font-size:.78rem;">${t('calendar_rest_day')}</div>
+            <div style="color:var(--muted);font-size:.78rem;">${coachForcedRestRow ? t('plan_coach_forced_rest_short') : t('calendar_rest_day')}</div>
           </div>`;
         future.appendChild(row);
         return;
@@ -2130,6 +2149,7 @@ function preparePlanSession(){
   const ratio=Number.isFinite(adjustment.ratio) ? adjustment.ratio : 1;
   const baseSets=generateDailyTarget(Number(planProfile.maxReps)||10, weekNumber, ratio).filter(n=>Number.isFinite(n)&&n>0);
   const aiDay=applyAIPlanForToday(baseSets, ratio);
+  if(aiDay.forcedRest) return false; // le coach impose explicitement un repos aujourd'hui
   const safeSets=(aiDay.sets && aiDay.sets.length ? aiDay.sets : baseSets).filter(n=>Number.isFinite(n)&&n>0);
   if(!safeSets.length) return false;
   planSessionSets=[{week:weekNumber, sets:safeSets, total:safeSets.reduce((a,b)=>a+b,0)}];
@@ -3130,14 +3150,21 @@ function renderCalDaySummary(iso){
     detailEl.onclick=()=>openCalendarDetail(iso);
   } else if(planProfile && iso>=todayIso && planProfile.days.includes(d.getDay())){
     const aiDay=getAIPlanForDate(iso);
-    const sets=aiDay && aiDay.sets && aiDay.sets.length ? aiDay.sets : [];
-    const total=sets.reduce((a,v)=>a+v,0);
-    statusEl.textContent=t('calendar_session_planned');
-    statusEl.style.color='var(--primary)';
-    detailEl.textContent=sets.length?`${total} ${t('training_pushups')} · ${sets.length} ${t('training_series_unit')}`:t('calendar_details_coming');
-    if(iso===todayIso){
-      actionBtn.classList.remove('hidden');
-      actionBtn.onclick=()=>goToTab('plan');
+    const coachForcedRestDetail = aiDay && Array.isArray(aiDay.sets) && aiDay.sets.length===0;
+    if(coachForcedRestDetail){
+      statusEl.textContent=t('plan_coach_forced_rest_short');
+      statusEl.style.color='var(--muted)';
+      detailEl.textContent=t('plan_coach_forced_rest');
+    } else {
+      const sets=aiDay && aiDay.sets && aiDay.sets.length ? aiDay.sets : [];
+      const total=sets.reduce((a,v)=>a+v,0);
+      statusEl.textContent=t('calendar_session_planned');
+      statusEl.style.color='var(--primary)';
+      detailEl.textContent=sets.length?`${total} ${t('training_pushups')} · ${sets.length} ${t('training_series_unit')}`:t('calendar_details_coming');
+      if(iso===todayIso){
+        actionBtn.classList.remove('hidden');
+        actionBtn.onclick=()=>goToTab('plan');
+      }
     }
   } else {
     statusEl.textContent=t('calendar_rest_day');
