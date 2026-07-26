@@ -1,4 +1,4 @@
-<!-- v224 -->
+<!-- v225 -->
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -221,7 +221,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
 <div id="toast" style="position:fixed;left:1rem;right:1rem;bottom:calc(4.9rem + env(safe-area-inset-bottom));z-index:250;background:var(--text);color:var(--inv);padding:.9rem 1.1rem;border-radius:1rem;font-size:.9rem;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .25s ease;"></div>
 <div class="app" id="appRoot" style="display:none;">
   <header class="topbar" style="flex-direction:column;align-items:stretch;">
-    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v224</p></div></div>
+    <div class="brand"><div class="logo"><img src="logo.jpg" alt="Push-Up logo" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;"></div><div><h1>Push-Up</h1><p style="margin:0;font-size:.6rem;color:var(--muted);">v225</p></div></div>
     <div class="home-quick-grid app-nav-grid" id="globalNavGrid">
       <button class="btn home-nav-btn" data-tab="home"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/></svg><span data-i18n="nav_home">Accueil</span></button>
       <button class="btn home-nav-btn" data-tab="plan"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg><span data-i18n="nav_plan">Plan</span></button>
@@ -889,6 +889,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
         <h2 style="margin-top:0;" data-i18n="feedback_question">Comment s'est passée cette séance ?</h2>
         <p style="color:var(--muted);font-size:.9rem;margin-bottom:1.2rem;" data-i18n="feedback_sub">Ça aide à ajuster vos prochaines séances.</p>
         <button id="feedbackOkBtn" class="btn btn-primary" style="width:100%;margin-bottom:.6rem;" data-i18n="feedback_good">Bien passée</button>
+        <button id="feedbackEasyBtn" class="btn" style="width:100%;margin-bottom:.6rem;" data-i18n="feedback_easy">Trop facile</button>
         <button id="feedbackHardBtn" class="btn" style="width:100%;" data-i18n="feedback_hard">Difficile (pauses supplémentaires)</button>
       </div>
     </div>
@@ -957,7 +958,7 @@ fr: {
  stats_best_day:"Meilleur jour",
  confirm_cancel:"Annuler", confirm_confirm:"Confirmer",
  feedback_question:"Comment s'est passée cette séance ?", feedback_sub:"Ça aide à ajuster vos prochaines séances.",
- feedback_good:"Bien passée", feedback_hard:"Difficile (pauses supplémentaires)",
+ feedback_good:"Bien passée", feedback_easy:"Trop facile", feedback_hard:"Difficile (pauses supplémentaires)",
  day_mon:"Lun", day_tue:"Mar", day_wed:"Mer", day_thu:"Jeu", day_fri:"Ven", day_sat:"Sam", day_sun:"Dim",
  cal_wd_mon:"L", cal_wd_tue:"M", cal_wd_wed:"M", cal_wd_thu:"J", cal_wd_fri:"V", cal_wd_sat:"S", cal_wd_sun:"D",
  no_session_recorded:"Aucune séance enregistrée",
@@ -1071,7 +1072,7 @@ en: {
  stats_best_day:"Best day",
  confirm_cancel:"Cancel", confirm_confirm:"Confirm",
  feedback_question:"How did this session go?", feedback_sub:"This helps fine-tune your next sessions.",
- feedback_good:"Went well", feedback_hard:"Hard (needed extra rest)",
+ feedback_good:"Went well", feedback_easy:"Too easy", feedback_hard:"Hard (needed extra rest)",
  day_mon:"Mon", day_tue:"Tue", day_wed:"Wed", day_thu:"Thu", day_fri:"Fri", day_sat:"Sat", day_sun:"Sun",
  cal_wd_mon:"M", cal_wd_tue:"T", cal_wd_wed:"W", cal_wd_thu:"T", cal_wd_fri:"F", cal_wd_sat:"S", cal_wd_sun:"S",
  no_session_recorded:"No session recorded",
@@ -1185,7 +1186,7 @@ es: {
  stats_best_day:"Mejor día",
  confirm_cancel:"Cancelar", confirm_confirm:"Confirmar",
  feedback_question:"¿Cómo fue esta sesión?", feedback_sub:"Esto ayuda a ajustar tus próximas sesiones.",
- feedback_good:"Bien", feedback_hard:"Difícil (descansos adicionales)",
+ feedback_good:"Bien", feedback_easy:"Demasiado fácil", feedback_hard:"Difícil (descansos adicionales)",
  day_mon:"Lun", day_tue:"Mar", day_wed:"Mié", day_thu:"Jue", day_fri:"Vie", day_sat:"Sáb", day_sun:"Dom",
  cal_wd_mon:"L", cal_wd_tue:"M", cal_wd_wed:"X", cal_wd_thu:"J", cal_wd_fri:"V", cal_wd_sat:"S", cal_wd_sun:"D",
  no_session_recorded:"Ninguna sesión registrada",
@@ -1374,17 +1375,21 @@ function askSessionFeedback(){
   return new Promise(resolve=>{
     const modal=document.getElementById('sessionFeedbackModal');
     const okBtn=document.getElementById('feedbackOkBtn');
+    const easyBtn=document.getElementById('feedbackEasyBtn');
     const hardBtn=document.getElementById('feedbackHardBtn');
     modal.classList.remove('hidden');
     function cleanup(result){
       modal.classList.add('hidden');
       okBtn.removeEventListener('click',onOk);
+      easyBtn.removeEventListener('click',onEasy);
       hardBtn.removeEventListener('click',onHard);
       resolve(result);
     }
     function onOk(){cleanup('ok');}
+    function onEasy(){cleanup('easy');}
     function onHard(){cleanup('hard');}
     okBtn.addEventListener('click',onOk);
+    easyBtn.addEventListener('click',onEasy);
     hardBtn.addEventListener('click',onHard);
   });
 }
@@ -3937,7 +3942,7 @@ async function finishPlanTraining(completed){
     const difficulty=await askSessionFeedback();
     workout.difficulty=difficulty;
     try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
-    regeneratePlanFromAI(difficulty==='hard' ? 'was_hard' : 'extra_reps').catch(()=>{});
+    regeneratePlanFromAI(difficulty==='hard' ? 'was_hard' : difficulty==='easy' ? 'was_easy' : 'extra_reps').catch(()=>{});
     speak(t('voice_workout_done'));
   }
   syncPlanUI();
