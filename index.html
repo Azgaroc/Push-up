@@ -2368,7 +2368,7 @@ document.getElementById('createPlanBtn').addEventListener('click',()=>{
   savePlan(planProfile);
   renderPlanTab();
   showToast(t('toast_plan_created'));
-  if(pushNotifEnabled){ getExistingPushSubscription().then(sub=>{ if(sub) syncPushSubscriptionToServer(sub); }); }
+  if(pushNotifEnabled){ getExistingPushSubscription().then(sub=>{ if(sub) syncPushPreferencesToServer(); }); }
 });
 
 
@@ -2383,7 +2383,7 @@ document.getElementById('savePlanSettingsBtn').addEventListener('click',()=>{
   savePlan(planProfile);
   renderPlanTab();
   showToast(t('toast_days_updated'));
-  if(pushNotifEnabled){ getExistingPushSubscription().then(sub=>{ if(sub) syncPushSubscriptionToServer(sub); }); }
+  if(pushNotifEnabled){ getExistingPushSubscription().then(sub=>{ if(sub) syncPushPreferencesToServer(); }); }
 });
 const goToPlanFromProfileBtn=document.getElementById('goToPlanFromProfileBtn');
 if(goToPlanFromProfileBtn) goToPlanFromProfileBtn.addEventListener('click',()=>{
@@ -2523,7 +2523,12 @@ if(toggleVibrationBtn){
 }
 
 // ===== Annonces vocales (en complément des bips, pas à la place) =====
-let voiceAnnounceEnabled = localStorage.getItem('pref_voice_announce')==='on';
+// BUGFIX : contrairement au son et aux vibrations (activés par défaut, opt-out),
+// les annonces vocales étaient désactivées par défaut (opt-in) sans raison
+// fonctionnelle apparente — probablement un oubli plutôt qu'un choix voulu, vu
+// que les 3 réglages sont présentés de façon identique dans l'écran Profil.
+// Aligné désormais sur le même comportement par défaut que le son/vibreur.
+let voiceAnnounceEnabled = localStorage.getItem('pref_voice_announce')!=='off';
 function updateVoiceBtnUI(){
   const btn=document.getElementById('toggleVoiceBtn');
   const icon=document.getElementById('toggleVoiceIcon');
@@ -2754,6 +2759,17 @@ if(pushNotifTimeInput){
     pushNotifEnabled=false;
     localStorage.setItem('pref_push_notif','off');
     updateNotifBtnUI();
+    return;
+  }
+  // Renvoie systématiquement nos préférences (jours/heure/abonnement) au serveur
+  // à chaque ouverture de l'app quand les notifications sont actives. Nécessaire
+  // car le stockage des abonnements côté serveur (fichier JSON) n'est pas garanti
+  // persistant entre deux redéploiements/redémarrages du service (cf. commentaire
+  // dans notifications-server-addon.js) : sans ce resync, un redémarrage serveur
+  // supprimait silencieusement l'abonnement et plus aucune notification n'arrivait,
+  // sans que rien ne le signale à l'utilisateur ni ne le corrige automatiquement.
+  if(pushNotifEnabled && planProfile){
+    try{ await syncPushPreferencesToServer(); }catch(e){}
   }
 })();
 
