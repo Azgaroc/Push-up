@@ -984,6 +984,7 @@ fr: {
  toast_plan_session_started:"Séance plan lancée : {target} pompes pour le set 1.",
  home_week_label:"Semaine {n} sur {total} (cycle {cycle})",
  calendar_session_done:"Séance terminée", calendar_session_planned:"Séance planifiée", calendar_no_session_that_day:"Aucune séance ce jour-là",
+ calendar_session_missed:"Séance manquée", calendar_session_missed_detail:"Aucune séance enregistrée ce jour-là (jour d'entraînement prévu).",
  plan_ai_active:"Plan IA actif", plan_pace_up:"Rythme accéléré · plus de volume aujourd'hui", plan_pace_down:"Rythme allégé · reprise en douceur", plan_pace_stable:"Rythme stable · volume habituel",
  plan_no_session_today:"Aucune séance planifiée aujourd'hui. profitez du repos, ou faites une séance libre si vous en avez envie.",
  plan_coach_forced_rest:"Ton coach IA a décidé d'imposer un repos aujourd'hui, même si c'est un jour d'entraînement prévu — récupération nécessaire d'après tes dernières séances.", plan_coach_forced_rest_short:"Repos imposé par le coach",
@@ -1099,6 +1100,7 @@ en: {
  toast_plan_session_started:"Plan session started: {target} push-ups for set 1.",
  home_week_label:"Week {n} of {total} (cycle {cycle})",
  calendar_session_done:"Session complete", calendar_session_planned:"Session planned", calendar_no_session_that_day:"No session that day",
+ calendar_session_missed:"Missed session", calendar_session_missed_detail:"No session recorded that day (a training day was planned).",
  plan_ai_active:"AI plan active", plan_pace_up:"Faster pace · more volume today", plan_pace_down:"Lighter pace · easing back in", plan_pace_stable:"Steady pace · usual volume",
  plan_no_session_today:"No session planned today. enjoy the rest, or do a free session if you feel like it.",
  plan_coach_forced_rest:"Your AI coach decided to enforce a rest day today, even though it's a scheduled training day — recovery needed based on your recent sessions.", plan_coach_forced_rest_short:"Rest enforced by coach",
@@ -1214,6 +1216,7 @@ es: {
  toast_plan_session_started:"Sesión del plan iniciada: {target} flexiones para la serie 1.",
  home_week_label:"Semana {n} de {total} (ciclo {cycle})",
  calendar_session_done:"Sesión completada", calendar_session_planned:"Sesión planificada", calendar_no_session_that_day:"Ninguna sesión ese día",
+ calendar_session_missed:"Sesión perdida", calendar_session_missed_detail:"No se registró ninguna sesión ese día (día de entrenamiento previsto).",
  plan_ai_active:"Plan IA activo", plan_pace_up:"Ritmo más rápido · más volumen hoy", plan_pace_down:"Ritmo más ligero · retomando con calma", plan_pace_stable:"Ritmo estable · volumen habitual",
  plan_no_session_today:"No hay ninguna sesión planificada hoy. disfruta del descanso, o haz una sesión libre si te apetece.",
  plan_coach_forced_rest:"Tu coach IA ha decidido imponer un descanso hoy, aunque sea un día de entrenamiento previsto — recuperación necesaria según tus últimas sesiones.", plan_coach_forced_rest_short:"Descanso impuesto por el coach",
@@ -1464,8 +1467,17 @@ workouts.forEach(w=>{
     __workoutsRepaired=true;
   }
 });
-if(__workoutsRepaired){ try{ if(storageOk) localStorage.setItem('pompes-workouts',JSON.stringify(workouts.slice(0,20))); }catch(e){} }
-function saveHistory(){if(storageOk)localStorage.setItem('pompes-workouts',JSON.stringify(workouts.slice(0,20)))}
+// BUGFIX : workouts.slice(0,20) gardait les 20 PREMIÈRES séances jamais
+// enregistrées (les plus anciennes, car push() ajoute à la fin du tableau) et
+// perdait silencieusement toute séance au-delà de la 20e — l'utilisateur voyait
+// bien ses séances récentes pendant la session en cours (tableau en mémoire),
+// mais elles n'étaient jamais réellement persistées : au rechargement suivant,
+// elles avaient disparu. On garde maintenant les N séances les PLUS RÉCENTES
+// (slice négatif), et on relève la limite à une taille raisonnable pour ne pas
+// perdre plusieurs mois d'historique (le stockage reste minime : quelques Ko).
+const HISTORY_MAX_ENTRIES=300;
+if(__workoutsRepaired){ try{ if(storageOk) localStorage.setItem('pompes-workouts',JSON.stringify(workouts.slice(-HISTORY_MAX_ENTRIES))); }catch(e){} }
+function saveHistory(){if(storageOk)localStorage.setItem('pompes-workouts',JSON.stringify(workouts.slice(-HISTORY_MAX_ENTRIES)))}
 
 // Gestion des onglets
 
@@ -1573,13 +1585,23 @@ function applyAIPlanForToday(baseSets, ratio, targetDateIso){
   return {sets: baseSets, restSeconds: 60, note: '', ai:false, forcedRest:false};
 }
 
-function recordSkippedPlanDay(){
+// Un marqueur "jour manqué" (poussé par recordSkippedPlanDay) n'est pas une vraie
+// séance : total 0, sets vides, juste un repère visuel/pour l'IA. Il ne doit jamais
+// être compté comme une séance effectuée dans les stats, le streak ou le calendrier.
+function isSkipMarker(w){
+  return !!(w && w.source==='plan' && w.skipped===true);
+}
+function recordSkippedPlanDay(targetIso){
   if(!planProfile) return;
-  const todayIso=toLocalDateStr(new Date());
-  const existing=workouts.find(w=>w && w.source==='plan' && w.skipped===true && w.isoDate===todayIso);
+  // targetIso doit toujours être un jour déjà terminé (jamais aujourd'hui) :
+  // voir getMissedPlanDayToRecord() plus bas pour le pourquoi.
+  const isoDate=targetIso;
+  if(!isoDate) return;
+  const existing=workouts.find(w=>w && w.source==='plan' && w.skipped===true && w.isoDate===isoDate);
   if(existing) return;
-  if(isSkipDismissedForDate(todayIso)) return;
-  workouts.push({date:new Date().toLocaleDateString(appLocale())+' '+new Date().toLocaleTimeString(appLocale(),{hour:'2-digit',minute:'2-digit'}),isoDate:todayIso,total:0,duration:'00:00',sets:[],source:'plan',skipped:true});
+  if(isSkipDismissedForDate(isoDate)) return;
+  const dateLabel=new Date(isoDate+'T00:00:00').toLocaleDateString(appLocale());
+  workouts.push({date:dateLabel,isoDate:isoDate,total:0,duration:'00:00',sets:[],source:'plan',skipped:true});
   try{saveHistory();}catch(e){}
 }
 function isSkipDismissedForDate(isoDate){
@@ -1625,15 +1647,24 @@ function buildFallbackAIPlan(reason='regular'){
   return {version:1, generatedAt:new Date().toISOString(), days:rows};
 }
 
-function shouldMarkSkippedToday(){
-  const recent=getRecentPlanWorkouts(2);
-  if(!recent.length) return false;
-  const last=recent[0];
-  const todayIso=toLocalDateStr(new Date());
-  const lastIso=last.isoDate;
-  if(lastIso===todayIso) return false;
-  const diffDays=Math.round((Date.now()-new Date(lastIso).getTime())/86400000);
-  return diffDays>=2 && planProfile && planProfile.days.includes(new Date().getDay());
+// BUGFIX : cette fonction s'appelait auparavant shouldMarkSkippedToday() et marquait
+// directement AUJOURD'HUI comme "séance sautée à 0 pompes" dès que l'app était ouverte
+// et qu'un certain écart existait depuis la dernière séance — y compris à 00h00, avant
+// même que l'utilisateur ait eu la moindre chance de s'entraîner ce jour-là. Résultat :
+// une fausse séance à 0 pompes apparaissait dans le calendrier, et cette entrée polluait
+// aussi le contexte envoyé au coach IA (moyenne tirée vers le bas, plan mal recalculé).
+// On ne peut légitimement considérer un jour comme "manqué" qu'une fois qu'il est
+// terminé : on vérifie donc HIER, jamais aujourd'hui.
+function getMissedPlanDayToRecord(){
+  if(!planProfile) return null;
+  const yesterday=new Date();
+  yesterday.setDate(yesterday.getDate()-1);
+  if(!planProfile.days.includes(yesterday.getDay())) return null;
+  const yIso=toLocalDateStr(yesterday);
+  const alreadyLogged=workouts.some(w=>w && w.source==='plan' && w.isoDate===yIso);
+  if(alreadyLogged) return null;
+  if(isSkipDismissedForDate(yIso)) return null;
+  return yIso;
 }
 
 function generateDailyTarget(maxReps, trainingIntensity, recentPerformanceRatio, reason='regular'){
@@ -1675,7 +1706,12 @@ function computeRecentPerformanceRatio(){
 
 function getRecentPlanWorkouts(days=14){
   const cutoff=Date.now()-days*86400000;
-  return workouts.filter(w=>w && w.isoDate && new Date(w.isoDate).getTime()>=cutoff).sort((a,b)=>new Date(b.isoDate)-new Date(a.isoDate));
+  // Les marqueurs "jour manqué" (skipped:true, total 0) ne sont pas des séances
+  // réelles : ils sont déjà comptés séparément via hasSkippedRecentPlanDay()/
+  // buildPlanPromptContext().skipped, et ne doivent jamais entrer dans les calculs
+  // de performance moyenne (avgTotal, ratio d'ajustement, contexte envoyé à l'IA),
+  // sous peine de tirer artificiellement ces chiffres vers le bas.
+  return workouts.filter(w=>w && w.isoDate && !(w.source==='plan' && w.skipped===true) && new Date(w.isoDate).getTime()>=cutoff).sort((a,b)=>new Date(b.isoDate)-new Date(a.isoDate));
 }
 
 function hasSkippedRecentPlanDay(){
@@ -1691,7 +1727,7 @@ function hasCompletedAheadSession(){
   // dans ce cas, l'IA doit réadapter la séance de J+1 pour tenir compte de ce double effort.
   const todayIso=toLocalDateStr(new Date());
   const tomorrowIso=toLocalDateStr(new Date(Date.now()+86400000));
-  const doneToday=workouts.some(w=>w && w.source==='plan' && w.isoDate===todayIso);
+  const doneToday=workouts.some(w=>w && w.source==='plan' && !w.skipped && w.isoDate===todayIso);
   const doneAheadForTomorrow=workouts.some(w=>w && w.source==='plan' && w.targetDate===tomorrowIso);
   return doneToday && doneAheadForTomorrow;
 }
@@ -1802,7 +1838,8 @@ function renderPlanTab(){
     active.classList.add('hidden');
     return;
   }
-  if(shouldMarkSkippedToday()) recordSkippedPlanDay();
+  const missedPlanDayIso=getMissedPlanDayToRecord();
+  if(missedPlanDayIso) recordSkippedPlanDay(missedPlanDayIso);
   const todayIsoForPlan = toLocalDateStr(new Date());
   const planCoversToday = !!(planProfile.aiPlan && getAIPlanForDate(todayIsoForPlan));
   if(!planCoversToday || hasSkippedRecentPlanDay() || hasRecentHardSession() || hasCompletedAheadSession()){
@@ -2065,7 +2102,7 @@ function renderPlanTab(){
         setCountRow=daySets.length;
       }
       const isoStr=toLocalDateStr(d);
-      const alreadyDone = (isToday && todayCompleted) || workouts.some(w=>w.source==='plan' && (w.targetDate===isoStr || (!w.targetDate && w.isoDate===isoStr)));
+      const alreadyDone = (isToday && todayCompleted) || workouts.some(w=>w.source==='plan' && !w.skipped && (w.targetDate===isoStr || (!w.targetDate && w.isoDate===isoStr)));
       row.innerHTML=`
         <div style="width:32px;height:32px;border-radius:50%;background:${alreadyDone?'var(--primary)':'var(--surface)'};color:${alreadyDone?'var(--inv)':'var(--muted)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">${alreadyDone?svgCheck:svgCal}</div>
         <div style="flex:1;">
@@ -2955,7 +2992,7 @@ function renderHomeTab(){
     const curWeekEnd=new Date(curWeekStart); curWeekEnd.setDate(curWeekEnd.getDate()+6); curWeekEnd.setHours(23,59,59,999);
     const trainedDaysThisWeek=new Set();
     workouts.forEach(w=>{
-      if(!w||!w.isoDate) return;
+      if(!w||!w.isoDate||isSkipMarker(w)) return;
       const d=new Date(w.isoDate+'T00:00:00');
       if(d>=curWeekStart && d<=curWeekEnd) trainedDaysThisWeek.add(w.isoDate);
     });
@@ -2996,12 +3033,12 @@ function renderHomeTab(){
   const prevWeekStart=new Date(curWeekStart); prevWeekStart.setDate(prevWeekStart.getDate()-7);
   const curWeekEnd=new Date(curWeekStart); curWeekEnd.setDate(curWeekEnd.getDate()+7);
   const curWorkouts=workouts.filter(w=>{
-    if(!w.isoDate) return false;
+    if(!w.isoDate||isSkipMarker(w)) return false;
     const d=new Date(w.isoDate+'T00:00:00');
     return d>=curWeekStart && d<curWeekEnd;
   });
   const prevWorkouts=workouts.filter(w=>{
-    if(!w.isoDate) return false;
+    if(!w.isoDate||isSkipMarker(w)) return false;
     const d=new Date(w.isoDate+'T00:00:00');
     return d>=prevWeekStart && d<curWeekStart;
   });
@@ -3066,7 +3103,7 @@ function getWeekStart(date){
 function computeWeeklyStreak(){
   const weeksWithActivity=new Set();
   workouts.forEach(w=>{
-    if(!w || !w.isoDate) return;
+    if(!w || !w.isoDate || isSkipMarker(w)) return;
     const d=new Date(w.isoDate+'T00:00:00');
     if(isNaN(d.getTime())) return;
     weeksWithActivity.add(toLocalDateStr(getWeekStart(d)));
@@ -3113,14 +3150,18 @@ function renderCalendar(){
   }
   for(let d=1;d<=daysInMonth;d++){
     const iso=`${calViewYear}-${String(calViewMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const dayWorkouts=workoutsForDate(iso);
+    const dayWorkoutsAll=workoutsForDate(iso);
+    const dayWorkouts=dayWorkoutsAll.filter(w=>!isSkipMarker(w));
+    const missedOnly=dayWorkoutsAll.length>0 && dayWorkouts.length===0;
     const cell=document.createElement('div');
     cell.className='cal-day'+(dayWorkouts.length?' has-workout':'')+(iso===todayIso?' today':'')+(iso===window.calSelectedIso?' selected':'');
     cell.innerHTML=`<span>${d}</span>`;
     if(dayWorkouts.length>1){
       cell.innerHTML+=`<span class="cal-count-badge">${dayWorkouts.length}</span>`;
     }
-    cell.innerHTML+=`<span class="cal-dot${dayWorkouts.length?'':' cal-dot-empty'}"></span>`;
+    // Jour manqué : petit point discret (couleur atténuée) plutôt que le point
+    // "séance faite" habituel, pour ne pas laisser croire qu'une séance a eu lieu.
+    cell.innerHTML+=`<span class="cal-dot${dayWorkouts.length?'':' cal-dot-empty'}"${missedOnly?' style="background:var(--muted);opacity:.6;"':''}></span>`;
     cell.addEventListener('click',()=>{ window.calSelectedIso=iso; renderCalendar(); renderCalDaySummary(iso); });
     grid.appendChild(cell);
   }
@@ -3137,7 +3178,9 @@ function renderCalDaySummary(iso){
   const todayIso=toLocalDateStr(new Date());
   const dateLabel=d.toLocaleDateString(appLocale(),{weekday:'long',day:'numeric',month:'long'});
   dateEl.textContent=iso===todayIso?t('calendar_today'):(dateLabel.charAt(0).toUpperCase()+dateLabel.slice(1));
-  const dayWorkouts=workoutsForDate(iso);
+  const dayWorkoutsAll=workoutsForDate(iso);
+  const dayWorkouts=dayWorkoutsAll.filter(w=>!isSkipMarker(w));
+  const missedOnly=dayWorkoutsAll.length>0 && dayWorkouts.length===0;
   actionBtn.classList.add('hidden');
   actionBtn.onclick=null;
   if(dayWorkouts.length){
@@ -3148,6 +3191,15 @@ function renderCalDaySummary(iso){
     detailEl.textContent=`${totalReps} ${t('training_pushups')} · ${totalSets} ${t(totalSets>1?'training_series_unit':'training_series_done_label')}`;
     detailEl.style.cursor='pointer';
     detailEl.onclick=()=>openCalendarDetail(iso);
+  } else if(missedOnly){
+    // Marqueur "jour manqué" (posé rétroactivement pour un jour d'entraînement
+    // prévu passé sans séance) : à ne jamais confondre avec une vraie séance à
+    // 0 pompes, d'où ce statut dédié plutôt que "Séance terminée".
+    statusEl.textContent=t('calendar_session_missed');
+    statusEl.style.color='var(--muted)';
+    detailEl.textContent=t('calendar_session_missed_detail');
+    detailEl.style.cursor='default';
+    detailEl.onclick=null;
   } else if(planProfile && iso>=todayIso && planProfile.days.includes(d.getDay())){
     const aiDay=getAIPlanForDate(iso);
     const coachForcedRestDetail = aiDay && Array.isArray(aiDay.sets) && aiDay.sets.length===0;
@@ -3200,7 +3252,9 @@ document.getElementById('calNextMonth').addEventListener('click',()=>{
 });
 
 function openCalendarDetail(iso){
-  const dayWorkouts=workoutsForDate(iso);
+  // On ne montre/édite jamais les marqueurs "jour manqué" ici : ils n'ont ni
+  // sets ni reps réels (Math.max sur un tableau vide produirait -Infinity).
+  const dayWorkouts=workoutsForDate(iso).filter(w=>!isSkipMarker(w));
   if(!dayWorkouts.length) return;
   const dateLabel=new Date(iso+'T00:00:00').toLocaleDateString(appLocale(),{weekday:'long',day:'numeric',month:'long'});
   document.getElementById('calendarDetailDate').textContent=dateLabel.charAt(0).toUpperCase()+dateLabel.slice(1);
@@ -3272,7 +3326,10 @@ document.getElementById('closeCalendarDetail').addEventListener('click',()=>{
 });
 
 function computeStreak(){
-  const isoDates=[...new Set(workouts.filter(w=>w.isoDate).map(w=>w.isoDate))].sort();
+  // Un marqueur "jour manqué" ne doit jamais faire gonfler artificiellement le
+  // streak (série de jours consécutifs) : sans ce filtre, un jour sans aucune
+  // pompe pouvait compter comme un jour "actif".
+  const isoDates=[...new Set(workouts.filter(w=>w.isoDate && !isSkipMarker(w)).map(w=>w.isoDate))].sort();
   if(!isoDates.length) return {current:0,best:0};
   const dateSet=new Set(isoDates);
   let best=0,current=0,run=0;
@@ -3303,15 +3360,19 @@ function computeStreak(){
 const BADGE_LEVELS=[100,500,1000,2500,5000,10000];
 const SESSION_BADGE_LEVELS=[10,25,50,100,250,500];
 function computeStats(){
-  const totalCumulative=workouts.reduce((a,w)=>a+(w.total||0),0);
-  const recordSession=workouts.length?Math.max(...workouts.map(w=>w.total||0)):0;
+  // Idem : ces marqueurs ne sont pas de vraies séances, on les exclut du
+  // décompte de séances et de la moyenne (sinon "0 pompes" tire la moyenne
+  // vers le bas et gonfle artificiellement le nombre de séances affiché).
+  const realWorkouts=workouts.filter(w=>!isSkipMarker(w));
+  const totalCumulative=realWorkouts.reduce((a,w)=>a+(w.total||0),0);
+  const recordSession=realWorkouts.length?Math.max(...realWorkouts.map(w=>w.total||0)):0;
   let recordSet=0;
-  workouts.forEach(w=>(w.sets||[]).forEach(s=>{if(s.reps>recordSet) recordSet=s.reps;}));
-  const sessionCount=workouts.length;
+  realWorkouts.forEach(w=>(w.sets||[]).forEach(s=>{if(s.reps>recordSet) recordSet=s.reps;}));
+  const sessionCount=realWorkouts.length;
   const average=sessionCount?Math.round(totalCumulative/sessionCount):0;
   let bestDay={iso:null,total:0};
   const byDay={};
-  workouts.forEach(w=>{ if(!w.isoDate) return; byDay[w.isoDate]=(byDay[w.isoDate]||0)+(w.total||0); });
+  realWorkouts.forEach(w=>{ if(!w.isoDate) return; byDay[w.isoDate]=(byDay[w.isoDate]||0)+(w.total||0); });
   Object.entries(byDay).forEach(([iso,total])=>{if(total>bestDay.total) bestDay={iso,total};});
   return {totalCumulative,recordSession,recordSet,sessionCount,average,bestDay,byDay};
 }
@@ -3589,7 +3650,7 @@ document.getElementById('importFileInput').addEventListener('change',(e)=>{
 
 
 
-function renderHistory(){historyList.innerHTML='';if(!workouts.length){historyList.innerHTML=`<div class="history-item"><span>${t('no_session_recorded')}</span><span>—</span></div>`;return;}workouts.slice().reverse().forEach(w=>{const item=document.createElement('div');item.className='history-item';item.innerHTML=`<span>${w.date}</span><strong>${w.total} ${t('training_pushups')} · ${w.sets.length} ${t('training_series_unit')}</strong>`;historyList.appendChild(item);});}
+function renderHistory(){historyList.innerHTML='';const realWorkouts=workouts.filter(w=>!isSkipMarker(w));if(!realWorkouts.length){historyList.innerHTML=`<div class="history-item"><span>${t('no_session_recorded')}</span><span>—</span></div>`;return;}realWorkouts.slice().reverse().forEach(w=>{const item=document.createElement('div');item.className='history-item';item.innerHTML=`<span>${w.date}</span><strong>${w.total} ${t('training_pushups')} · ${w.sets.length} ${t('training_series_unit')}</strong>`;historyList.appendChild(item);});}
 function refreshHeader(){setInfoEl.textContent=currentSet;countEl.textContent=setCount;totalCountEl.textContent=totalCount;const ssc=document.getElementById('sessionSetsCount');if(ssc)ssc.textContent=completedSets.length;updateProgressRing();}
 function updateProgressRing(){
   const ring=document.getElementById('setProgressRing');
@@ -3758,13 +3819,13 @@ async function detectLoop(ts){
     if(poses&&poses[0]){
       lastKeypoints=poses[0].keypoints;
       const m=getPoseMetrics(lastKeypoints);
-      if((sessionActive||planSessionActive)&&!restActive&&!planRestActive&&calibrated){
+      if((sessionActive||planSessionActive)&&!restActive&&!planRestActive&&!validateModalOpen&&calibrated){
         processRep(m);
       }
       renderDebug(lastKeypoints, !!m);
     } else {
       lastKeypoints=null;
-      if((sessionActive||planSessionActive)&&!restActive&&!planRestActive&&calibrated){
+      if((sessionActive||planSessionActive)&&!restActive&&!planRestActive&&!validateModalOpen&&calibrated){
         processRep(null);
       }
       renderDebug(null, false);
@@ -3903,14 +3964,17 @@ function autoResumeAfterRest(){
 
 function stopRest(){restActive=false;clearInterval(restTimer);restPanel.classList.add('hidden');}
 let validateModalMode='nextSet';
+let validateModalOpen=false;
 function openValidateModal(mode='nextSet'){
   validateModalMode=mode;
+  validateModalOpen=true;
   pendingReps = setCount;
   document.getElementById('validateCount').textContent = pendingReps;
   document.getElementById('confirmSet').textContent = mode==='finish' ? t('training_validate_finish') : t('training_validate_rest');
   document.getElementById('validateModal').classList.remove('hidden');
 }
 function closeValidateModal(){
+  validateModalOpen=false;
   document.getElementById('validateModal').classList.add('hidden');
 }
 function nextSet(){
