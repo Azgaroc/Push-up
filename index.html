@@ -4049,7 +4049,16 @@ async function finishPlanTraining(completed){
     const difficulty=await askSessionFeedback();
     workout.difficulty=difficulty;
     try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
-    regeneratePlanFromAI(difficulty==='hard' ? 'was_hard' : difficulty==='easy' ? 'was_easy' : 'extra_reps').catch(()=>{});
+    // BUGFIX : le bouton "Bien passée" (issue normale, la plus cliquée) renvoie
+    // difficulty==='ok', qui tombait dans la branche "extra_reps" par défaut —
+    // une raison censée signifier "répétitions bonus faites hors plan" (voir son
+    // usage correct ligne ~4401 pour une séance Libre à côté d'un plan actif).
+    // Résultat : après une séance tout à fait normale, l'IA recevait un signal
+    // lui suggérant que l'utilisateur avait déjà fait plus que prévu, ce qui la
+    // poussait à garder le volume plat au lieu de le faire progresser — cause
+    // très probable d'un plan qui stagne (ex: 24 pompes proposées deux jours de
+    // suite après une séance normale de 24 pompes).
+    regeneratePlanFromAI(difficulty==='hard' ? 'was_hard' : difficulty==='easy' ? 'was_easy' : 'regular').catch(()=>{});
     speak(t('voice_workout_done'));
   }
   syncPlanUI();
