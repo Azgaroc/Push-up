@@ -1510,11 +1510,23 @@ async function generatePlanWithAI(payload){
 }
 
 function buildPlanPromptContext(){
+  // BUGFIX : les deux filtres ci-dessous n'avaient auparavant AUCUNE limite de
+  // temps — ils remontaient TOUTE l'historique de l'app depuis le premier jour,
+  // alors que le prompt envoyé au serveur affirme explicitement "7 derniers
+  // jours" pour ces deux compteurs (voir recentSummary/skippedCount dans
+  // pushup-backend-nodejs-free.js). Un seul jour sauté ou une seule séance
+  // signalée difficile, même vieille de plusieurs mois, restait donc compté
+  // pour toujours : croissance bloquée en permanence dès qu'il y avait ne
+  // serait-ce qu'une séance "difficile" dans tout l'historique, repos forcé à
+  // répétition à cause d'un jour sauté ancien — un bug qui s'aggrave à mesure
+  // que l'historique de l'app grandit. Alignés maintenant sur la même fenêtre
+  // de 7 jours que hasRecentHardSession()/hasSkippedRecentPlanDay().
+  const sevenDaysAgo = Date.now() - 7*86400000;
   return {
     profile: planProfile,
     recent: getRecentPlanWorkouts(14),
-    skipped: workouts.filter(w=>w && w.source==='plan' && w.skipped===true),
-    recentHard: workouts.filter(w=>w && w.source==='plan' && w.difficulty==='hard'),
+    skipped: workouts.filter(w=>w && w.source==='plan' && w.skipped===true && w.isoDate && new Date(w.isoDate).getTime()>=sevenDaysAgo),
+    recentHard: workouts.filter(w=>w && w.source==='plan' && w.difficulty==='hard' && w.isoDate && new Date(w.isoDate).getTime()>=sevenDaysAgo),
     today: toLocalDateStr(new Date())
   };
 }
@@ -1523,10 +1535,18 @@ function normalizeAIPlan(ai){
   if(!ai || !Array.isArray(ai.days)) return null;
   const days = ai.days.map(d=>({
     date: String(d.date||'').slice(0,10),
-    sets: Array.isArray(d.sets) ? d.sets.map(n=>Math.max(2,Math.round(Number(n)||0))).filter(Boolean) : [],
+    // BUGFIX : un jour de repos imposé par le coach est légitimement représenté
+    // par un tableau de séries VIDE (sets: []) — voir applyAIPlanForToday() plus
+    // bas, qui traite explicitement sets.length===0 comme "repos imposé". Le
+    // filtre final ci-dessous excluait auparavant tout jour à sets vide
+    // (`d.sets.length` dans le filter), donc TOUT jour de repos proposé par le
+    // serveur était silencieusement supprimé ici avant même d'être enregistré —
+    // annulant complètement la fonctionnalité de jour de repos, quoi que fasse
+    // le serveur. On ne filtre plus que sur la validité de la date.
+    sets: Array.isArray(d.sets) ? d.sets.map(n=>Math.max(2,Math.round(Number(n)||0))) : [],
     restSeconds: Math.max(30, Math.round(Number(d.restSeconds)||60)),
     note: String(d.note||'')
-  })).filter(d=>d.date && d.sets.length);
+  })).filter(d=>/^\d{4}-\d{2}-\d{2}$/.test(d.date));
   return days.length ? {version:1, generatedAt:new Date().toISOString(), days} : null;
 }
 
@@ -1806,6 +1826,13 @@ async function maybePromptMaxTest(){
   if(accepted){
     goToTab('training');
     showToast(t('toast_max_reps_test'), 5000);
+  } else {
+    // BUGFIX : ce drapeau était mis à true avant même d'afficher la question,
+    // et n'était effacé que dans applyMaxTestResult() — jamais en cas de refus.
+    // Résultat : la PROCHAINE séance Libre, même totalement anodine et faite
+    // bien plus tard, était silencieusement traitée comme la réponse à ce test
+    // et recalculait planProfile.maxReps à partir d'elle, sans confirmation.
+    window.pendingMaxTestCycle=null;
   }
 }
 function applyMaxTestResult(maxRepsAchieved){
@@ -1888,11 +1915,13 @@ function renderPlanTab(){
   const todayDow=new Date().getDay();
   let isTrainingDay=planProfile.days.includes(todayDow);
   let coachForcedRestToday=false;
+  let coachNoteForToday='';
   if(isTrainingDay){
     const aiDayCheck=getAIPlanForDate(toLocalDateStr(new Date()));
     if(aiDayCheck && Array.isArray(aiDayCheck.sets) && aiDayCheck.sets.length===0){
       isTrainingDay=false;
       coachForcedRestToday=true;
+      coachNoteForToday=aiDayCheck.note||'';
     }
   }
   const weekNumber=getPlanWeekNumber();
@@ -1920,6 +1949,21 @@ function renderPlanTab(){
     titleEl.textContent='';
     setsEl.innerHTML='';
     window.lastTodayPlanSnapshot=null;
+    // BUGFIX : le coach génère une note explicative par jour (ex: pourquoi il
+    // impose ce repos), mais rien ne l'affichait jamais nulle part — elle était
+    // calculée puis silencieusement jetée. Affichée ici pour un repos imposé.
+    if(coachForcedRestToday){
+      const restNoteCard=document.createElement('section');
+      restNoteCard.className='panel plan-dynamic-card';
+      restNoteCard.style.marginTop='.6rem';
+      restNoteCard.innerHTML=`
+        <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>${t('calendar_rest_day')}</span>
+        </div>
+        <div style="color:var(--muted);font-size:.85rem;margin-top:.5rem;">${coachNoteForToday || t('plan_no_session_today')}</div>
+      `;
+      setsEl.parentElement.insertBefore(restNoteCard, setsEl.nextSibling);
+    }
   }else{
     const intensity=planProfile.days.indexOf(todayDow)+1;
     const baseSets=generateDailyTarget(planProfile.maxReps,intensity,ratio);
@@ -2010,6 +2054,18 @@ function renderPlanTab(){
 `;
     setsEl.parentElement.insertBefore(restCard, setsEl.nextSibling);
     restCardRef=restCard;
+    if(aiToday && aiToday.note){
+      const noteCard=document.createElement('section');
+      noteCard.className='panel plan-dynamic-card';
+      noteCard.style.marginTop='.6rem';
+      noteCard.innerHTML=`
+        <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 00-4 12.7V17a2 2 0 002 2h4a2 2 0 002-2v-2.3A7 7 0 0012 2z"/><path d="M9 21h6"/></svg><span>${t('plan_ai_active')}</span>
+        </div>
+        <div style="color:var(--muted);font-size:.85rem;margin-top:.5rem;">${aiToday.note}</div>
+      `;
+      restCard.parentElement.insertBefore(noteCard, restCard.nextSibling);
+    }
   }
   if(planTabVisible){
     const histCard=document.createElement('section');
@@ -2973,7 +3029,16 @@ function renderHomeTab(){
   if(planProfile){
     renderPlanTab();
     const titleEl=document.getElementById('planTodayTitle');
-    isRestDay=!planProfile.days.includes(new Date().getDay());
+    // BUGFIX : ne dépendait auparavant que des jours choisis par l'utilisateur,
+    // sans jamais regarder si le coach avait imposé un repos aujourd'hui (voir
+    // la même vérification dans renderPlanTab ci-dessus, via getAIPlanForDate).
+    // Résultat : sur un jour de repos imposé par l'IA mais qui restait un jour
+    // d'entraînement choisi par l'utilisateur, l'accueil affichait quand même
+    // "0 pompes" avec un bouton "Commencer" actif — qui ne faisait alors
+    // silencieusement rien au clic (preparePlanSession() refuse de démarrer).
+    const todayAiDay=getAIPlanForDate(toLocalDateStr(new Date()));
+    const coachForcedRestOnHome=!!(todayAiDay && Array.isArray(todayAiDay.sets) && todayAiDay.sets.length===0);
+    isRestDay=!planProfile.days.includes(new Date().getDay()) || coachForcedRestOnHome;
     if(detailsRowEl) detailsRowEl.classList.toggle('hidden', isRestDay);
     if(ringWrapEl) ringWrapEl.classList.toggle('hidden', isRestDay);
     if(restMessageEl){
@@ -3035,7 +3100,14 @@ function renderHomeTab(){
   if(planProfile){
     const cycleInfo=getPlanCycleInfo();
     const weekNum=cycleInfo.weekInCycle;
-    const statusTxt=planProfile.aiPlan ? (planProfile.aiPlan.note || t('plan_adjusted_default')) : t('plan_adjusted_default');
+    // BUGFIX : `planProfile.aiPlan.note` n'existe pas — la note est générée par
+    // JOUR (planProfile.aiPlan.days[i].note), jamais au niveau du plan entier.
+    // Cette variable tombait donc TOUJOURS sur le texte par défaut, ce qui
+    // rendait aussi inopérant le badge "rythme allégé/accéléré" juste en dessous
+    // (sa détection cherche des mots-clés dans ce texte). Utilise maintenant la
+    // note du jour réellement générée par le coach pour aujourd'hui.
+    const todayAiDayForStatus=getAIPlanForDate(toLocalDateStr(new Date()));
+    const statusTxt=(todayAiDayForStatus && todayAiDayForStatus.note) ? todayAiDayForStatus.note : t('plan_adjusted_default');
     if(weekLabelEl) weekLabelEl.textContent=t('home_week_label').replace('{n}',weekNum).replace('{total}',totalPlanWeeks).replace('{cycle}',cycleInfo.cycleNumber);
     const curWeekStart=getWeekStart(new Date());
     const curWeekEnd=new Date(curWeekStart); curWeekEnd.setDate(curWeekEnd.getDate()+6); curWeekEnd.setHours(23,59,59,999);
@@ -4048,7 +4120,10 @@ function confirmNextSet(){
 
 async function startPlanTraining(){
   activeMode='plan';
-  if(!preparePlanSession()) return;
+  // BUGFIX : sur un jour de repos imposé par le coach (ou sans plan valable
+  // pour aujourd'hui), preparePlanSession() refusait déjà de démarrer, mais en
+  // silence — aucun retour visuel, le bouton semblait juste ne rien faire.
+  if(!preparePlanSession()){ showToast(t('plan_no_session_today'), 3200); return; }
   planSessionActive=true;
   sessionActive=false;
   syncPlanUI();
