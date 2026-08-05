@@ -1509,6 +1509,18 @@ async function generatePlanWithAI(payload){
   }
 }
 
+// Empreinte des événements réels qui justifient une régénération du plan côté
+// "signal de fatigue/skip/avance" (voir renderPlanTab). Change uniquement quand
+// l'un de ces événements change vraiment (nouvelle séance, nouveau jour manqué,
+// nouvelle séance en avance) — pas à chaque simple visite de l'app.
+function computePlanRegenSignature(){
+  const lastReal=[...workouts].reverse().find(w=>w && w.source==='plan' && !isSkipMarker(w));
+  const lastSkip=[...workouts].reverse().find(w=>w && isSkipMarker(w));
+  return [
+    lastReal ? `${lastReal.isoDate}:${lastReal.total}:${lastReal.difficulty||''}:${lastReal.targetDate||''}` : 'none',
+    lastSkip ? lastSkip.isoDate : 'none'
+  ].join('|');
+}
 function buildPlanPromptContext(){
   // BUGFIX : les deux filtres ci-dessous n'avaient auparavant AUCUNE limite de
   // temps — ils remontaient TOUTE l'historique de l'app depuis le premier jour,
@@ -1902,9 +1914,30 @@ function renderPlanTab(){
   if(missedPlanDayIso) recordSkippedPlanDay(missedPlanDayIso);
   const todayIsoForPlan = toLocalDateStr(new Date());
   const planCoversToday = !!(planProfile.aiPlan && getAIPlanForDate(todayIsoForPlan));
-  if(!planCoversToday || hasSkippedRecentPlanDay() || hasRecentHardSession() || hasCompletedAheadSession()){
-    const regenReason = hasSkippedRecentPlanDay() ? 'skipped_day' : (hasRecentHardSession() ? 'was_hard' : (hasCompletedAheadSession() ? 'ahead_session' : (planProfile.aiPlan ? 'regular' : 'initial')));
+  // BUGFIX : cette condition restait vraie plusieurs jours d'affilée (ex :
+  // hasRecentHardSession() reste vrai 7 jours après une seule séance signalée
+  // difficile), donc CHAQUE visite de l'accueil ou du plan pendant cette
+  // fenêtre relançait une régénération complète auprès de l'IA — d'où les
+  // messages "Génération du plan..." / "Plan à jour" à répétition alors que
+  // rien de nouveau ne s'était produit depuis la dernière fois. On ne
+  // régénère plus que si l'événement réel qui déclenche la condition a
+  // changé depuis la dernière régénération (nouvelle séance, nouveau jour
+  // manqué, nouvelle séance en avance...), via une signature comparée à la
+  // dernière régénération effectuée.
+  if(!planCoversToday){
+    const regenReason = planProfile.aiPlan ? 'regular' : 'initial';
     regeneratePlanFromAI(regenReason).catch(()=>{});
+  } else {
+    const skipped=hasSkippedRecentPlanDay(), hard=hasRecentHardSession(), ahead=hasCompletedAheadSession();
+    if(skipped || hard || ahead){
+      const regenSignature=computePlanRegenSignature();
+      if(planProfile.lastAiRegenSignature!==regenSignature){
+        const regenReason = skipped ? 'skipped_day' : (hard ? 'was_hard' : 'ahead_session');
+        regeneratePlanFromAI(regenReason).then(()=>{
+          if(planProfile){ planProfile.lastAiRegenSignature=regenSignature; savePlan(planProfile); }
+        }).catch(()=>{});
+      }
+    }
   }
   onboarding.classList.add('hidden');
   active.classList.remove('hidden');
@@ -3416,6 +3449,11 @@ function openCalendarDetail(iso){
       workouts[wIdx].total=newTotal;
       saveHistory();
       renderCalendar();
+      // Les données ayant changé, on laisse renderPlanTab() réévaluer si le
+      // plan doit être régénéré (déduplication automatique : ne redéclenche
+      // l'IA que si ça change réellement quelque chose, voir computePlanRegenSignature).
+      if(typeof renderPlanTab==='function') renderPlanTab();
+      if(typeof renderHomeTab==='function') renderHomeTab();
       showToast(t('toast_session_updated'));
       openCalendarDetail(iso);
     });
@@ -3730,6 +3768,10 @@ document.getElementById('resetCalendarBtn').addEventListener('click',async()=>{
   workouts.length=0;
   saveHistory();
   renderCalendar();renderStats();
+  // L'historique entier vient de changer : on laisse renderPlanTab()
+  // réévaluer si le plan doit être régénéré (déduplication automatique).
+  if(typeof renderPlanTab==='function') renderPlanTab();
+  if(typeof renderHomeTab==='function') renderHomeTab();
   document.getElementById('calendarDetailModal').classList.add('hidden');
   showToast(t('toast_calendar_reset'));
 });
@@ -3760,6 +3802,8 @@ document.getElementById('importFileInput').addEventListener('change',(e)=>{
       saveHistory();
       renderCalendar();
       renderHistory();renderStats();
+      if(typeof renderPlanTab==='function') renderPlanTab();
+      if(typeof renderHomeTab==='function') renderHomeTab();
       showToast(t('toast_data_imported'));
     }catch(err){
       showToast(t('toast_invalid_file'));
