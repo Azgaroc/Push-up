@@ -1007,6 +1007,7 @@ fr: {
  toast_server_unavailable:"Serveur indisponible, plan généré localement.",
  plan_note_skipped:"Volume réduit après jour sauté", plan_note_hard:"Volume réduit après une séance difficile",
  plan_note_ahead:"Ajusté après une séance réalisée en avance", plan_note_extra:"Ajusté suite à des pompes supplémentaires réalisées",
+ plan_note_forced_rest:"Jour de repos imposé par ton coach : rythme soutenu et signes de fatigue récents.",
  plan_note_progressive:"Adaptation progressive", toast_camera_denied:"Impossible d'activer la caméra. autorisez l'accès puis réessayez.",
  toast_plan_created:"Plan créé avec succès !", toast_create_plan_first:"Créez d'abord votre plan dans l'onglet plan.",
  toast_days_updated:"Jours d'entraînement mis à jour.",
@@ -1123,6 +1124,7 @@ en: {
  toast_server_unavailable:"Server unavailable, plan generated locally.",
  plan_note_skipped:"Reduced volume after a skipped day", plan_note_hard:"Reduced volume after a hard session",
  plan_note_ahead:"Adjusted after a session done ahead of schedule", plan_note_extra:"Adjusted after extra push-ups were done",
+ plan_note_forced_rest:"Rest day imposed by your coach: sustained pace and recent signs of fatigue.",
  plan_note_progressive:"Progressive adjustment", toast_camera_denied:"Couldn't activate the camera. allow access then try again.",
  toast_plan_created:"Plan created successfully!", toast_create_plan_first:"First create your plan in the plan tab.",
  toast_days_updated:"Training days updated.",
@@ -1239,6 +1241,7 @@ es: {
  toast_server_unavailable:"Servidor no disponible, plan generado localmente.",
  plan_note_skipped:"Volumen reducido tras un día saltado", plan_note_hard:"Volumen reducido tras una sesión difícil",
  plan_note_ahead:"Ajustado tras una sesión realizada antes de tiempo", plan_note_extra:"Ajustado tras flexiones extra realizadas",
+ plan_note_forced_rest:"Día de descanso impuesto por tu coach: ritmo sostenido y signos de fatiga recientes.",
  plan_note_progressive:"Ajuste progresivo", toast_camera_denied:"No se pudo activar la cámara. permite el acceso y vuelve a intentarlo.",
  toast_plan_created:"¡Plan creado con éxito!", toast_create_plan_first:"Primero crea tu plan en la pestaña plan.",
  toast_days_updated:"Días de entrenamiento actualizados.",
@@ -1621,6 +1624,21 @@ function dismissSkipForDate(isoDate){
   }catch(e){}
 }
 
+// Même logique que côté serveur (voir computeConsecutiveTrainingStreak dans
+// pushup-backend-nodejs-free.js) : reflète le rythme RÉEL des séances plutôt
+// que les jours simplement cochés dans le profil.
+function computeConsecutiveTrainingStreak(){
+  const dates=[...new Set(getRecentPlanWorkouts(14).map(w=>w.isoDate))].sort();
+  if(!dates.length) return 0;
+  let streak=1;
+  for(let i=dates.length-1;i>0;i--){
+    const prev=new Date(dates[i-1]+'T00:00:00');
+    const cur=new Date(dates[i]+'T00:00:00');
+    const diff=Math.round((cur-prev)/86400000);
+    if(diff<=1) streak++; else break;
+  }
+  return streak;
+}
 function buildFallbackAIPlan(reason='regular'){
   if(!planProfile) return null;
   const today=new Date();
@@ -1629,10 +1647,25 @@ function buildFallbackAIPlan(reason='regular'){
   const ratio=adjustment.ratio;
   const maxReps=Number(planProfile.maxReps)||10;
   const days=planProfile.days && planProfile.days.length ? planProfile.days : [1,3,5];
+  // Même repli utilisé quand le serveur est injoignable : mêmes 3 signaux
+  // qu'en ligne pour proposer un repos si nécessaire, indépendamment des jours
+  // choisis par l'utilisateur (voir la même logique côté serveur).
+  const recentHardCount=workouts.filter(w=>w && w.source==='plan' && w.difficulty==='hard' && w.isoDate && (Date.now()-new Date(w.isoDate).getTime())<=7*86400000).length;
+  const trainingDaysPerWeek=days.length;
+  const consecutiveStreak=computeConsecutiveTrainingStreak();
+  const forcedRestDayIndex = (reason==='initial') ? -1
+    : (recentHardCount>=2) ? 1
+    : (recentHardCount>=1 && trainingDaysPerWeek>=5) ? 2
+    : (consecutiveStreak>=6) ? 2
+    : -1;
   const rows=[];
   for(let i=0;i<5;i++){
     const d=new Date(today);
     d.setDate(d.getDate()+i);
+    if(i===forcedRestDayIndex){
+      rows.push({date:toLocalDateStr(d), sets:[], restSeconds:0, note:t('plan_note_forced_rest')});
+      continue;
+    }
     const intensity=(days.indexOf(d.getDay())+1) || 2;
     let sets=generateDailyTarget(maxReps,intensity,ratio,reason);
     if(reason==='skipped_day' && i===0) sets=sets.map(v=>Math.max(2,Math.round(v*0.92)));
