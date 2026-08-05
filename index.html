@@ -4423,7 +4423,17 @@ toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||r
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
-document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent=t('training_ready');}); resumeAfterRestBtn.addEventListener('click',()=>{stopRest();if(autoCalibrate()){sessionActive=true;toggleSessionBtn.textContent=t('phase_paused');phaseEl.textContent=t('phase_in_progress');}else{phaseEl.textContent=t('training_ready');movementLabel.textContent=t('phase_reposition');}});
+document.getElementById('confirmSet').addEventListener('click',()=>{confirmNextSet();}); skipRestBtn.addEventListener('click',()=>{stopRest();phaseEl.textContent=t('training_ready');}); resumeAfterRestBtn.addEventListener('click',()=>{
+  // BUGFIX : contrairement à la reprise automatique (autoResumeAfterRest, qui
+  // appelle resetTracking() avant de recalibrer), ce bouton de reprise MANUELLE
+  // ne réinitialisait pas le suivi caméra — l'algorithme repartait avec un état
+  // de calibration périmé (baseline, awaitingFirstPosition...) datant d'avant le
+  // repos, ce qui pouvait fausser la détection des premières répétitions de la
+  // série suivante. Alignée sur le même comportement que la reprise automatique.
+  stopRest();
+  resetTracking();
+  if(autoCalibrate()){sessionActive=true;toggleSessionBtn.textContent=t('phase_paused');phaseEl.textContent=t('phase_in_progress');}else{phaseEl.textContent=t('training_ready');movementLabel.textContent=t('phase_reposition');}
+});
 resetBtn.addEventListener('click',()=>{setCount=0;refreshHeader();resetTracking();});
 finishWorkoutBtn.addEventListener('click',()=>{
   if(totalCount===0 && setCount===0){
