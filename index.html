@@ -3920,8 +3920,14 @@ function processRep(metrics){
 
   if(returned){
     const outOfView=now-poseLostAt;
-    // Une pompe a un aller-retour bref. Une sortie prolongée du champ est ignorée.
-    const validDescent=downFrames>=2 && outOfView>=350 && outOfView<=2200;
+    // BUGFIX / réglage : la fenêtre haute était fixée à 2200ms (2,2s), ce qui est
+    // court pour une pompe lente et contrôlée (descente 2-3s + remontée 1-2s
+    // dépasse facilement ce seuil) — une répétition parfaitement valide mais
+    // exécutée lentement n'était alors simplement jamais comptée, sans aucun
+    // retour à l'utilisateur pour expliquer pourquoi. Élargi à 3600ms pour
+    // couvrir un tempo contrôlé réaliste, tout en gardant le plancher à 350ms
+    // qui filtre le bruit (un simple mouvement de tête ne doit pas compter).
+    const validDescent=downFrames>=2 && outOfView>=350 && outOfView<=3600;
     if(validDescent && now-lastRepAt>=350){
       lastRepAt=now;
       state='up';
