@@ -1452,7 +1452,7 @@ const toggleSessionBtn=$('toggleSession'),nextSetBtn=$('nextSet'),finishWorkoutB
 const targetRepsInput=$('targetReps'),restSecondsInput=$('restSeconds'),restPanel=$('restPanel'),restDisplay=$('restDisplay'),restText=$('restText'),skipRestBtn=$('skipRest'),resumeAfterRestBtn=$('resumeAfterRest'),historyList=$('historyList');
 let detector=null,lastKeypoints=null,cameraReady=false,manualMode=false,sessionActive=false,restActive=false,calibrated=false,processing=false,rafId=null,stream=null,lastDetectAt=0;
 let awaitingFirstPosition=true; // true = la prochaine pose vue = "je me mets en place", ne doit jamais compter comme une pompe
-const DETECT_INTERVAL=300; // ms — bon compromis fluidité/fiabilité
+const DETECT_INTERVAL=220; // ms — abaissé (300ms) pour mieux résoudre les pompes rapides, tout en restant raisonnable côté performance
 let setCount=0,totalCount=0,currentSet=1,completedSets=[],restTimer=null,restRemaining=0;
 let sessionStartTime=null,sessionTimerInterval=null;
 let baseline=null,state='up',downFrames=0,upFrames=0,lastRepAt=0,poseWasDetected=false,poseVisible=true,poseLostAt=0,pendingReps=0,trackingMode=null;
@@ -2218,8 +2218,31 @@ function renderPlanTab(){
         setCountRow = window.lastTodayPlanSnapshot ? window.lastTodayPlanSnapshot.sets.length : 0;
       }else{
         const aiDay=getAIPlanForDate(toLocalDateStr(d));
-        const dIntensity = planProfile.days.indexOf(d.getDay()) + 1;
-        const daySets=aiDay && aiDay.sets && aiDay.sets.length ? aiDay.sets : generateDailyTarget(planProfile.maxReps, dIntensity, ratio);
+        let daySets;        if(aiDay && aiDay.sets && aiDay.sets.length){
+          daySets=aiDay.sets;
+        } else {
+          // BUGFIX : le plan généré par l'IA ne couvre que 5 jours, mais cette
+          // liste en affiche 7. Pour les jours au-delà (ici les 2 derniers),
+          // le code recalculait auparavant depuis zéro avec generateDailyTarget()
+          // en utilisant un "ratio" et une formule d'intensité totalement
+          // DIFFÉRENTS de ceux que l'IA a utilisés pour les jours précédents
+          // (deux algorithmes indépendants, jamais coordonnés) — d'où un
+          // décrochage brutal et incohérent d'un jour à l'autre (ex: 31 pompes
+          // puis 63 le lendemain, sans aucune progression logique entre les
+          // deux). On prolonge maintenant en douceur à partir du dernier jour
+          // RÉEL généré par l'IA (légère progression de 2%), pour rester dans
+          // la continuité de ce qu'elle a déjà proposé, plutôt que de repartir
+          // d'un calcul sans rapport.
+          const aiDays=(planProfile.aiPlan && Array.isArray(planProfile.aiPlan.days)) ? planProfile.aiPlan.days : [];
+          const lastAiDayWithSets=[...aiDays].reverse().find(dd=>Array.isArray(dd.sets) && dd.sets.length);
+          if(lastAiDayWithSets){
+            const perSetCap=Math.max(2, Math.round((planProfile.maxReps||10)*0.7));
+            daySets=lastAiDayWithSets.sets.map(v=>Math.max(2, Math.min(perSetCap, Math.round(v*1.02))));
+          } else {
+            const dIntensity = planProfile.days.indexOf(d.getDay()) + 1;
+            daySets=generateDailyTarget(planProfile.maxReps, dIntensity, ratio);
+          }
+        }
         total=daySets.reduce((a,b)=>a+b,0);
         setCountRow=daySets.length;
       }
@@ -3920,15 +3943,24 @@ function processRep(metrics){
 
   if(returned){
     const outOfView=now-poseLostAt;
-    // BUGFIX / réglage : la fenêtre haute était fixée à 2200ms (2,2s), ce qui est
-    // court pour une pompe lente et contrôlée (descente 2-3s + remontée 1-2s
-    // dépasse facilement ce seuil) — une répétition parfaitement valide mais
-    // exécutée lentement n'était alors simplement jamais comptée, sans aucun
-    // retour à l'utilisateur pour expliquer pourquoi. Élargi à 3600ms pour
-    // couvrir un tempo contrôlé réaliste, tout en gardant le plancher à 350ms
-    // qui filtre le bruit (un simple mouvement de tête ne doit pas compter).
-    const validDescent=downFrames>=2 && outOfView>=350 && outOfView<=3600;
-    if(validDescent && now-lastRepAt>=350){
+    // Réglages de la fenêtre de détection :
+    // - Plafond (3600ms) : élargi pour couvrir une pompe lente et contrôlée
+    //   (voir commentaire d'origine plus haut dans l'historique du fichier).
+    // - Plancher (350ms → 220ms) et downFrames (>=2 → >=1) : abaissés pour
+    //   détecter aussi une pompe exécutée RAPIDEMENT. Avec un échantillonnage
+    //   caméra toutes les 300ms (DETECT_INTERVAL), exiger downFrames>=2
+    //   imposait de fait un minimum réel proche de 600ms hors champ — une
+    //   pompe explosive peut légitimement descendre et remonter plus vite que
+    //   ça, et n'était alors jamais comptée. downFrames>=1 accepte qu'un seul
+    //   cycle de détection ait "manqué" la pose, ce qui suffit déjà à confirmer
+    //   une disparition réelle (pas un simple bruit d'une frame isolée, qui
+    //   n'aurait de toute façon pas pu faire disparaître ET réapparaître la
+    //   pose en un seul cycle). Le cooldown entre deux répétitions comptées
+    //   est aussi aligné sur l'intervalle d'échantillonnage (350ms → 280ms)
+    //   pour ne pas artificiellement plafonner la cadence détectable en dessous
+    //   de ce que la caméra peut réellement suivre.
+    const validDescent=downFrames>=1 && outOfView>=220 && outOfView<=3600;
+    if(validDescent && now-lastRepAt>=280){
       lastRepAt=now;
       state='up';
       downFrames=0;
