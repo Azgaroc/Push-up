@@ -1007,6 +1007,7 @@ fr: {
  plan_note_skipped:"Volume réduit après jour sauté", plan_note_hard:"Volume réduit après une séance difficile",
  plan_note_ahead:"Ajusté après une séance réalisée en avance", plan_note_extra:"Ajusté suite à des pompes supplémentaires réalisées",
  plan_note_forced_rest:"Jour de repos imposé par ton coach : rythme soutenu et signes de fatigue récents.",
+ plan_note_estimated:"Estimation (au-delà des 5 jours détaillés par le coach)",
  plan_note_progressive:"Adaptation progressive", toast_camera_denied:"Impossible d'activer la caméra. autorisez l'accès puis réessayez.",
  toast_plan_created:"Plan créé avec succès !", toast_create_plan_first:"Créez d'abord votre plan dans l'onglet plan.",
  toast_days_updated:"Jours d'entraînement mis à jour.",
@@ -1124,6 +1125,7 @@ en: {
  plan_note_skipped:"Reduced volume after a skipped day", plan_note_hard:"Reduced volume after a hard session",
  plan_note_ahead:"Adjusted after a session done ahead of schedule", plan_note_extra:"Adjusted after extra push-ups were done",
  plan_note_forced_rest:"Rest day imposed by your coach: sustained pace and recent signs of fatigue.",
+ plan_note_estimated:"Estimate (beyond the 5 days detailed by the coach)",
  plan_note_progressive:"Progressive adjustment", toast_camera_denied:"Couldn't activate the camera. allow access then try again.",
  toast_plan_created:"Plan created successfully!", toast_create_plan_first:"First create your plan in the plan tab.",
  toast_days_updated:"Training days updated.",
@@ -1241,6 +1243,7 @@ es: {
  plan_note_skipped:"Volumen reducido tras un día saltado", plan_note_hard:"Volumen reducido tras una sesión difícil",
  plan_note_ahead:"Ajustado tras una sesión realizada antes de tiempo", plan_note_extra:"Ajustado tras flexiones extra realizadas",
  plan_note_forced_rest:"Día de descanso impuesto por tu coach: ritmo sostenido y signos de fatiga recientes.",
+ plan_note_estimated:"Estimación (más allá de los 5 días detallados por el coach)",
  plan_note_progressive:"Ajuste progresivo", toast_camera_denied:"No se pudo activar la cámara. permite el acceso y vuelve a intentarlo.",
  toast_plan_created:"¡Plan creado con éxito!", toast_create_plan_first:"Primero crea tu plan en la pestaña plan.",
  toast_days_updated:"Días de entrenamiento actualizados.",
@@ -2193,6 +2196,7 @@ function renderPlanTab(){
     const svgCal='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg>';
     const svgCheck='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--inv)" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>';
     const svgChevron='<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>';
+    let extrapolationState=null; // uniquement pour les jours au-delà de la fenêtre de 5 jours couverte par l'IA
     nextDates.forEach((d,idx)=>{
       const isToday = idx===0;
       const aiDayRow=getAIPlanForDate(toLocalDateStr(d));
@@ -2211,7 +2215,7 @@ function renderPlanTab(){
         future.appendChild(row);
         return;
       }
-      let total, setCountRow;
+      let total, setCountRow, dayNote='';
       if(isToday && todayCompleted){
         total = displayTotal;
         setCountRow = window.lastTodayPlanSnapshot ? window.lastTodayPlanSnapshot.sets.length : 0;
@@ -2219,6 +2223,7 @@ function renderPlanTab(){
         const aiDay=getAIPlanForDate(toLocalDateStr(d));
         let daySets;        if(aiDay && aiDay.sets && aiDay.sets.length){
           daySets=aiDay.sets;
+          dayNote=aiDay.note||'';
         } else {
           // BUGFIX : le plan généré par l'IA ne couvre que 5 jours, mais cette
           // liste en affiche 7. Pour les jours au-delà (ici les 2 derniers),
@@ -2226,17 +2231,46 @@ function renderPlanTab(){
           // en utilisant un "ratio" et une formule d'intensité totalement
           // DIFFÉRENTS de ceux que l'IA a utilisés pour les jours précédents
           // (deux algorithmes indépendants, jamais coordonnés) — d'où un
-          // décrochage brutal et incohérent d'un jour à l'autre (ex: 31 pompes
-          // puis 63 le lendemain, sans aucune progression logique entre les
-          // deux). On prolonge maintenant en douceur à partir du dernier jour
-          // RÉEL généré par l'IA (légère progression de 2%), pour rester dans
-          // la continuité de ce qu'elle a déjà proposé, plutôt que de repartir
-          // d'un calcul sans rapport.
-          const aiDays=(planProfile.aiPlan && Array.isArray(planProfile.aiPlan.days)) ? planProfile.aiPlan.days : [];
-          const lastAiDayWithSets=[...aiDays].reverse().find(dd=>Array.isArray(dd.sets) && dd.sets.length);
-          if(lastAiDayWithSets){
-            const perSetCap=Math.max(2, Math.round((planProfile.maxReps||10)*0.7));
-            daySets=lastAiDayWithSets.sets.map(v=>Math.max(2, Math.min(perSetCap, Math.round(v*1.02))));
+          // décrochage brutal et incohérent d'un jour à l'autre. Corrigé une
+          // première fois en prolongeant depuis le dernier jour RÉEL de l'IA
+          // (+2%), MAIS ce calcul repartait à chaque fois du MÊME jour de
+          // référence (jamais du jour extrapolé précédent) et arrondissait
+          // immédiatement à l'entier à chaque étape — si +2% ne suffisait pas
+          // à faire bouger un total entier (courant sur de petits nombres),
+          // TOUS les jours au-delà de la fenêtre IA affichaient exactement le
+          // même total (ex: 44/44/44 trois jours de suite). On accumule
+          // maintenant la croissance en continu (sans ré-arrondir à chaque
+          // étape) pour qu'elle finisse toujours par se voir, et chaque jour
+          // extrapolé compose bien sur le précédent.
+          const perSetCap=Math.max(2, Math.round((planProfile.maxReps||10)*0.7));
+          if(!extrapolationState){
+            const aiDays=(planProfile.aiPlan && Array.isArray(planProfile.aiPlan.days)) ? planProfile.aiPlan.days : [];
+            const lastAiDayWithSets=[...aiDays].reverse().find(dd=>Array.isArray(dd.sets) && dd.sets.length);
+            if(lastAiDayWithSets){
+              const baseTotal=lastAiDayWithSets.sets.reduce((a,b)=>a+b,0);
+              extrapolationState={baseSets:lastAiDayWithSets.sets.slice(), runningTotal:baseTotal};
+            }
+          }
+          if(extrapolationState){
+            extrapolationState.runningTotal*=1.02;
+            const targetTotal=Math.round(extrapolationState.runningTotal);
+            const baseSum=extrapolationState.baseSets.reduce((a,b)=>a+b,0);
+            const factor=baseSum>0 ? targetTotal/baseSum : 1;
+            // Répartition à reste le plus fort : arrondir chaque série indépendamment
+            // (Math.round) peut faire dériver le total réel loin de la cible visée
+            // (les erreurs d'arrondi s'accumulent). On arrondit ici à l'entier
+            // inférieur puis on redistribue précisément le reliquat aux séries les
+            // plus proches de l'arrondi supérieur, pour que le total affiché
+            // corresponde exactement à la progression voulue.
+            const rawVals=extrapolationState.baseSets.map(v=>Math.max(2, Math.min(perSetCap, v*factor)));
+            const floors=rawVals.map(v=>Math.max(2, Math.floor(v)));
+            let remainder=targetTotal - floors.reduce((a,b)=>a+b,0);
+            const order=rawVals.map((v,i)=>({i, frac:v-floors[i]})).sort((a,b)=>b.frac-a.frac);
+            for(let k=0;k<order.length && remainder>0;k++){
+              if(floors[order[k].i]<perSetCap){ floors[order[k].i]++; remainder--; }
+            }
+            daySets=floors;
+            dayNote=t('plan_note_estimated');
           } else {
             const dIntensity = planProfile.days.indexOf(d.getDay()) + 1;
             daySets=generateDailyTarget(planProfile.maxReps, dIntensity, ratio);
@@ -2252,6 +2286,7 @@ function renderPlanTab(){
         <div style="flex:1;">
           <div style="font-weight:700;font-size:.9rem;${isToday?'color:var(--primary);':''}">${label}</div>
           <div style="color:var(--muted);font-size:.78rem;">${setCountRow} ${t(setCountRow>1?'training_series_unit':'training_series_done_label')}</div>
+          ${dayNote ? `<div style="color:var(--muted);font-size:.72rem;margin-top:.15rem;font-style:italic;">${dayNote}</div>` : ''}
         </div>
         <strong style="color:var(--primary);font-size:.95rem;">${total} ${t('training_pushups')}</strong>
         ${svgChevron}`;
