@@ -1457,7 +1457,14 @@ let sessionStartTime=null,sessionTimerInterval=null;
 let baseline=null,state='up',downFrames=0,upFrames=0,lastRepAt=0,poseWasDetected=false,poseVisible=true,poseLostAt=0,pendingReps=0,trackingMode=null;
 let recentWidths=[],approachConfirmed=true;
 let lastDebugInfo={};
-const storageOk=typeof localStorage!=='undefined';const workouts=storageOk?JSON.parse(localStorage.getItem('pompes-workouts')||'[]'):[];
+const storageOk=typeof localStorage!=='undefined';
+// BUGFIX : JSON.parse() sur 'pompes-workouts' n'était pas protégé — une valeur
+// corrompue en localStorage (écriture interrompue, édition manuelle, etc.)
+// levait une exception non capturée ici, tout en haut du script, avant même le
+// premier rendu : page blanche totale, sans aucun message ni recours pour
+// l'utilisateur. Même principe de repli que loadPlan() : JSON invalide → [].
+function loadWorkoutsFromStorage(){ try{ return storageOk?JSON.parse(localStorage.getItem('pompes-workouts')||'[]'):[]; }catch(e){ return []; } }
+const workouts=loadWorkoutsFromStorage();
 // Répare les séances plan déjà enregistrées avec un objectif ("target") incohérent,
 // un bug survenu avant correction : pour une séance plan non ignorée, l'objectif
 // doit toujours correspondre au total réellement effectué (le mécanisme de comptage
@@ -1901,6 +1908,15 @@ function renderProfileTab(){
     ch.classList.toggle('active', planProfile.days.includes(Number(ch.dataset.day)));
   });
 }
+// BUGFIX : note/dayNote/coachNoteForToday (ci-dessous dans renderPlanTab) sont
+// du texte renvoyé par le backend IA distant et étaient insérés tels quels
+// dans de l'innerHTML — si ce backend est un jour compromis ou manipulé pour
+// renvoyer du HTML, ce texte s'exécuterait dans la page (accès localStorage,
+// token push, etc.). On échappe désormais ce texte avant insertion ; il reste
+// affiché normalement, seule une éventuelle balise HTML serait neutralisée.
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
 function renderPlanTab(){
   const onboarding=document.getElementById('planOnboarding');
   const active=document.getElementById('planActive');
@@ -1992,7 +2008,7 @@ function renderPlanTab(){
         <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>${t('calendar_rest_day')}</span>
         </div>
-        <div style="color:var(--muted);font-size:.85rem;margin-top:.5rem;">${coachNoteForToday || t('plan_no_session_today')}</div>
+        <div style="color:var(--muted);font-size:.85rem;margin-top:.5rem;">${coachNoteForToday ? escapeHtml(coachNoteForToday) : t('plan_no_session_today')}</div>
       `;
       setsEl.parentElement.insertBefore(restNoteCard, setsEl.nextSibling);
     }
@@ -2094,7 +2110,7 @@ function renderPlanTab(){
         <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 00-4 12.7V17a2 2 0 002 2h4a2 2 0 002-2v-2.3A7 7 0 0012 2z"/><path d="M9 21h6"/></svg><span>${t('plan_ai_active')}</span>
         </div>
-        <div style="color:var(--muted);font-size:.85rem;margin-top:.5rem;">${aiToday.note}</div>
+        <div style="color:var(--muted);font-size:.85rem;margin-top:.5rem;">${escapeHtml(aiToday.note)}</div>
       `;
       restCard.parentElement.insertBefore(noteCard, restCard.nextSibling);
     }
@@ -2239,7 +2255,7 @@ function renderPlanTab(){
         <div style="flex:1;">
           <div style="font-weight:700;font-size:.9rem;${isToday?'color:var(--primary);':''}">${label}</div>
           <div style="color:var(--muted);font-size:.78rem;">${setCountRow} ${t(setCountRow>1?'training_series_unit':'training_series_done_label')}</div>
-          ${dayNote ? `<div style="color:var(--muted);font-size:.72rem;margin-top:.15rem;font-style:italic;">${dayNote}</div>` : ''}
+          ${dayNote ? `<div style="color:var(--muted);font-size:.72rem;margin-top:.15rem;font-style:italic;">${escapeHtml(dayNote)}</div>` : ''}
         </div>
         <strong style="color:var(--primary);font-size:.95rem;">${total} ${t('training_pushups')}</strong>
         ${svgChevron}`;
@@ -4135,6 +4151,15 @@ document.addEventListener('visibilitychange',()=>{
   }
   if(!document.hidden && sessionActive && sessionStartTime){
     updateSessionDurationDisplay();
+  }
+  // BUGFIX : ce handler ne resynchronisait que le repos de la séance libre
+  // (restActive/restTargetTime) au retour au premier plan — le repos d'une
+  // séance issue du plan (planRestActive/planRestTargetTime) n'était jamais
+  // recalculé, alors que les setInterval sont ralentis/suspendus en
+  // arrière-plan sur Safari iOS : le compte à rebours du mode Plan pouvait
+  // rester figé/désynchronisé après un retour d'arrière-plan.
+  if(!document.hidden && planRestActive && planRestTargetTime){
+    planRestTick();
   }
 });
 function autoResumeAfterRest(){
