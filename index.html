@@ -2002,7 +2002,7 @@ function renderPlanTab(){
     const aiToday=applyAIPlanForToday(baseSets, ratio);
     const sets=aiToday.sets;
     const todayIsoStr=toLocalDateStr(new Date());
-    const todayWorkout=[...workouts].reverse().find(w=>w && w.source==='plan' && w.isoDate===todayIsoStr);
+    const todayWorkout=[...workouts].reverse().find(w=>w && w.source==='plan' && !w.skipped && (w.targetDate===todayIsoStr || (!w.targetDate && w.isoDate===todayIsoStr)));
     todayCompleted=!!todayWorkout;
     // Une fois la séance faite, on affiche ce qui a réellement été réalisé,
     // pas une nouvelle suggestion générée après coup (ex. après un retour "difficile").
