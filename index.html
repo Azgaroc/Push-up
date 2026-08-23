@@ -894,11 +894,13 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       </div>
     </div>
   </div>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.20.0/dist/tf-core.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@4.20.0/dist/tf-converter.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.20.0/dist/tf-backend-webgl.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js" crossorigin="anonymous"></script>
 <script>
+// BUGFIX perf : les 4 scripts TensorFlow.js/pose-detection étaient chargés en
+// balises <script> statiques, donc à CHAQUE visite, même quand la caméra n'est
+// jamais utilisée (consultation stats/plan/calendrier). Chargement différé via
+// loadCameraLibs() (voir juste avant startCamera()) : mêmes URLs, mêmes
+// versions, même attribut crossorigin, même ordre — uniquement déclenché par
+// un chemin qui a réellement besoin de la caméra.
 const APP_I18N = {
 fr: {
  nav_home:"Accueil", nav_plan:"Plan", nav_free:"Libre", nav_calendar:"Calendrier", nav_stats:"Stats", nav_profile:"Profil",
@@ -1437,7 +1439,7 @@ document.querySelectorAll('#profileLangChips .chip').forEach(btn=>{
     setAppLanguage(btn.dataset.lang);
   });
 });
-const $=id=>document.getElementById(id); const video=$('video'), work=$('work'), wctx=work.getContext('2d'), toastEl=$('toast');
+const $=id=>document.getElementById(id); const video=$('video'), toastEl=$('toast');
 let toastTimer=null;
 function showToast(msg,duration=2600){
   toastEl.textContent=msg; toastEl.style.opacity='1';
@@ -1457,7 +1459,6 @@ let setCount=0,totalCount=0,currentSet=1,completedSets=[],restTimer=null,restRem
 let sessionStartTime=null,sessionTimerInterval=null;
 let baseline=null,state='up',downFrames=0,upFrames=0,lastRepAt=0,poseWasDetected=false,poseVisible=true,poseLostAt=0,pendingReps=0,trackingMode=null;
 let recentWidths=[],approachConfirmed=true;
-let lastDebugInfo={};
 const storageOk=typeof localStorage!=='undefined';
 // BUGFIX : JSON.parse() sur 'pompes-workouts' n'était pas protégé — une valeur
 // corrompue en localStorage (écriture interrompue, édition manuelle, etc.)
@@ -2958,7 +2959,12 @@ function goToTab(tabName){
   document.body.classList.toggle('home-active', tabName==='home');
   if(tabName==='home') renderHomeTab();
   if(tabName==='calendar') renderCalendar();
-  if(tabName==='training'){activeMode='free';}
+  // BUGFIX perf : la caméra n'est plus démarrée automatiquement au chargement
+  // de la page (voir window.load) — l'écran "Libre" est le chemin qui en a
+  // réellement besoin, donc c'est lui qui la déclenche désormais, au moment
+  // où l'utilisateur y accède (toujours via un clic, donc dans la fenêtre de
+  // geste utilisateur requise par Safari iOS pour getUserMedia).
+  if(tabName==='training'){activeMode='free'; startCamera();}
   if(tabName==='plan'){activeMode='plan';}
   if(tabName==='stats') renderStats();
   if(tabName==='profile') renderProfileTab();
@@ -3964,7 +3970,17 @@ function processRep(metrics){
     //   pour ne pas artificiellement plafonner la cadence détectable en dessous
     //   de ce que la caméra peut réellement suivre.
     const validDescent=downFrames>=1 && outOfView>=220 && outOfView<=3600;
-    if(validDescent && now-lastRepAt>=280){
+    // BUGFIX faux positif : le mode 'face' (nez seul) suffisait à revalider une
+    // pose disparue/réapparue — un simple mouvement de tête (rotation, flou
+    // passager) fait chuter puis remonter la confiance du nez sans aucun
+    // déplacement réel du corps, et se faisait donc compter comme une pompe.
+    // On exige désormais au moins le mode 'simple' (nez + les deux épaules,
+    // quasiment jamais perturbées par un mouvement de tête isolé) pour qu'une
+    // transition compte. Le mode 'face' continue d'exister normalement pour
+    // la détection/calibration générale (getPoseMetrics, renderDebug) — il
+    // n'est retiré que de cette validation de comptage.
+    const poseConfirmedEnough=metrics.mode!=='face';
+    if(validDescent && poseConfirmedEnough && now-lastRepAt>=280){
       lastRepAt=now;
       state='up';
       downFrames=0;
@@ -3979,7 +3995,6 @@ function processRep(metrics){
       }
       if(planSessionActive) finishPlanRep();
       beep();
-      lastDebugInfo={info:'pompe validée : disparition puis retour',outOfView};
       return;
     }
 
@@ -3988,13 +4003,11 @@ function processRep(metrics){
     downFrames=0;
     upFrames=0;
     phaseEl.textContent=t('training_ready');
-    lastDebugInfo={info:'retour ignoré',outOfView};
     return;
   }
 
   // Pose stable en haut : aucune action. Cette version ne dépend pas des angles.
   phaseEl.textContent=t('phase_up');
-  lastDebugInfo={mode:metrics.mode,state:'up',info:'pose détectée'};
 }
 function renderDebug(keypoints, detected){
   const inSession = sessionActive || planSessionActive;
@@ -4055,10 +4068,37 @@ document.addEventListener('visibilitychange',()=>{
   }
 });
 window.addEventListener('pagehide',stopCameraResources);
+// Chargement différé de TensorFlow.js/pose-detection : mêmes 4 URLs/versions/
+// crossorigin/ordre que les anciennes balises <script> statiques, mais
+// uniquement au moment où startCamera() en a réellement besoin. Promise
+// mémoïsée : un second appel (nouvel essai après échec réseau, deuxième
+// écran caméra ouvert) réutilise le même chargement, ne re-télécharge rien.
+let cameraLibsPromise=null;
+function loadScriptTag(src){
+  return new Promise((resolve,reject)=>{
+    const s=document.createElement('script');
+    s.src=src;
+    s.crossOrigin='anonymous';
+    s.onload=()=>resolve();
+    s.onerror=()=>reject(new Error('Failed to load '+src));
+    document.head.appendChild(s);
+  });
+}
+function loadCameraLibs(){
+  if(cameraLibsPromise) return cameraLibsPromise;
+  cameraLibsPromise=(async()=>{
+    await loadScriptTag('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.20.0/dist/tf-core.min.js');
+    await loadScriptTag('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@4.20.0/dist/tf-converter.min.js');
+    await loadScriptTag('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.20.0/dist/tf-backend-webgl.min.js');
+    await loadScriptTag('https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js');
+  })();
+  return cameraLibsPromise;
+}
 async function startCamera(){
   if(stream) return;
   try{
     cameraStatus.textContent=t('camera_loading_model');
+    await loadCameraLibs();
     try{
       await tf.setBackend('webgl');
       await tf.ready();
@@ -4328,14 +4368,12 @@ window.addEventListener('load',async()=>{
   // Le Plan est l'onglet actif par défaut, mais son contenu est construit
   // dynamiquement en JS : on le peuple ici, une fois tout le script chargé.
   renderPlanTab();
-  try{
-    await Promise.race([
-      startCamera(),
-      new Promise(resolve=>setTimeout(resolve,15000))
-    ]);
-  }catch(e){
-    console.error('startCamera error on boot', e && e.message ? e.message : String(e));
-  }
+  // BUGFIX perf : la caméra (et donc TensorFlow.js) démarrait automatiquement
+  // ici, à chaque chargement de page, sans geste utilisateur — retardant
+  // l'affichage de l'app (splash bloqué jusqu'à 15s) et chargeant TF.js même
+  // pour une visite qui ne touche jamais à la caméra. Le démarrage caméra se
+  // fait désormais uniquement depuis les écrans qui en ont réellement besoin
+  // (voir goToTab('training') et startPlanSession()).
   const splash=document.getElementById('splashScreen');
   const appRoot=document.getElementById('appRoot');
   appRoot.style.display='';
