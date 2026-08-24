@@ -1459,6 +1459,13 @@ let setCount=0,totalCount=0,currentSet=1,completedSets=[],restTimer=null,restRem
 let sessionStartTime=null,sessionTimerInterval=null;
 let baseline=null,state='up',downFrames=0,upFrames=0,lastRepAt=0,poseWasDetected=false,poseVisible=true,poseLostAt=0,pendingReps=0,trackingMode=null;
 let recentWidths=[],approachConfirmed=true;
+// Compteur dédié UNIQUEMENT à l'affichage de la phase ("Bas" vs "Haut"/"Prêt"),
+// séparé de downFrames (qui continue de servir exactement comme avant au
+// comptage réel des pompes dans processRep : validDescent, outOfView, etc.
+// restent inchangés). Évite qu'une seule frame de bruit de mesure (score de
+// confiance MoveNet passant sous 0.35 un instant, même immobile) ne fasse
+// clignoter le texte affiché sur "Bas".
+let missingFrameStreak=0;
 const storageOk=typeof localStorage!=='undefined';
 // BUGFIX : JSON.parse() sur 'pompes-workouts' n'était pas protégé — une valeur
 // corrompue en localStorage (écriture interrompue, édition manuelle, etc.)
@@ -3935,9 +3942,19 @@ function processRep(metrics){
       poseLostAt=now;
       downFrames=1;
       upFrames=0;
-      phaseEl.textContent=t('phase_down');
+      missingFrameStreak=1;
     } else if(downFrames>0){
       downFrames++;
+      missingFrameStreak++;
+    }
+    // BUGFIX affichage : une seule frame sans détection ne doit pas suffire à
+    // afficher "Bas" — bruit de mesure normal même en restant immobile (voir
+    // analyse). N'affiche "Bas" qu'à partir de 2 cycles de détection
+    // consécutifs sans pose ; le comptage réel (downFrames, poseLostAt,
+    // poseVisible, validDescent, outOfView) n'est en rien modifié par cette
+    // seule condition d'affichage.
+    if(missingFrameStreak>=2){
+      phaseEl.textContent=t('phase_down');
     }
     return;
   }
@@ -3945,6 +3962,7 @@ function processRep(metrics){
   const returned=!poseVisible;
   poseVisible=true;
   poseWasDetected=true;
+  missingFrameStreak=0;
 
   // Première pose après une reprise (début de séance ou fin de repos) : on
   // établit juste la position, on ne compte jamais cette pose comme une pompe,
@@ -3978,7 +3996,13 @@ function processRep(metrics){
     //   est aussi aligné sur l'intervalle d'échantillonnage (350ms → 280ms)
     //   pour ne pas artificiellement plafonner la cadence détectable en dessous
     //   de ce que la caméra peut réellement suivre.
-    const validDescent=downFrames>=1 && outOfView>=220 && outOfView<=3600;
+    // BUGFIX faux positif : downFrames>=1 comptait déjà une pompe sur une
+    // simple perte de pose d'une seule frame (220ms, le minimum physiquement
+    // atteignable) — indiscernable d'un bruit de mesure isolé. downFrames>=2
+    // exige au moins 2 cycles de détection consécutifs sans pose (~440ms
+    // minimum), éliminant ce faux positif sans rater les pompes réelles
+    // (rapides ou normales), qui atteignent déjà downFrames>=2 naturellement.
+    const validDescent=downFrames>=2 && outOfView>=220 && outOfView<=3600;
     // BUGFIX faux positif : le mode 'face' (nez seul) suffisait à revalider une
     // pose disparue/réapparue — un simple mouvement de tête (rotation, flou
     // passager) fait chuter puis remonter la confiance du nez sans aucun
