@@ -1010,7 +1010,7 @@ fr: {
  plan_note_skipped:"Volume réduit après jour sauté", plan_note_hard:"Volume réduit après une séance difficile",
  plan_note_ahead:"Ajusté après une séance réalisée en avance", plan_note_extra:"Ajusté suite à des pompes supplémentaires réalisées",
  plan_note_forced_rest:"Jour de repos imposé par ton coach : rythme soutenu et signes de fatigue récents.",
- plan_note_progressive:"Adaptation progressive", toast_camera_denied:"Impossible d'activer la caméra. autorisez l'accès puis réessayez.",
+ plan_note_progressive:"Adaptation progressive", toast_camera_denied:"Impossible d'activer la caméra. autorisez l'accès puis réessayez.", toast_camera_denied_ios:"Accès caméra refusé. Allez dans Réglages > Safari > Caméra (ou Réglages > Push-Up si l'app est installée) pour l'autoriser, puis revenez ici.", toast_camera_denied_android:"Accès caméra refusé. Appuyez sur le cadenas à côté de l'adresse du site, ou allez dans Réglages > Applications > Push-Up > Autorisations, pour l'activer.",
  toast_plan_created:"Plan créé avec succès !", toast_create_plan_first:"Créez d'abord votre plan dans l'onglet plan.",
  toast_days_updated:"Jours d'entraînement mis à jour.",
  confirm_full_reset:"Réinitialisation complète : toutes vos données (plan, historique, séances, préférences) seront définitivement supprimées et l'application redémarrera comme neuve. continuer ?",
@@ -1127,7 +1127,7 @@ en: {
  plan_note_skipped:"Reduced volume after a skipped day", plan_note_hard:"Reduced volume after a hard session",
  plan_note_ahead:"Adjusted after a session done ahead of schedule", plan_note_extra:"Adjusted after extra push-ups were done",
  plan_note_forced_rest:"Rest day imposed by your coach: sustained pace and recent signs of fatigue.",
- plan_note_progressive:"Progressive adjustment", toast_camera_denied:"Couldn't activate the camera. allow access then try again.",
+ plan_note_progressive:"Progressive adjustment", toast_camera_denied:"Couldn't activate the camera. allow access then try again.", toast_camera_denied_ios:"Camera access denied. Go to Settings > Safari > Camera (or Settings > Push-Up if installed) to allow it, then come back here.", toast_camera_denied_android:"Camera access denied. Tap the lock icon next to the site address, or go to Settings > Apps > Push-Up > Permissions, to enable it.",
  toast_plan_created:"Plan created successfully!", toast_create_plan_first:"First create your plan in the plan tab.",
  toast_days_updated:"Training days updated.",
  confirm_full_reset:"Full reset: all your data (plan, history, sessions, preferences) will be permanently deleted and the app will restart fresh. continue?",
@@ -1244,7 +1244,7 @@ es: {
  plan_note_skipped:"Volumen reducido tras un día saltado", plan_note_hard:"Volumen reducido tras una sesión difícil",
  plan_note_ahead:"Ajustado tras una sesión realizada antes de tiempo", plan_note_extra:"Ajustado tras flexiones extra realizadas",
  plan_note_forced_rest:"Día de descanso impuesto por tu coach: ritmo sostenido y signos de fatiga recientes.",
- plan_note_progressive:"Ajuste progresivo", toast_camera_denied:"No se pudo activar la cámara. permite el acceso y vuelve a intentarlo.",
+ plan_note_progressive:"Ajuste progresivo", toast_camera_denied:"No se pudo activar la cámara. permite el acceso y vuelve a intentarlo.", toast_camera_denied_ios:"Acceso a la cámara denegado. Ve a Ajustes > Safari > Cámara (o Ajustes > Push-Up si está instalada) para permitirlo, y vuelve aquí.", toast_camera_denied_android:"Acceso a la cámara denegado. Toca el candado junto a la dirección del sitio, o ve a Ajustes > Aplicaciones > Push-Up > Permisos, para activarlo.",
  toast_plan_created:"¡Plan creado con éxito!", toast_create_plan_first:"Primero crea tu plan en la pestaña plan.",
  toast_days_updated:"Días de entrenamiento actualizados.",
  confirm_full_reset:"Restablecimiento completo: todos tus datos (plan, historial, sesiones, preferencias) se eliminarán permanentemente y la app se reiniciará desde cero. ¿continuar?",
@@ -1453,6 +1453,12 @@ const countEl=$('count'),totalCountEl=$('totalCount'),setInfoEl=$('setInfo'),pha
 const toggleSessionBtn=$('toggleSession'),nextSetBtn=$('nextSet'),finishWorkoutBtn=$('finishWorkout');
 const targetRepsInput=$('targetReps'),restSecondsInput=$('restSeconds'),restPanel=$('restPanel'),restDisplay=$('restDisplay'),restText=$('restText'),skipRestBtn=$('skipRest'),resumeAfterRestBtn=$('resumeAfterRest'),historyList=$('historyList');
 let detector=null,lastKeypoints=null,cameraReady=false,manualMode=false,sessionActive=false,restActive=false,calibrated=false,processing=false,rafId=null,stream=null,lastDetectAt=0;
+// Distingue un refus explicite de permission caméra (message actionnable
+// possible : où réactiver) d'un autre échec (matériel absent/occupé, où
+// "autoriser dans les réglages" n'aiderait pas). Lu par startPlanSession()
+// en plus de startCamera() — aucune des deux fonctions n'est autrement
+// modifiée dans sa logique.
+let lastCameraDenialWasPermission=false;
 let awaitingFirstPosition=true; // true = la prochaine pose vue = "je me mets en place", ne doit jamais compter comme une pompe
 const DETECT_INTERVAL=220; // ms — abaissé (300ms) pour mieux résoudre les pompes rapides, tout en restant raisonnable côté performance
 let setCount=0,totalCount=0,currentSet=1,completedSets=[],restTimer=null,restRemaining=0;
@@ -2399,7 +2405,7 @@ async function startPlanSession(dateIso){
     await startCamera();
   }
   if(!cameraReady){
-    showToast(t('toast_camera_denied'),4000);
+    showToast(lastCameraDenialWasPermission ? cameraPermissionDeniedMessage() : t('toast_camera_denied'),4000);
     return;
   }
   runPlanCountdown(()=>{ startPlanSessionInner(dateIso); });
@@ -4162,6 +4168,11 @@ function loadCameraLibs(){
   ]);
   return cameraLibsPromise;
 }
+function cameraPermissionDeniedMessage(){
+  if(document.body.classList.contains('is-ios')) return t('toast_camera_denied_ios');
+  if(document.body.classList.contains('is-android')) return t('toast_camera_denied_android');
+  return t('toast_camera_denied');
+}
 async function startCamera(){
   if(stream) return;
   try{
@@ -4199,13 +4210,14 @@ async function startCamera(){
   }catch(e){
     console.error('startCamera error', e && e.name ? e.name : '', e && e.message ? e.message : String(e));
     const isPermissionError = e && (e.name==='NotAllowedError' || e.name==='PermissionDeniedError' || e.name==='SecurityError');
+    lastCameraDenialWasPermission = isPermissionError;
     cameraStatus.textContent = isPermissionError ? t('camera_access_denied') : t('camera_detection_unavailable');
     cameraDot.className='dot warn';
     stopCameraResources();
     manualMode=true;
     toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent=t('training_ready');
     movementLabel.textContent=t('camera_manual_mode');
-    showToast(t('toast_camera_unavailable'),4500);
+    showToast(isPermissionError ? cameraPermissionDeniedMessage() : t('toast_camera_unavailable'),4500);
   }
 }
 function resetTracking(){state='up';downFrames=0;upFrames=0;lastRepAt=0;poseWasDetected=false;poseVisible=true;poseLostAt=0;baseline=null;trackingMode=null;recentWidths=[];approachConfirmed=true;awaitingFirstPosition=true;phaseEl.textContent=t('training_ready');}
