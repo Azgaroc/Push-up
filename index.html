@@ -2959,12 +2959,21 @@ function goToTab(tabName){
   document.body.classList.toggle('home-active', tabName==='home');
   if(tabName==='home') renderHomeTab();
   if(tabName==='calendar') renderCalendar();
-  // BUGFIX perf : la caméra n'est plus démarrée automatiquement au chargement
-  // de la page (voir window.load) — l'écran "Libre" est le chemin qui en a
-  // réellement besoin, donc c'est lui qui la déclenche désormais, au moment
-  // où l'utilisateur y accède (toujours via un clic, donc dans la fenêtre de
-  // geste utilisateur requise par Safari iOS pour getUserMedia).
-  if(tabName==='training'){activeMode='free'; startCamera();}
+  // BUGFIX perf/Safari : la caméra n'est plus démarrée automatiquement au
+  // chargement de la page (voir window.load). Ici, à l'arrivée sur l'écran
+  // "Libre", on se contente de PRÉCHARGER TensorFlow.js en tâche de fond
+  // (sans bloquer l'interface, sans appeler getUserMedia) : ainsi, quand
+  // l'utilisateur appuie ensuite sur "Démarrer" (voir toggleSessionBtn), les
+  // bibliothèques sont déjà chargées ou en passe de l'être, et startCamera()
+  // peut appeler getUserMedia() immédiatement depuis ce clic, sans attendre
+  // de réseau — condition nécessaire pour que Safari iOS affiche la demande
+  // de permission au lieu de la refuser silencieusement.
+  // BUGFIX : toggleSessionBtn est "disabled" par défaut dans le HTML — avant,
+  // startCamera() (appelé ici même) le réactivait toujours, succès ou échec.
+  // Comme startCamera() n'est plus appelé à ce stade, le bouton doit être
+  // réactivé explicitement ici pour rester cliquable (même pattern que le
+  // bouton "Commencer la séance" du Plan, qui n'est jamais disabled).
+  if(tabName==='training'){activeMode='free'; toggleSessionBtn.disabled=false; loadCameraLibs().catch(()=>{});}
   if(tabName==='plan'){activeMode='plan';}
   if(tabName==='stats') renderStats();
   if(tabName==='profile') renderProfileTab();
@@ -4079,6 +4088,12 @@ function loadScriptTag(src){
     const s=document.createElement('script');
     s.src=src;
     s.crossOrigin='anonymous';
+    // async=false : les scripts dynamiques sont "async" par défaut (ordre
+    // d'exécution non garanti). En le désactivant explicitement, les 4
+    // fichiers se téléchargent EN PARALLÈLE (plus rapide) tout en s'exécutant
+    // dans l'ordre où ils ont été insérés ci-dessous — indispensable car
+    // pose-detection dépend de tfjs-core/converter/backend-webgl déjà prêts.
+    s.async=false;
     s.onload=()=>resolve();
     s.onerror=()=>reject(new Error('Failed to load '+src));
     document.head.appendChild(s);
@@ -4086,18 +4101,29 @@ function loadScriptTag(src){
 }
 function loadCameraLibs(){
   if(cameraLibsPromise) return cameraLibsPromise;
-  cameraLibsPromise=(async()=>{
-    await loadScriptTag('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.20.0/dist/tf-core.min.js');
-    await loadScriptTag('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@4.20.0/dist/tf-converter.min.js');
-    await loadScriptTag('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.20.0/dist/tf-backend-webgl.min.js');
-    await loadScriptTag('https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js');
-  })();
+  cameraLibsPromise=Promise.all([
+    loadScriptTag('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@4.20.0/dist/tf-core.min.js'),
+    loadScriptTag('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@4.20.0/dist/tf-converter.min.js'),
+    loadScriptTag('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@4.20.0/dist/tf-backend-webgl.min.js'),
+    loadScriptTag('https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3/dist/pose-detection.min.js')
+  ]);
   return cameraLibsPromise;
 }
 async function startCamera(){
   if(stream) return;
   try{
     cameraStatus.textContent=t('camera_loading_model');
+    // BUGFIX Safari iOS : getUserMedia() doit être le tout PREMIER await de
+    // cette fonction, appelée directement depuis le geste utilisateur (clic).
+    // Attendre un téléchargement réseau (TF.js) avant getUserMedia faisait
+    // sortir l'appel de la fenêtre d'activation transitoire de Safari, qui
+    // refusait alors silencieusement — sans même afficher la popup de
+    // permission. TF.js/le modèle ne sont chargés qu'APRÈS l'obtention du
+    // flux caméra, une fois la permission déjà acquise (loadCameraLibs() est
+    // en général déjà en cours grâce au préchargement lancé à l'ouverture de
+    // l'écran caméra — voir goToTab() — donc quasi instantané ici).
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
+    video.setAttribute('playsinline',true); video.setAttribute('webkit-playsinline',true); video.srcObject=stream; await video.play();
     await loadCameraLibs();
     try{
       await tf.setBackend('webgl');
@@ -4108,8 +4134,6 @@ async function startCamera(){
       await tf.ready();
     }
     if(!detector) detector=await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet,{modelType:poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING});
-    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
-    video.setAttribute('playsinline',true); video.setAttribute('webkit-playsinline',true); video.srcObject=stream; await video.play();
     cameraReady=true; localStorage.setItem('cameraGranted','1'); cameraStatus.textContent=t('camera_active'); cameraDot.className='dot live'; movementLabel.textContent=t('camera_press_start'); const _eb=document.getElementById('enableCameraBtn'); if(_eb) _eb.classList.add('hidden');
     toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false; phaseEl.textContent=t('training_ready');
     if(!rafId) rafId=requestAnimationFrame(detectLoop);
@@ -4552,7 +4576,17 @@ function runPlanCountdown(onComplete){
   },1000);
 }
 
-toggleSessionBtn.addEventListener('click',()=>{if((!cameraReady&&!manualMode)||restActive)return;if(!sessionActive){if(toggleSessionBtn.dataset.countdownDone!=='1'){runFreeCountdown(()=>{toggleSessionBtn.dataset.countdownDone='1';toggleSessionBtn.click();});return;}delete toggleSessionBtn.dataset.countdownDone;if(cameraReady&&!autoCalibrate()){showToast(t('toast_reposition_camera'));return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent=t('phase_paused');phaseEl.textContent=t('phase_in_progress');nextSetBtn.classList.remove('hidden');finishWorkoutBtn.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});speak(t('voice_set_start').replace('{n}',currentSet));}else{sessionActive=false;toggleSessionBtn.textContent=t('phase_start_short');phaseEl.textContent=t('phase_paused');}});
+toggleSessionBtn.addEventListener('click',async()=>{
+  if(restActive) return;
+  // BUGFIX Safari/perf : startCamera() n'est plus déclenché à l'ouverture de
+  // l'écran (voir goToTab), seulement ici, au clic réel sur "Démarrer" —
+  // c'est ce clic qui doit rester le déclencheur direct de getUserMedia().
+  if(!cameraReady && !manualMode){
+    showToast(t('toast_camera_activating'),2000);
+    await startCamera();
+    if(!cameraReady && !manualMode){ showToast(t('toast_camera_denied'),4000); return; }
+  }
+  if(!sessionActive){if(toggleSessionBtn.dataset.countdownDone!=='1'){runFreeCountdown(()=>{toggleSessionBtn.dataset.countdownDone='1';toggleSessionBtn.click();});return;}delete toggleSessionBtn.dataset.countdownDone;if(cameraReady&&!autoCalibrate()){showToast(t('toast_reposition_camera'));return;}resetTracking();sessionActive=true;startSessionTimer();toggleSessionBtn.textContent=t('phase_paused');phaseEl.textContent=t('phase_in_progress');nextSetBtn.classList.remove('hidden');finishWorkoutBtn.classList.remove('hidden');window.scrollTo({top:0,behavior:'smooth'});speak(t('voice_set_start').replace('{n}',currentSet));}else{sessionActive=false;toggleSessionBtn.textContent=t('phase_start_short');phaseEl.textContent=t('phase_paused');}});
 nextSetBtn.addEventListener('click',()=>{if(setCount===0&&totalCount===0)return;nextSet();});
 document.getElementById('incrementRep').addEventListener('click',()=>{pendingReps++;document.getElementById('validateCount').textContent=pendingReps;});
 document.getElementById('decrementRep').addEventListener('click',()=>{pendingReps=Math.max(0,pendingReps-1);document.getElementById('validateCount').textContent=pendingReps;});
