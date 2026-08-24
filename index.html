@@ -232,7 +232,18 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       <button class="btn home-nav-btn" data-tab="profile"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg><span data-i18n="nav_profile">Profil</span></button>
     </div>
   </header>
-  
+
+  <section class="panel hidden" id="iosInstallHint" style="margin:.8rem 0;position:relative;">
+    <button id="iosInstallHintClose" aria-label="Fermer" style="position:absolute;top:.4rem;right:.4rem;width:48px;height:48px;border-radius:50%;border:none;background:transparent;color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;padding-right:3rem;">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>
+      <span data-i18n="pwa_install_hint_title">Installer Push-Up</span>
+    </div>
+    <div style="color:var(--muted);font-size:.85rem;margin-top:.5rem;padding-right:1rem;" data-i18n="pwa_install_hint_body">Ajoutez Push-Up à votre écran d'accueil pour y accéder plus rapidement et profiter pleinement de l'application. Appuyez sur Partager, puis Sur l'écran d'accueil.</div>
+    <button id="iosInstallHintDismiss" style="background:none;border:none;color:var(--muted);font-size:.75rem;text-decoration:underline;margin-top:.6rem;padding:0;cursor:pointer;" data-i18n="pwa_install_hint_dismiss">Ne plus afficher</button>
+  </section>
 
   <div id="tab-home" class="tab-content">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.8rem;flex-wrap:wrap;gap:.3rem;">
@@ -905,6 +916,7 @@ const APP_I18N = {
 fr: {
  nav_home:"Accueil", nav_plan:"Plan", nav_free:"Libre", nav_calendar:"Calendrier", nav_stats:"Stats", nav_profile:"Profil",
  loading_text:"Chargement", landscape_rotate:"Tournez votre téléphone", landscape_sub:"Push-up fonctionne uniquement en mode portrait.",
+ pwa_install_hint_title:"Installer Push-Up", pwa_install_hint_body:"Ajoutez Push-Up à votre écran d'accueil pour y accéder plus rapidement et profiter pleinement de l'application. Appuyez sur Partager, puis Sur l'écran d'accueil.", pwa_install_hint_dismiss:"Ne plus afficher",
  home_today_session:"Séance du jour", home_estimated_time:"Temps estimé", home_level:"Niveau", home_total:"Au total",
  home_start_session:"▶ COMMENCER LA SÉANCE", home_plan_progress:"Progression du plan", home_this_week:"Cette semaine",
  home_sessions_completed:"Séances complétées", home_total_pushups:"Pompes au total", home_vs_last_week:"Vs semaine dernière",
@@ -1022,6 +1034,7 @@ fr: {
 en: {
  nav_home:"Home", nav_plan:"Plan", nav_free:"Free", nav_calendar:"Calendar", nav_stats:"Stats", nav_profile:"Profile",
  loading_text:"Loading", landscape_rotate:"Turn your phone", landscape_sub:"Push-up only works in portrait mode.",
+ pwa_install_hint_title:"Install Push-Up", pwa_install_hint_body:"Add Push-Up to your Home Screen for faster access and the full app experience. Tap Share, then Add to Home Screen.", pwa_install_hint_dismiss:"Don't show again",
  home_today_session:"Today's session", home_estimated_time:"Estimated time", home_level:"Level", home_total:"Total",
  home_start_session:"▶ START SESSION", home_plan_progress:"Plan progress", home_this_week:"This week",
  home_sessions_completed:"Sessions completed", home_total_pushups:"Total push-ups", home_vs_last_week:"Vs last week",
@@ -1139,6 +1152,7 @@ en: {
 es: {
  nav_home:"Inicio", nav_plan:"Plan", nav_free:"Libre", nav_calendar:"Calendario", nav_stats:"Stats", nav_profile:"Perfil",
  loading_text:"Cargando", landscape_rotate:"Gira tu teléfono", landscape_sub:"Push-up solo funciona en modo vertical.",
+ pwa_install_hint_title:"Instalar Push-Up", pwa_install_hint_body:"Añade Push-Up a tu pantalla de inicio para acceder más rápidamente y disfrutar de toda la experiencia de la aplicación. Toca Compartir y luego Añadir a pantalla de inicio.", pwa_install_hint_dismiss:"No volver a mostrar",
  home_today_session:"Sesión de hoy", home_estimated_time:"Tiempo estimado", home_level:"Nivel", home_total:"En total",
  home_start_session:"▶ EMPEZAR SESIÓN", home_plan_progress:"Progreso del plan", home_this_week:"Esta semana",
  home_sessions_completed:"Sesiones completadas", home_total_pushups:"Flexiones totales", home_vs_last_week:"Vs semana pasada",
@@ -4456,6 +4470,28 @@ function updatePlanScreenState(){
 
 function pad(n){return String(n).padStart(2,'0')} function toICSDate(d){return `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`;}
 function downloadCalendarEvent(workout){const start=new Date(),end=new Date(start.getTime()+30*60000);const desc=`${t('training_total_session')} : ${workout.total} ${t('training_pushups')}\\n${t('training_series')} : ${workout.sets.map(s=>`${t('training_series_done_label')} ${s.set} : ${s.reps}`).join(' | ')}`;const ics=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Pompes//FR//EN','BEGIN:VEVENT',`UID:pompes-${Date.now()}@webapp`,`DTSTAMP:${toICSDate(new Date())}`,`DTSTART:${toICSDate(start)}`,`DTEND:${toICSDate(end)}`,`SUMMARY:${t('calendar_session')} - ${workout.total} ${t('training_pushups')}`,`DESCRIPTION:${desc}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');const blob=new Blob([ics],{type:'text/calendar;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='pompes-seance.ics';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1200);}
+// Invitation ponctuelle à installer la PWA sur l'écran d'accueil — iPhone/iPad
+// Safari uniquement, jamais en mode standalone (déjà installée), jamais avant
+// la fin de l'onboarding (même critère que le modal de bienvenue), jamais si
+// "Ne plus afficher" a été choisi, et pas avant 7 jours si simplement fermée.
+function initIOSInstallHint(){
+  const card=document.getElementById('iosInstallHint');
+  if(!card || !document.body.classList.contains('is-ios')) return;
+  const isStandalone = window.navigator.standalone===true || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+  if(isStandalone) return;
+  if(localStorage.getItem('pwa_install_hint_dismissed')==='1') return;
+  const onboarded = !!(localStorage.getItem('user_nickname') || localStorage.getItem('pompes-plan-v1'));
+  if(!onboarded) return;
+  const lastShown = Number(localStorage.getItem('pwa_install_hint_last_shown')||0);
+  if(lastShown && (Date.now()-lastShown) < 7*24*60*60*1000) return;
+  card.classList.remove('hidden');
+  localStorage.setItem('pwa_install_hint_last_shown', String(Date.now()));
+  document.getElementById('iosInstallHintClose').addEventListener('click', ()=>card.classList.add('hidden'));
+  document.getElementById('iosInstallHintDismiss').addEventListener('click', ()=>{
+    localStorage.setItem('pwa_install_hint_dismissed','1');
+    card.classList.add('hidden');
+  });
+}
 window.addEventListener('load',async()=>{
   // Verrouillage natif si le navigateur le supporte (iOS Safari ne le supporte pas ;
   // le blocage visuel CSS #landscapeBlock reste la protection réelle sur iPhone).
@@ -4463,6 +4499,7 @@ window.addEventListener('load',async()=>{
   // Le Plan est l'onglet actif par défaut, mais son contenu est construit
   // dynamiquement en JS : on le peuple ici, une fois tout le script chargé.
   renderPlanTab();
+  initIOSInstallHint();
   // BUGFIX perf : la caméra (et donc TensorFlow.js) démarrait automatiquement
   // ici, à chaque chargement de page, sans geste utilisateur — retardant
   // l'affichage de l'app (splash bloqué jusqu'à 15s) et chargeant TF.js même
