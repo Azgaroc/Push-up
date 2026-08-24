@@ -3960,6 +3960,17 @@ function processRep(metrics){
   }
 
   const returned=!poseVisible;
+  // BUGFIX : un retour en mode 'face' seul (nez redétecté avant les épaules)
+  // ne doit pas être traité comme "la pose est revenue" — sinon la frame
+  // suivante en mode 'simple'/'full' (le vrai retour) ne déclenche plus
+  // aucune vérification de comptage, car poseVisible serait déjà à true et
+  // la pompe se perd silencieusement. On attend une détection 'simple' ou
+  // 'full' pour considérer la pose réellement revenue ; l'état de descente
+  // (downFrames, poseLostAt, poseVisible, missingFrameStreak) reste
+  // intégralement inchangé tant que ce n'est pas le cas.
+  if(returned && metrics.mode==='face'){
+    return;
+  }
   poseVisible=true;
   poseWasDetected=true;
   missingFrameStreak=0;
