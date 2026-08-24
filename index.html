@@ -4103,6 +4103,24 @@ function stopCameraResources(){
   if(rafId){cancelAnimationFrame(rafId);rafId=null;}
   if(stream){stream.getTracks().forEach(t=>t.stop());stream=null;}
 }
+// BUGFIX fiabilité : rien ne détectait la perte du flux vidéo en cours de
+// séance (caméra reprise par une autre app, déconnexion physique...) —
+// detectLoop() continuait de tourner sur un flux mort, sans aucun message,
+// laissant croire à l'utilisateur que ses pompes étaient toujours comptées.
+// Le garde `if(!stream) return;` évite tout traitement redondant si ce
+// handler était appelé plusieurs fois (notamment parce que
+// stopCameraResources() ci-dessus déclenche lui-même 'ended' en arrêtant
+// la piste — pas de boucle ni de double notification grâce à ce garde).
+function handleCameraTrackEnded(){
+  if(!stream) return;
+  stopCameraResources();
+  manualMode=true;
+  cameraStatus.textContent=t('camera_detection_unavailable');
+  cameraDot.className='dot warn';
+  movementLabel.textContent=t('camera_manual_mode');
+  toggleSessionBtn.disabled=false; nextSetBtn.disabled=false; finishWorkoutBtn.disabled=false;
+  showToast(t('toast_camera_unavailable'),4500);
+}
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden){
     if(stream) stream.getTracks().forEach(t=>t.enabled=false);
@@ -4158,6 +4176,12 @@ async function startCamera(){
     // en général déjà en cours grâce au préchargement lancé à l'ouverture de
     // l'écran caméra — voir goToTab() — donc quasi instantané ici).
     stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:480},height:{ideal:640},frameRate:{ideal:24,max:24}},audio:false});
+    // Détecte la coupure du flux en cours de séance (caméra reprise par une
+    // autre app, déconnexion physique...) — un seul listener par piste,
+    // jamais accumulé (voir analyse : if(stream) return; en tête de
+    // startCamera() empêche toute création d'un second stream/listener
+    // tant que celui-ci est actif).
+    stream.getVideoTracks()[0].addEventListener('ended', handleCameraTrackEnded);
     video.setAttribute('playsinline',true); video.setAttribute('webkit-playsinline',true); video.srcObject=stream; await video.play();
     await loadCameraLibs();
     try{
