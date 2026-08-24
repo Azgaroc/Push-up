@@ -4070,45 +4070,6 @@ function renderDebug(keypoints, detected){
   }
 }
 
-// ==== DIAGNOSTIC TEMPORAIRE — à retirer après analyse, aucune condition de
-// comptage n'est touchée. Capture en lecture seule, après chaque appel à
-// processRep() déjà existant dans detectLoop(), l'état qu'il vient de
-// mettre à jour (variables globales déjà existantes) + les scores de
-// confiance bruts des keypoints principaux renvoyés par MoveNet. ====
-window.__pushupDiag = window.__pushupDiag || [];
-function __diagScore(rawKeypoints, name){
-  if(!rawKeypoints) return null;
-  const k = rawKeypoints.find(p=>p.name===name);
-  return k ? Math.round(k.score*1000)/1000 : null;
-}
-function __logPushupDiag(metrics, rawKeypoints){
-  window.__pushupDiag.push({
-    n: window.__pushupDiag.length + 1,
-    t_ms: Math.round(performance.now()),
-    mode: metrics ? metrics.mode : 'none',
-    phase: phaseEl.textContent,
-    poseVisible,
-    downFrames,
-    missingFrameStreak,
-    outOfView_ms: poseVisible ? null : Math.round(performance.now() - poseLostAt),
-    setCount,
-    nose: __diagScore(rawKeypoints,'nose'),
-    l_shoulder: __diagScore(rawKeypoints,'left_shoulder'),
-    r_shoulder: __diagScore(rawKeypoints,'right_shoulder'),
-    l_elbow: __diagScore(rawKeypoints,'left_elbow'),
-    r_elbow: __diagScore(rawKeypoints,'right_elbow'),
-    l_wrist: __diagScore(rawKeypoints,'left_wrist'),
-    r_wrist: __diagScore(rawKeypoints,'right_wrist')
-  });
-}
-// À taper dans la console après ~3 pompes : window.__printPushupDiag()
-window.__printPushupDiag = function(){
-  console.table(window.__pushupDiag);
-  console.log('Total cycles capturés :', window.__pushupDiag.length);
-};
-window.__resetPushupDiag = function(){ window.__pushupDiag = []; console.log('Diagnostic réinitialisé.'); };
-// ==== FIN DIAGNOSTIC TEMPORAIRE ====
-
 async function detectLoop(ts){
   if(!cameraReady){rafId=null;return;}
   rafId=requestAnimationFrame(detectLoop);
@@ -4124,14 +4085,12 @@ async function detectLoop(ts){
       const m=getPoseMetrics(lastKeypoints);
       if((sessionActive||planSessionActive)&&!restActive&&!planRestActive&&!validateModalOpen&&calibrated){
         processRep(m);
-        __logPushupDiag(m, lastKeypoints); // DIAGNOSTIC TEMPORAIRE
       }
       renderDebug(lastKeypoints, !!m);
     } else {
       lastKeypoints=null;
       if((sessionActive||planSessionActive)&&!restActive&&!planRestActive&&!validateModalOpen&&calibrated){
         processRep(null);
-        __logPushupDiag(null, null); // DIAGNOSTIC TEMPORAIRE
       }
       renderDebug(null, false);
     }
