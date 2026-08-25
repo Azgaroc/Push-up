@@ -1574,8 +1574,33 @@ function buildPlanPromptContext(){
     recent: getRecentPlanWorkouts(14),
     skipped: workouts.filter(w=>w && w.source==='plan' && w.skipped===true && w.isoDate && new Date(w.isoDate).getTime()>=sevenDaysAgo),
     recentHard: workouts.filter(w=>w && w.source==='plan' && w.difficulty==='hard' && w.isoDate && new Date(w.isoDate).getTime()>=sevenDaysAgo),
-    today: toLocalDateStr(new Date())
+    today: toLocalDateStr(new Date()),
+    // Historique enrichi, non lu par la génération actuelle du plan (ni front ni
+    // backend) : transport préparatoire pour un futur PerformanceSnapshot (V2).
+    // Ajouter ou retirer ce champ n'a aucun effet sur le plan généré aujourd'hui.
+    history: buildPlanHistorySnapshot()
   };
+}
+
+// Instantané d'historique sur une fenêtre plus longue que `recent`/`recentHard`
+// (8 semaines), avec des champs explicites et une distinction Plan/Libre
+// normalisée (source toujours 'plan' ou 'free', jamais undefined) — préparation
+// V2 uniquement, aucune règle de calcul actuelle ne lit ce champ.
+function buildPlanHistorySnapshot(days=56){
+  const cutoff = Date.now() - days*86400000;
+  return workouts
+    .filter(w=>w && w.isoDate && new Date(w.isoDate).getTime()>=cutoff)
+    .map(w=>({
+      isoDate: w.isoDate,
+      source: w.source==='plan' ? 'plan' : 'free',
+      skipped: w.source==='plan' && w.skipped===true,
+      total: Number(w.total)||0,
+      target: Number.isFinite(w.target) ? w.target : null,
+      durationText: w.duration || null,
+      difficulty: w.difficulty || null,
+      sets: Array.isArray(w.sets) ? w.sets.map(s=>({set:s.set, reps:Number(s.reps)||0})) : []
+    }))
+    .sort((a,b)=>new Date(a.isoDate)-new Date(b.isoDate));
 }
 
 function normalizeAIPlan(ai){
