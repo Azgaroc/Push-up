@@ -1878,6 +1878,34 @@ function computeDailyPlanAdjustment(reason='regular'){
   return {ratio, daysPenalty, avgTotal, recentCount:recent.length};
 }
 
+// Détermine le badge de "rythme" (accéléré/allégé/stable) et le badge
+// "reprise en douceur" affichés à l'écran, à partir des VOLUMES réels du
+// plan Coach V2 -- jamais à partir du texte de la note, qui est un texte
+// utilisateur et ne doit jamais servir de source de vérité pour un état.
+// Ne reproduit PAS classifyCoachState()/COACH_STATE_THRESHOLDS côté serveur :
+// simple comparaison d'affichage entre le volume du jour et la dernière
+// séance Plan réellement effectuée (déjà disponible via
+// getRecentPlanWorkouts()). Les seuils ci-dessous sont purement esthétiques,
+// sans rapport avec les seuils Coach V2 du backend.
+const PACE_UI_UP_THRESHOLD=0.10;
+const PACE_UI_DOWN_THRESHOLD=-0.10;
+const PACE_UI_EASING_IN_DROP_THRESHOLD=-0.30;
+const PACE_UI_EASING_IN_GAP_DAYS=4;
+function computeTodayPaceInfo(todayAiDay){
+  const result={pace:'stable', easingIn:false};
+  if(!todayAiDay || !Array.isArray(todayAiDay.sets) || !todayAiDay.sets.length) return result;
+  const todayTotal=todayAiDay.sets.reduce((a,b)=>a+b,0);
+  const lastReal=getRecentPlanWorkouts(30).find(w=>w && w.total>0);
+  if(!lastReal || !(lastReal.total>0)) return result;
+  const delta=(todayTotal-lastReal.total)/lastReal.total;
+  if(delta>=PACE_UI_UP_THRESHOLD) result.pace='up';
+  else if(delta<=PACE_UI_DOWN_THRESHOLD) result.pace='down';
+  if(delta<=PACE_UI_EASING_IN_DROP_THRESHOLD) result.easingIn=true;
+  const gapDays=Math.round((Date.now()-new Date(lastReal.isoDate).getTime())/86400000);
+  if(gapDays>=PACE_UI_EASING_IN_GAP_DAYS) result.easingIn=true;
+  return result;
+}
+
 
 const PLAN_CYCLE_WEEKS=4;
 function getPlanCycleInfo(){
@@ -2015,28 +2043,41 @@ function renderPlanTab(){
   syncPlanUI();
 
   const todayDow=new Date().getDay();
-  let isTrainingDay=planProfile.days.includes(todayDow);
-  let coachForcedRestToday=false;
-  let coachNoteForToday='';
-  if(isTrainingDay){
-    const aiDayCheck=getAIPlanForDate(toLocalDateStr(new Date()));
-    if(aiDayCheck && Array.isArray(aiDayCheck.sets) && aiDayCheck.sets.length===0){
-      isTrainingDay=false;
+  // Le plan Coach V2 (aiDayCheck) est la SOURCE DE VERITE pour savoir si
+  // aujourd'hui est un jour d'entraînement ou de repos -- jamais
+  // planProfile.days seul, qui ne reflète qu'une préférence de calendrier
+  // choisie à l'inscription et peut diverger du plan réellement généré
+  // (séance de récupération, rattrapage ou repos forcé un jour non habituel).
+  // planProfile.days ne sert plus que de repli si aucun plan ne couvre
+  // encore la date du jour (ex: génération en cours ou échouée).
+  const aiDayCheck=getAIPlanForDate(toLocalDateStr(new Date()));
+  let isTrainingDay, coachForcedRestToday=false, coachNoteForToday='';
+  if(aiDayCheck && Array.isArray(aiDayCheck.sets)){
+    isTrainingDay=aiDayCheck.sets.length>0;
+    if(!isTrainingDay){
       coachForcedRestToday=true;
       coachNoteForToday=aiDayCheck.note||'';
     }
+  } else {
+    isTrainingDay=planProfile.days.includes(todayDow);
   }
   const weekNumber=getPlanWeekNumber();
   const adjustment=computeDailyPlanAdjustment();
-  const ratio=adjustment.ratio;
+  const ratio=adjustment.ratio; // encore utilisé plus bas pour le repli client (baseSets) si aucun plan IA ne couvre le jour
 
   const planWeekNumberEl=document.getElementById('planWeekNumber');
   if(planWeekNumberEl) planWeekNumberEl.textContent=weekNumber;
   const planAdaptStatusEl=document.getElementById('planAdaptStatus');
-  if(planAdaptStatusEl) planAdaptStatusEl.textContent=
-    (planProfile.aiPlan ? t('plan_ai_active')+' · ' : '') + (
-    ratio>1.05?t('plan_pace_up'):
-    ratio<0.82?t('plan_pace_down'):t('plan_pace_stable'));
+  if(planAdaptStatusEl){
+    // Basé sur les volumes réels du plan (computeTodayPaceInfo), jamais sur
+    // le texte de la note ni sur une heuristique client indépendante du plan
+    // réellement généré par le backend.
+    const paceInfo=computeTodayPaceInfo(aiDayCheck);
+    planAdaptStatusEl.textContent=
+      (planProfile.aiPlan ? t('plan_ai_active')+' · ' : '') + (
+      paceInfo.pace==='up'?t('plan_pace_up'):
+      paceInfo.pace==='down'?t('plan_pace_down'):t('plan_pace_stable'));
+  }
   maybePromptMaxTest();
 
   const titleEl=document.getElementById('planTodayTitle');
@@ -2266,17 +2307,33 @@ function renderPlanTab(){
     nextDates.forEach((d,idx)=>{
       const isToday = idx===0;
       const aiDayRow=getAIPlanForDate(toLocalDateStr(d));
-      const coachForcedRestRow = planProfile.days.includes(d.getDay()) && aiDayRow && Array.isArray(aiDayRow.sets) && aiDayRow.sets.length===0;
-      const isTrainingDayRow = planProfile.days.includes(d.getDay()) && !coachForcedRestRow;
+      // Même principe que pour la carte "aujourd'hui" plus haut : le plan
+      // Coach V2 (aiDayRow) est la source de vérité pour savoir si CETTE
+      // date est un jour d'entraînement ou de repos -- planProfile.days ne
+      // sert plus que de repli si le plan ne couvre pas encore cette date.
+      let coachForcedRestRow, isTrainingDayRow;
+      if(aiDayRow && Array.isArray(aiDayRow.sets)){
+        coachForcedRestRow = aiDayRow.sets.length===0;
+        isTrainingDayRow = !coachForcedRestRow;
+      } else {
+        coachForcedRestRow = false;
+        isTrainingDayRow = planProfile.days.includes(d.getDay());
+      }
       const label = isToday ? t('calendar_today') : `${dayNames[d.getDay()]} ${d.getDate()} ${monthShort(d.getMonth())}`;
       const row=document.createElement('div');
       row.style.cssText='display:flex;align-items:center;gap:.7rem;padding:.75rem .8rem;background:var(--surface2);border:1px solid var(--border);border-radius:1rem;';
       if(!isTrainingDayRow){
+        // La note spécifique du backend (cause du repos forcé, ou note de
+        // récupération) prime toujours sur le libellé générique -- celui-ci
+        // ne sert plus que de repli si aucune note n'est disponible.
+        const restSubtitle = (coachForcedRestRow && aiDayRow && aiDayRow.note)
+          ? aiDayRow.note
+          : (coachForcedRestRow ? t('plan_coach_forced_rest_short') : t('calendar_rest_day'));
         row.innerHTML=`
           <div style="width:32px;height:32px;border-radius:50%;background:var(--surface);color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;">${svgCal}</div>
           <div style="flex:1;">
             <div style="font-weight:700;font-size:.9rem;">${label}</div>
-            <div style="color:var(--muted);font-size:.78rem;">${coachForcedRestRow ? t('plan_coach_forced_rest_short') : t('calendar_rest_day')}</div>
+            <div style="color:var(--muted);font-size:.78rem;">${escapeHtml(restSubtitle)}</div>
           </div>`;
         future.appendChild(row);
         return;
@@ -3229,12 +3286,16 @@ function renderHomeTab(){
     const weekNum=cycleInfo.weekInCycle;
     // BUGFIX : `planProfile.aiPlan.note` n'existe pas — la note est générée par
     // JOUR (planProfile.aiPlan.days[i].note), jamais au niveau du plan entier.
-    // Cette variable tombait donc TOUJOURS sur le texte par défaut, ce qui
-    // rendait aussi inopérant le badge "rythme allégé/accéléré" juste en dessous
-    // (sa détection cherche des mots-clés dans ce texte). Utilise maintenant la
-    // note du jour réellement générée par le coach pour aujourd'hui.
+    // BUGFIX : les badges de rythme/reprise ci-dessous cherchaient auparavant
+    // des mots-clés ("allégé"/"accéléré") dans le texte de cette note -- une
+    // note est un texte utilisateur, jamais une source de vérité fiable pour
+    // un état (aucun texte de note actuel ne contient d'ailleurs ces mots, ce
+    // qui figeait le badge de rythme sur "stable" en permanence), et le badge
+    // "reprise en douceur" s'affichait en plus INCONDITIONNELLEMENT, même en
+    // pleine progression. Les deux badges sont maintenant dérivés des volumes
+    // réels du plan via computeTodayPaceInfo() (voir plus haut).
     const todayAiDayForStatus=getAIPlanForDate(toLocalDateStr(new Date()));
-    const statusTxt=(todayAiDayForStatus && todayAiDayForStatus.note) ? todayAiDayForStatus.note : t('plan_adjusted_default');
+    const paceInfoHome=computeTodayPaceInfo(todayAiDayForStatus);
     if(weekLabelEl) weekLabelEl.textContent=t('home_week_label').replace('{n}',weekNum).replace('{total}',totalPlanWeeks).replace('{cycle}',cycleInfo.cycleNumber);
     const curWeekStart=getWeekStart(new Date());
     const curWeekEnd=new Date(curWeekStart); curWeekEnd.setDate(curWeekEnd.getDate()+6); curWeekEnd.setHours(23,59,59,999);
@@ -3255,10 +3316,10 @@ function renderHomeTab(){
       badgesEl.innerHTML='';
       const items=[];
       if(planProfile.aiPlan) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V4M9 4h6"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/></svg> ${t('plan_ai_active')}`);
-      if(statusTxt.includes('allégé') || statusTxt.toLowerCase().includes('lighter')) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h4l2-3 3 6 2-3h5"/></svg> ${t('badge_pace_light')}`);
-      else if(statusTxt.includes('accéléré') || statusTxt.toLowerCase().includes('faster')) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg> ${t('badge_pace_fast')}`);
+      if(paceInfoHome.pace==='down') items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h4l2-3 3 6 2-3h5"/></svg> ${t('badge_pace_light')}`);
+      else if(paceInfoHome.pace==='up') items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg> ${t('badge_pace_fast')}`);
       else items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M4 12h16"/></svg> ${t('badge_pace_stable')}`);
-      items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M5 20c0-8 6-14 14-14 0 8-6 14-14 14zM5 20c2-4 5-7 9-9"/></svg> ${t('badge_easing_in')}`);
+      if(paceInfoHome.easingIn) items.push(`<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="var(--primary)" stroke-width="2" style="vertical-align:-1px;"><path d="M5 20c0-8 6-14 14-14 0 8-6 14-14 14zM5 20c2-4 5-7 9-9"/></svg> ${t('badge_easing_in')}`);
       items.forEach(txt=>{
         const span=document.createElement('span');
         span.innerHTML=txt;
