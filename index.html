@@ -1020,6 +1020,7 @@ fr: {
  toast_plan_generating:"Génération du plan... (le serveur peut prendre jusqu'à 1 min à démarrer)",
  toast_server_unavailable:"Serveur indisponible, plan généré localement.",
  plan_note_skipped:"Volume réduit après jour sauté", plan_note_hard:"Volume réduit après une séance difficile",
+ plan_note_easy:"Le volume est augmenté après une séance jugée trop facile.",
  plan_note_ahead:"Ajusté après une séance réalisée en avance", plan_note_extra:"Ajusté suite à des pompes supplémentaires réalisées",
  plan_note_forced_rest:"Jour de repos imposé par ton coach : rythme soutenu et signes de fatigue récents.",
  plan_note_progressive:"Adaptation progressive", toast_camera_denied:"Impossible d'activer la caméra. autorisez l'accès puis réessayez.", toast_camera_denied_ios:"Accès caméra refusé. Allez dans Réglages > Safari > Caméra (ou Réglages > Push-Up si l'app est installée) pour l'autoriser, puis revenez ici.", toast_camera_denied_android:"Accès caméra refusé. Appuyez sur le cadenas à côté de l'adresse du site, ou allez dans Réglages > Applications > Push-Up > Autorisations, pour l'activer.",
@@ -1138,6 +1139,7 @@ en: {
  toast_plan_generating:"Generating your plan... (the server can take up to 1 minute to start)",
  toast_server_unavailable:"Server unavailable, plan generated locally.",
  plan_note_skipped:"Reduced volume after a skipped day", plan_note_hard:"Reduced volume after a hard session",
+ plan_note_easy:"Volume increased after a session rated too easy.",
  plan_note_ahead:"Adjusted after a session done ahead of schedule", plan_note_extra:"Adjusted after extra push-ups were done",
  plan_note_forced_rest:"Rest day imposed by your coach: sustained pace and recent signs of fatigue.",
  plan_note_progressive:"Progressive adjustment", toast_camera_denied:"Couldn't activate the camera. allow access then try again.", toast_camera_denied_ios:"Camera access denied. Go to Settings > Safari > Camera (or Settings > Push-Up if installed) to allow it, then come back here.", toast_camera_denied_android:"Camera access denied. Tap the lock icon next to the site address, or go to Settings > Apps > Push-Up > Permissions, to enable it.",
@@ -1256,6 +1258,7 @@ es: {
  toast_plan_generating:"Generando tu plan... (el servidor puede tardar hasta 1 minuto en arrancar)",
  toast_server_unavailable:"Servidor no disponible, plan generado localmente.",
  plan_note_skipped:"Volumen reducido tras un día saltado", plan_note_hard:"Volumen reducido tras una sesión difícil",
+ plan_note_easy:"El volumen aumenta tras una sesión considerada demasiado fácil.",
  plan_note_ahead:"Ajustado tras una sesión realizada antes de tiempo", plan_note_extra:"Ajustado tras flexiones extra realizadas",
  plan_note_forced_rest:"Día de descanso impuesto por tu coach: ritmo sostenido y signos de fatiga recientes.",
  plan_note_progressive:"Ajuste progresivo", toast_camera_denied:"No se pudo activar la cámara. permite el acceso y vuelve a intentarlo.", toast_camera_denied_ios:"Acceso a la cámara denegado. Ve a Ajustes > Safari > Cámara (o Ajustes > Push-Up si está instalada) para permitirlo, y vuelve aquí.", toast_camera_denied_android:"Acceso a la cámara denegado. Toca el candado junto a la dirección del sitio, o ve a Ajustes > Aplicaciones > Push-Up > Permisos, para activarlo.",
@@ -1764,6 +1767,7 @@ function buildFallbackAIPlan(reason='regular'){
     const restSeconds = sets.length>=6 ? 75 : sets.length>=5 ? 60 : 90;
     const note = reason==='skipped_day' && i===0 ? t('plan_note_skipped')
       : reason==='was_hard' ? t('plan_note_hard')
+      : reason==='was_easy' ? t('plan_note_easy')
       : reason==='ahead_session' && i===0 ? t('plan_note_ahead')
       : reason==='extra_reps' ? t('plan_note_extra')
       : t('plan_note_progressive');
@@ -1895,7 +1899,11 @@ function computeTodayPaceInfo(todayAiDay){
   const result={pace:'stable', easingIn:false};
   if(!todayAiDay || !Array.isArray(todayAiDay.sets) || !todayAiDay.sets.length) return result;
   const todayTotal=todayAiDay.sets.reduce((a,b)=>a+b,0);
-  const lastReal=getRecentPlanWorkouts(30).find(w=>w && w.total>0);
+  // Une séance signalée "difficile" a déjà un volume anormalement réduit
+  // (côté backend comme côté repli client) : la prendre comme référence de
+  // comparaison fausserait le badge (une séance normale semblerait "en
+  // hausse" par rapport à une référence déjà artificiellement basse).
+  const lastReal=getRecentPlanWorkouts(30).find(w=>w && w.total>0 && w.difficulty!=='hard');
   if(!lastReal || !(lastReal.total>0)) return result;
   const delta=(todayTotal-lastReal.total)/lastReal.total;
   if(delta>=PACE_UI_UP_THRESHOLD) result.pace='up';
@@ -2067,17 +2075,6 @@ function renderPlanTab(){
 
   const planWeekNumberEl=document.getElementById('planWeekNumber');
   if(planWeekNumberEl) planWeekNumberEl.textContent=weekNumber;
-  const planAdaptStatusEl=document.getElementById('planAdaptStatus');
-  if(planAdaptStatusEl){
-    // Basé sur les volumes réels du plan (computeTodayPaceInfo), jamais sur
-    // le texte de la note ni sur une heuristique client indépendante du plan
-    // réellement généré par le backend.
-    const paceInfo=computeTodayPaceInfo(aiDayCheck);
-    planAdaptStatusEl.textContent=
-      (planProfile.aiPlan ? t('plan_ai_active')+' · ' : '') + (
-      paceInfo.pace==='up'?t('plan_pace_up'):
-      paceInfo.pace==='down'?t('plan_pace_down'):t('plan_pace_stable'));
-  }
   maybePromptMaxTest();
 
   const titleEl=document.getElementById('planTodayTitle');
@@ -2638,10 +2635,20 @@ document.getElementById('savePlanSettingsBtn').addEventListener('click',()=>{
   if(!planProfile){ showToast(t('toast_create_plan_first')); return; }
   const newDays=[...document.querySelectorAll('#planDaysChipsEdit .chip.active')].map(ch=>Number(ch.dataset.day));
   if(!newDays.length){ showToast(t('onboarding_days_error')); return; }
+  // Ne régénère le plan que si les jours ont réellement changé -- sinon le
+  // plan déjà généré (aiPlan) reste affiché tel quel, sans appel réseau inutile.
+  const daysChanged = [...planProfile.days].sort().join(',') !== [...newDays].sort().join(',');
   planProfile.days=newDays;
   savePlan(planProfile);
   renderPlanTab();
   showToast(t('toast_days_updated'));
+  if(daysChanged){
+    // Le nouveau calendrier doit se refléter immédiatement dans le plan déjà
+    // généré -- regeneratePlanFromAI() affiche déjà lui-même le toast
+    // toast_plan_generating et gère son propre verrou (planAIRegenInFlight),
+    // qui empêche tout double appel réseau concurrent.
+    regeneratePlanFromAI('regular').catch(()=>{});
+  }
   if(pushNotifEnabled){ getExistingPushSubscription().then(sub=>{ if(sub) syncPushPreferencesToServer(); }); }
 });
 const goToPlanFromProfileBtn=document.getElementById('goToPlanFromProfileBtn');
