@@ -1030,6 +1030,8 @@ fr: {
  toast_calendar_reset:"Calendrier réinitialisé.", toast_data_exported:"Données exportées.",
  toast_data_imported:"Données importées avec succès.", toast_invalid_file:"Fichier invalide, import annulé.",
  toast_plan_finished:"Plan terminé : {count} pompes enregistrées !", toast_session_stopped:"Séance arrêtée : {count} pompes enregistrées.",
+ toast_record_session:"Bravo ! Nouveau record de séance : {count} pompes. 🎉", toast_record_set:"Nouveau record sur une série : {count} pompes ! 💪",
+ toast_record_both:"Bravo ! Nouveau record de séance et de série. 🎉", toast_session_done_positive:"Séance terminée. Bravo pour le travail ! 💪",
  phase_done:"Terminé", training_sets_completed:"Set(s) réalisé(s)", training_validate_finish:"Valider et terminer l'entraînement", training_series_label:"SÉRIE"
 },
 en: {
@@ -1149,6 +1151,8 @@ en: {
  toast_calendar_reset:"Calendar reset.", toast_data_exported:"Data exported.",
  toast_data_imported:"Data imported successfully.", toast_invalid_file:"Invalid file, import cancelled.",
  toast_plan_finished:"Plan complete: {count} push-ups recorded!", toast_session_stopped:"Session stopped: {count} push-ups recorded.",
+ toast_record_session:"Great job! New session record: {count} push-ups. 🎉", toast_record_set:"New personal best on a set: {count} push-ups! 💪",
+ toast_record_both:"Great job! New session and set record. 🎉", toast_session_done_positive:"Session complete. Great work! 💪",
  phase_done:"Done", training_sets_completed:"Set(s) completed", training_validate_finish:"Confirm and finish workout", training_series_label:"SET"
 },
 es: {
@@ -1268,6 +1272,8 @@ es: {
  toast_calendar_reset:"Calendario reiniciado.", toast_data_exported:"Datos exportados.",
  toast_data_imported:"Datos importados con éxito.", toast_invalid_file:"Archivo no válido, importación cancelada.",
  toast_plan_finished:"Plan completado: ¡{count} flexiones registradas!", toast_session_stopped:"Sesión detenida: {count} flexiones registradas.",
+ toast_record_session:"¡Bien hecho! Nuevo récord de sesión: {count} flexiones. 🎉", toast_record_set:"¡Nuevo récord en una serie: {count} flexiones! 💪",
+ toast_record_both:"¡Bien hecho! Nuevo récord de sesión y de serie. 🎉", toast_session_done_positive:"Sesión completada. ¡Buen trabajo! 💪",
  phase_done:"Terminado", training_sets_completed:"Serie(s) completada(s)", training_validate_finish:"Confirmar y terminar entrenamiento", training_series_label:"SERIE"
 }
 };
@@ -4476,6 +4482,7 @@ async function finishPlanTraining(completed){
   stopRest();
   stopPlanRest();
   stopPlanSessionTimer();
+  let sessionEndMessage=null;
   if(planTotalCount>0){
     const now=new Date();
     // Le calendrier reflète toujours le jour réel où la séance a été effectuée.
@@ -4486,6 +4493,11 @@ async function finishPlanTraining(completed){
     const durationMs=planSessionStartTime?(Date.now()-planSessionStartTime):0;
     const doneSets=(planSessionSets[0]&&planSessionSets[0].sets ? planSessionSets[0].sets.slice(0,planSessionIndex+(completed?1:0)) : []).map((reps,i)=>({set:i+1,reps}));
     const workout={date:now.toLocaleDateString(appLocale())+' '+now.toLocaleTimeString(appLocale(),{hour:'2-digit',minute:'2-digit'}),isoDate,targetDate:targetDateForPlan,total:planTotalCount,target:planSessionSets[0]?planSessionSets[0].total:planTotalCount,duration:formatDuration(durationMs),sets:doneSets,source:'plan'};
+    // Capture des records personnels AVANT d'enregistrer cette séance (via
+    // computeStats(), déjà existant pour l'onglet Stats -- aucun nouveau
+    // système de statistiques) : la séance qu'on vient de faire ne doit
+    // jamais être comparée à elle-même.
+    const statsBeforeThisSession=computeStats();
     workouts.push(workout);
     try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
     try{renderHistory();}catch(e){console.error('renderHistory error', e && e.message ? e.message : String(e));}
@@ -4505,13 +4517,26 @@ async function finishPlanTraining(completed){
     // suite après une séance normale de 24 pompes).
     regeneratePlanFromAI(difficulty==='hard' ? 'was_hard' : difficulty==='easy' ? 'was_easy' : 'regular').catch(()=>{});
     speak(t('voice_workout_done'));
+    if(completed){
+      // Un record n'est reconnu que s'il y avait déjà au moins une séance
+      // réelle avant celle-ci -- sinon la toute première séance "battrait"
+      // artificiellement un record à 0.
+      const hadPriorSessions=statsBeforeThisSession.sessionCount>0;
+      const beatSessionRecord=hadPriorSessions && planTotalCount>statsBeforeThisSession.recordSession;
+      const maxSetReps=doneSets.length ? Math.max(...doneSets.map(s=>s.reps)) : 0;
+      const beatSetRecord=hadPriorSessions && maxSetReps>statsBeforeThisSession.recordSet;
+      sessionEndMessage = beatSessionRecord && beatSetRecord ? t('toast_record_both')
+        : beatSessionRecord ? t('toast_record_session').replace('{count}',planTotalCount)
+        : beatSetRecord ? t('toast_record_set').replace('{count}',maxSetReps)
+        : t('toast_session_done_positive');
+    }
   }
   syncPlanUI();
   applyPlanModeUI();
   updatePlanScreenState();
   updatePlanSessionUI();
   if(typeof renderPlanTab==='function') renderPlanTab();
-  showToast(completed ? t('toast_plan_finished').replace('{count}',planTotalCount) : t('toast_session_stopped').replace('{count}',planTotalCount));
+  showToast(sessionEndMessage || (completed ? t('toast_plan_finished').replace('{count}',planTotalCount) : t('toast_session_stopped').replace('{count}',planTotalCount)));
   planTotalCount=0;
   planSessionTargetDate=null;
   const totalEl=document.getElementById('planTotalCount');
