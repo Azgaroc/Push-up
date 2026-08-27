@@ -3234,8 +3234,18 @@ function renderHomeTab(){
     // "0 pompes" avec un bouton "Commencer" actif — qui ne faisait alors
     // silencieusement rien au clic (preparePlanSession() refuse de démarrer).
     const todayAiDay=getAIPlanForDate(toLocalDateStr(new Date()));
-    const coachForcedRestOnHome=!!(todayAiDay && Array.isArray(todayAiDay.sets) && todayAiDay.sets.length===0);
-    isRestDay=!planProfile.days.includes(new Date().getDay()) || coachForcedRestOnHome;
+    // Même principe déjà validé dans renderPlanTab() ci-dessus : le plan
+    // Coach V2 (todayAiDay) est la source de vérité pour savoir si
+    // aujourd'hui est un jour d'entraînement ou de repos -- jamais
+    // planProfile.days seul. planProfile.days ne sert plus que de repli
+    // si le plan ne couvre pas encore la date du jour.
+    let coachForcedRestOnHome=false;
+    if(todayAiDay && Array.isArray(todayAiDay.sets)){
+      isRestDay=todayAiDay.sets.length===0;
+      coachForcedRestOnHome=isRestDay;
+    } else {
+      isRestDay=!planProfile.days.includes(new Date().getDay());
+    }
     if(detailsRowEl) detailsRowEl.classList.toggle('hidden', isRestDay);
     if(ringWrapEl) ringWrapEl.classList.toggle('hidden', isRestDay);
     if(restMessageEl){
