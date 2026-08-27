@@ -202,6 +202,26 @@
 @media (orientation: landscape) and (max-width: 1024px){
   #landscapeBlock{display:flex;}
 }
+
+/* ETAPE 3 -- micro-animations et feedback utilisateur (CSS/JS uniquement, aucune logique metier) */
+@keyframes rep-pop{0%{transform:scale(1);}50%{transform:scale(1.07);}100%{transform:scale(1);}}
+.rep-pop{animation:rep-pop 160ms ease-out;}
+@keyframes count-pulse{0%{transform:scale(1);}40%{transform:scale(1.14);color:var(--primary);}100%{transform:scale(1);}}
+.count-pulse{animation:count-pulse 320ms ease-out;}
+@keyframes panel-enter-anim{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+#restPanel:not(.hidden){animation:panel-enter-anim 200ms ease-out;}
+#planRestPanel:not(.hidden){animation:panel-enter-anim 200ms ease-out;}
+@keyframes tab-fade-in{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+.tab-content:not(.hidden){animation:tab-fade-in 180ms ease-out;}
+@keyframes toast-pop{from{transform:translateY(8px) scale(.97);}to{transform:translateY(0) scale(1);}}
+#toast.toast-pop{animation:toast-pop 220ms ease-out;}
+@keyframes toast-record-glow{0%{box-shadow:0 8px 24px rgba(0,0,0,.25),0 0 0 2px var(--success),0 0 0 color-mix(in srgb, var(--success) 0%, transparent);}50%{box-shadow:0 8px 24px rgba(0,0,0,.25),0 0 0 2px var(--success),0 0 26px color-mix(in srgb, var(--success) 70%, transparent);}100%{box-shadow:0 8px 24px rgba(0,0,0,.25),0 0 0 2px var(--success),0 0 14px color-mix(in srgb, var(--success) 45%, transparent);}}
+#toast.toast-record{animation:toast-pop 220ms ease-out, toast-record-glow 380ms ease-out;}
+@keyframes badge-unlock-anim{0%{transform:scale(.5) rotate(-15deg);opacity:0;}60%{transform:scale(1.12) rotate(6deg);opacity:1;}100%{transform:scale(1) rotate(0);opacity:1;}}
+.badge-unlock{animation:badge-unlock-anim 350ms cubic-bezier(.34,1.56,.64,1);}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:0.001ms !important;animation-iteration-count:1 !important;transition-duration:0.001ms !important;scroll-behavior:auto !important;}
+}
 </style>
 </head>
 <body>
@@ -1464,8 +1484,20 @@ document.querySelectorAll('#profileLangChips .chip').forEach(btn=>{
 });
 const $=id=>document.getElementById(id); const video=$('video'), toastEl=$('toast');
 let toastTimer=null;
-function showToast(msg,duration=2600){
+// Micro-animation utilitaire : rejoue une classe CSS d'animation en forçant un
+// reflow entre temps, pour qu'un déclenchement répété (ex. répétitions
+// successives) rejoue bien l'animation à chaque fois plutôt qu'une seule.
+function pulseEl(el,cls){
+  if(!el) return;
+  el.classList.remove(cls);
+  void el.offsetWidth;
+  el.classList.add(cls);
+}
+function showToast(msg,duration=2600,variant=null){
   toastEl.textContent=msg; toastEl.style.opacity='1';
+  toastEl.classList.remove('toast-pop','toast-record');
+  void toastEl.offsetWidth;
+  toastEl.classList.add(variant==='record' ? 'toast-record' : 'toast-pop');
   clearTimeout(toastTimer);
   toastTimer=setTimeout(()=>{toastEl.style.opacity='0';},duration);
   // Filet de sécurité : sur Safari iOS, un alert() aurait mis la vidéo en pause sans la relancer.
@@ -2590,7 +2622,7 @@ function finishPlanRep(){
   const totalEl=document.getElementById('planTotalCount');
   if(totalEl) totalEl.textContent = planTotalCount;
   const repEl=document.getElementById('planCurrentRepValue');
-  if(repEl) repEl.textContent = planSessionRemaining;
+  if(repEl){ repEl.textContent = planSessionRemaining; pulseEl(repEl,'rep-pop'); }
   if(planSessionRemaining===0){
     planSessionCompleted.push(planSessionRepTarget);
     const sets = planSessionSets[0].sets;
@@ -3779,6 +3811,12 @@ function renderWeeklyProgressChart(){
   }
 }
 
+// Suivi (purement d'affichage) des trophées déjà vus, pour ne jouer
+// l'animation de déblocage que la première fois qu'un trophée passe de
+// verrouillé à débloqué -- ne modifie en rien le seuil ou le calcul
+// `unlocked` de chaque badge, seulement quand une classe CSS est ajoutée.
+let statsBadgesSeenInit=false;
+const statsBadgesSeen=new Set();
 function renderStats(){
   try{
   const streak=computeStreak();
@@ -3798,9 +3836,12 @@ function renderStats(){
   badgesGrid.innerHTML='';
   BADGE_LEVELS.forEach(level=>{
     const unlocked=stats.totalCumulative>=level;
+    const badgeKey='total:'+level;
+    const justUnlocked=unlocked && statsBadgesSeenInit && !statsBadgesSeen.has(badgeKey);
+    if(unlocked) statsBadgesSeen.add(badgeKey);
     const badge=document.createElement('div');
     badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.3};`;
-    badge.innerHTML=`<div style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?'🏆':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${level}</div>`;
+    badge.innerHTML=`<div class="${justUnlocked?'badge-unlock':''}" style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?'🏆':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${level}</div>`;
     badgesGrid.appendChild(badge);
   });
 
@@ -3809,9 +3850,12 @@ function renderStats(){
     streakBadgesGrid.innerHTML='';
     STREAK_BADGE_LEVELS.forEach(level=>{
       const unlocked=streak.best>=level.days;
+      const badgeKey='streak:'+level.days;
+      const justUnlocked=unlocked && statsBadgesSeenInit && !statsBadgesSeen.has(badgeKey);
+      if(unlocked) statsBadgesSeen.add(badgeKey);
       const badge=document.createElement('div');
       badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.3};`;
-      badge.innerHTML=`<div style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?level.icon:'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${level.days}</div>`;
+      badge.innerHTML=`<div class="${justUnlocked?'badge-unlock':''}" style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?level.icon:'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${level.days}</div>`;
       streakBadgesGrid.appendChild(badge);
     });
   }
@@ -3821,13 +3865,17 @@ function renderStats(){
     sessionBadgesGrid.innerHTML='';
     SESSION_BADGE_LEVELS.forEach(level=>{
       const unlocked=stats.sessionCount>=level;
+      const badgeKey='session:'+level;
+      const justUnlocked=unlocked && statsBadgesSeenInit && !statsBadgesSeen.has(badgeKey);
+      if(unlocked) statsBadgesSeen.add(badgeKey);
       const badge=document.createElement('div');
       badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.3};`;
-      badge.innerHTML=`<div style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?'🥇':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${level}</div>`;
+      badge.innerHTML=`<div class="${justUnlocked?'badge-unlock':''}" style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?'🥇':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${level}</div>`;
       sessionBadgesGrid.appendChild(badge);
     });
   }
 
+  statsBadgesSeenInit=true;
   renderProgressChart(stats.byDay);
   }catch(e){
     console.error('renderStats error:', e && e.message ? e.message : String(e));
@@ -4160,6 +4208,7 @@ function processRep(metrics){
         setCount++;
         totalCount++;
         refreshHeader();
+        pulseEl(countEl,'rep-pop');
         if(setCount>=Number(targetRepsInput.value||10)) phaseEl.textContent=t('phase_goal_reached');
       }
       if(planSessionActive) finishPlanRep();
@@ -4385,6 +4434,7 @@ function restTick(){
   if(remainingSec!==restRemaining){
     restRemaining=remainingSec;
     restDisplay.textContent=formatRest(restRemaining);
+    if(restRemaining>=1 && restRemaining<=3) pulseEl(restDisplay,'count-pulse');
     if(restRemaining<=3 && restRemaining>=0 && !restBeepedSeconds.has(restRemaining)){
       restBeepedSeconds.add(restRemaining);
       playCountdownBeep(restRemaining);
@@ -4489,6 +4539,7 @@ async function finishPlanTraining(completed){
   stopPlanRest();
   stopPlanSessionTimer();
   let sessionEndMessage=null;
+  let isNewRecord=false;
   if(planTotalCount>0){
     const now=new Date();
     // Le calendrier reflète toujours le jour réel où la séance a été effectuée.
@@ -4531,6 +4582,7 @@ async function finishPlanTraining(completed){
       const beatSessionRecord=hadPriorSessions && planTotalCount>statsBeforeThisSession.recordSession;
       const maxSetReps=doneSets.length ? Math.max(...doneSets.map(s=>s.reps)) : 0;
       const beatSetRecord=hadPriorSessions && maxSetReps>statsBeforeThisSession.recordSet;
+      isNewRecord = beatSessionRecord || beatSetRecord;
       sessionEndMessage = beatSessionRecord && beatSetRecord ? t('toast_record_both')
         : beatSessionRecord ? t('toast_record_session').replace('{count}',planTotalCount)
         : beatSetRecord ? t('toast_record_set').replace('{count}',maxSetReps)
@@ -4542,7 +4594,7 @@ async function finishPlanTraining(completed){
   updatePlanScreenState();
   updatePlanSessionUI();
   if(typeof renderPlanTab==='function') renderPlanTab();
-  showToast(sessionEndMessage || (completed ? t('toast_plan_finished').replace('{count}',planTotalCount) : t('toast_session_stopped').replace('{count}',planTotalCount)));
+  showToast(sessionEndMessage || (completed ? t('toast_plan_finished').replace('{count}',planTotalCount) : t('toast_session_stopped').replace('{count}',planTotalCount)), 2600, isNewRecord ? 'record' : null);
   planTotalCount=0;
   planSessionTargetDate=null;
   const totalEl=document.getElementById('planTotalCount');
@@ -4710,6 +4762,7 @@ function planRestTick(){
     planRestRemaining=remainingSec;
     const display=document.getElementById('planRestDisplay');
     if(display) display.textContent=formatPlanRest(planRestRemaining);
+    if(display && planRestRemaining>=1 && planRestRemaining<=3) pulseEl(display,'count-pulse');
     if(planRestRemaining<=3 && planRestRemaining>=0 && !planRestBeepedSeconds.has(planRestRemaining)){
       planRestBeepedSeconds.add(planRestRemaining);
       playCountdownBeep(planRestRemaining);
