@@ -44,7 +44,7 @@
     .app{max-width:580px;margin:0 auto;padding:max(env(safe-area-inset-top),1rem) 1rem max(env(safe-area-inset-bottom),1rem)}
     .topbar,.counter-wrap,.camera-overlay,.two{display:flex;justify-content:space-between;align-items:center;gap:.8rem}.brand{display:flex;gap:.8rem;align-items:center}.logo{width:42px;height:42px;border-radius:14px;background:var(--primary);display:grid;place-items:center;color:var(--inv)}
     .logo svg{width:24px;height:24px}.topbar{margin-bottom:1rem}.brand h1{margin:0;font-size:1.35rem}.brand p{margin:.15rem 0 0;font-size:.82rem;color:var(--muted)}
-    .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;box-shadow:var(--shadow-sm)}.counter-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)} .counter{font-size:clamp(4rem,18vw,7rem);font-weight:700;line-height:.92}
+    .panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.1rem;box-shadow:var(--shadow-sm)}.panel-featured{border-color:color-mix(in srgb, var(--primary) 24%, var(--border));box-shadow:var(--shadow-md)}.coach-note-card{border-left:3px solid var(--primary);background:color-mix(in srgb, var(--primary) 5%, var(--surface))}.counter-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)} .counter{font-size:clamp(4rem,18vw,7rem);font-weight:700;line-height:.92}
     .section-title{font-size:1.4rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--text);margin-bottom:.4rem;}
     .home-quick-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.35rem;margin-top:.6rem;}
     .home-quick-grid .home-nav-btn{background:transparent;color:var(--text);border:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;padding:.4rem .1rem;min-height:56px;font-size:.62rem;}
@@ -73,7 +73,7 @@
 .tab-content{padding-bottom:calc(4.6rem + env(safe-area-inset-bottom));}
     .camera-shell{position:relative;overflow:hidden;border-radius:1rem;background:#0f1113;aspect-ratio:3/4;margin-top:1rem}.camera-shell video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.camera-shell canvas{display:none}
     .camera-overlay{position:absolute;left:.8rem;right:.8rem;bottom:.8rem;z-index:2}.pill{display:inline-flex;align-items:center;gap:.45rem;border-radius:var(--pill);padding:.45rem .75rem;background:rgba(17,20,24,.62);backdrop-filter:blur(10px);color:#fff;font-size:.78rem}.dot{width:.55rem;height:.55rem;border-radius:50%;background:#9ca3af}.dot.live{background:var(--success)}.dot.warn{background:var(--warning)}
-    .grid,.controls{display:grid;gap:.75rem}.controls,.grid,.two-col{grid-template-columns:1fr 1fr}.btn,.chip,.icon-btn,input{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--pill)} .btn{min-height:52px;padding:.9rem 1rem;font-weight:700}.btn-primary{background:var(--primary);color:var(--inv);border:none;box-shadow:0 6px 18px color-mix(in srgb, var(--primary) 30%, transparent)}.btn-danger{background:var(--text);color:var(--inv);border:none}.icon-btn{width:48px;height:48px}.btn,.chip,.icon-btn{transition:transform .1s ease}.btn:active,.chip:active,.icon-btn:active{transform:scale(.97)}
+    .grid,.controls{display:grid;gap:.75rem}.controls,.grid,.two-col{grid-template-columns:1fr 1fr}.btn,.chip,.icon-btn,input{border:1px solid var(--border);background:var(--surface);color:var(--text);border-radius:var(--pill)} .btn{min-height:52px;padding:.9rem 1rem;font-weight:600}.btn-primary{background:var(--primary);color:var(--inv);border:none;font-weight:800;box-shadow:0 6px 18px color-mix(in srgb, var(--primary) 30%, transparent)}.btn-danger{background:var(--text);color:var(--inv);border:none;font-weight:800}.icon-btn{width:48px;height:48px}.btn,.chip,.icon-btn{transition:transform .1s ease}.btn:active,.chip:active,.icon-btn:active{transform:scale(.97)}.btn:disabled{opacity:.42}
     .metric span,label,h2{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.35rem;font-weight:700;}.metric strong{font-size:1.45rem} .metric{padding:1rem} input{width:100%;min-height:48px;padding:0 .9rem;background:var(--surface2)}
     .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.7rem}.chip{padding:.65rem .9rem;font-weight:700}.chip.active{background:var(--primary);color:var(--inv);border-color:transparent}
     #welcomeDaysChips,#planDaysChips,#planDaysChipsEdit{display:grid;grid-template-columns:repeat(7,1fr);gap:.3rem;}
@@ -87,7 +87,7 @@
     .pref-row{display:flex;align-items:center;gap:.8rem;padding:.7rem 0;}
     .pref-row+.pref-row{border-top:1px solid var(--border);}
     .accordion-toggle{display:flex;justify-content:space-between;align-items:center;width:100%;background:none;border:none;padding:0;cursor:pointer;text-align:left;color:inherit;font:inherit;}
-    .accordion-toggle h2{margin:0;}
+    .accordion-toggle h2{margin:0;font-weight:800;}
     .accordion-chevron{transition:transform .2s ease;flex-shrink:0;}
     .accordion-panel.open .accordion-chevron{transform:rotate(90deg);}
     .accordion-body{margin-top:.9rem;}
@@ -267,7 +267,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
     </section>
 -->
 
-    <section class="panel" style="margin-top:.8rem;">
+    <section class="panel panel-featured" style="margin-top:.8rem;">
       <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
         <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span data-i18n="home_today_session">Séance du jour</span>
       </div>
@@ -529,7 +529,7 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
     </div>
 
     <div id="planActive" class="hidden">
-      <section class="panel" id="planTodaySummaryPanel">
+      <section class="panel panel-featured" id="planTodaySummaryPanel">
         <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
           <span><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 9h18M8 3v4M16 3v4"/></svg></span><span data-i18n="plan_today_session">Séance du jour</span>
         </div>
@@ -2111,13 +2111,13 @@ function renderPlanTab(){
     // calculée puis silencieusement jetée. Affichée ici pour un repos imposé.
     if(coachForcedRestToday){
       const restNoteCard=document.createElement('section');
-      restNoteCard.className='panel plan-dynamic-card';
+      restNoteCard.className='panel plan-dynamic-card coach-note-card';
       restNoteCard.style.marginTop='.6rem';
       restNoteCard.innerHTML=`
         <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg><span>${t('calendar_rest_day')}</span>
         </div>
-        <div style="color:var(--muted);font-size:.85rem;margin-top:.5rem;">${coachNoteForToday ? escapeHtml(coachNoteForToday) : t('plan_no_session_today')}</div>
+        <div style="color:var(--text);font-size:.88rem;margin-top:.5rem;line-height:1.4;">${coachNoteForToday ? escapeHtml(coachNoteForToday) : t('plan_no_session_today')}</div>
       `;
       setsEl.parentElement.insertBefore(restNoteCard, setsEl.nextSibling);
     }
@@ -2213,13 +2213,13 @@ function renderPlanTab(){
     restCardRef=restCard;
     if(aiToday && aiToday.note){
       const noteCard=document.createElement('section');
-      noteCard.className='panel plan-dynamic-card';
+      noteCard.className='panel plan-dynamic-card coach-note-card';
       noteCard.style.marginTop='.6rem';
       noteCard.innerHTML=`
         <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 00-4 12.7V17a2 2 0 002 2h4a2 2 0 002-2v-2.3A7 7 0 0012 2z"/><path d="M9 21h6"/></svg><span>${t('plan_ai_active')}</span>
         </div>
-        <div style="color:var(--muted);font-size:.85rem;margin-top:.5rem;">${escapeHtml(aiToday.note)}</div>
+        <div style="color:var(--text);font-size:.88rem;margin-top:.5rem;line-height:1.4;">${escapeHtml(aiToday.note)}</div>
       `;
       restCard.parentElement.insertBefore(noteCard, restCard.nextSibling);
     }
@@ -2335,7 +2335,9 @@ function renderPlanTab(){
       }
       const label = isToday ? t('calendar_today') : `${dayNames[d.getDay()]} ${d.getDate()} ${monthShort(d.getMonth())}`;
       const row=document.createElement('div');
-      row.style.cssText='display:flex;align-items:center;gap:.7rem;padding:.75rem .8rem;background:var(--surface2);border:1px solid var(--border);border-radius:1rem;';
+      row.style.cssText = isToday
+        ? 'display:flex;align-items:center;gap:.7rem;padding:.75rem .8rem;background:color-mix(in srgb, var(--primary) 8%, var(--surface2));border:1.5px solid color-mix(in srgb, var(--primary) 35%, var(--border));border-radius:1rem;'
+        : 'display:flex;align-items:center;gap:.7rem;padding:.75rem .8rem;background:var(--surface2);border:1px solid var(--border);border-radius:1rem;';
       if(!isTrainingDayRow){
         // La note spécifique du backend (cause du repos forcé, ou note de
         // récupération) prime toujours sur le libellé générique -- celui-ci
@@ -3797,8 +3799,8 @@ function renderStats(){
   BADGE_LEVELS.forEach(level=>{
     const unlocked=stats.totalCumulative>=level;
     const badge=document.createElement('div');
-    badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.35};`;
-    badge.innerHTML=`<div style="width:48px;height:48px;border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">${unlocked?'🏆':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">${level}</div>`;
+    badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.3};`;
+    badge.innerHTML=`<div style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?'🏆':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${level}</div>`;
     badgesGrid.appendChild(badge);
   });
 
@@ -3808,8 +3810,8 @@ function renderStats(){
     STREAK_BADGE_LEVELS.forEach(level=>{
       const unlocked=streak.best>=level.days;
       const badge=document.createElement('div');
-      badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.35};`;
-      badge.innerHTML=`<div style="width:48px;height:48px;border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">${unlocked?level.icon:'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">${level.days}</div>`;
+      badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.3};`;
+      badge.innerHTML=`<div style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?level.icon:'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${level.days}</div>`;
       streakBadgesGrid.appendChild(badge);
     });
   }
@@ -3820,8 +3822,8 @@ function renderStats(){
     SESSION_BADGE_LEVELS.forEach(level=>{
       const unlocked=stats.sessionCount>=level;
       const badge=document.createElement('div');
-      badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.35};`;
-      badge.innerHTML=`<div style="width:48px;height:48px;border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};display:flex;align-items:center;justify-content:center;font-size:1.3rem;margin:0 auto;">${unlocked?'🥇':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);">${level}</div>`;
+      badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.3};`;
+      badge.innerHTML=`<div style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?'🥇':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${level}</div>`;
       sessionBadgesGrid.appendChild(badge);
     });
   }
