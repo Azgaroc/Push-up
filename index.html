@@ -1676,6 +1676,28 @@ function getAIPlanForDate(dateIso){
     : null;
 }
 
+// Détermine si AUJOURD'HUI est un jour d'entraînement ou de repos, à partir du
+// plan Coach V2 réellement généré (source de vérité unique) -- jamais de
+// planProfile.days seul, qui ne reflète qu'une préférence de calendrier et
+// peut diverger du plan réel (récupération, rattrapage, repos forcé un jour
+// non habituel). planProfile.days ne sert que de repli si le plan ne couvre
+// pas encore la date du jour (génération en cours ou échouée).
+// Unique source de vérité partagée par renderPlanTab() et renderHomeTab().
+function getTodayPlanStatus(){
+  const aiDay=getAIPlanForDate(toLocalDateStr(new Date()));
+  let isTrainingDay, isForcedRest=false, note='';
+  if(aiDay && Array.isArray(aiDay.sets)){
+    isTrainingDay=aiDay.sets.length>0;
+    if(!isTrainingDay){
+      isForcedRest=true;
+      note=aiDay.note||'';
+    }
+  } else {
+    isTrainingDay=planProfile.days.includes(new Date().getDay());
+  }
+  return {aiDay, isTrainingDay, isForcedRest, note};
+}
+
 function applyAIPlanForToday(baseSets, ratio, targetDateIso){
   const isoDate=targetDateIso || toLocalDateStr(new Date());
   const aiDay=getAIPlanForDate(isoDate);
@@ -2057,24 +2079,13 @@ function renderPlanTab(){
   syncPlanUI();
 
   const todayDow=new Date().getDay();
-  // Le plan Coach V2 (aiDayCheck) est la SOURCE DE VERITE pour savoir si
-  // aujourd'hui est un jour d'entraînement ou de repos -- jamais
-  // planProfile.days seul, qui ne reflète qu'une préférence de calendrier
-  // choisie à l'inscription et peut diverger du plan réellement généré
-  // (séance de récupération, rattrapage ou repos forcé un jour non habituel).
-  // planProfile.days ne sert plus que de repli si aucun plan ne couvre
-  // encore la date du jour (ex: génération en cours ou échouée).
-  const aiDayCheck=getAIPlanForDate(toLocalDateStr(new Date()));
-  let isTrainingDay, coachForcedRestToday=false, coachNoteForToday='';
-  if(aiDayCheck && Array.isArray(aiDayCheck.sets)){
-    isTrainingDay=aiDayCheck.sets.length>0;
-    if(!isTrainingDay){
-      coachForcedRestToday=true;
-      coachNoteForToday=aiDayCheck.note||'';
-    }
-  } else {
-    isTrainingDay=planProfile.days.includes(todayDow);
-  }
+  // Source de vérité unique, partagée avec renderHomeTab() -- voir
+  // getTodayPlanStatus().
+  const todayStatus=getTodayPlanStatus();
+  const aiDayCheck=todayStatus.aiDay;
+  const isTrainingDay=todayStatus.isTrainingDay;
+  const coachForcedRestToday=todayStatus.isForcedRest;
+  const coachNoteForToday=todayStatus.note;
   const weekNumber=getPlanWeekNumber();
   const adjustment=computeDailyPlanAdjustment();
   const ratio=adjustment.ratio; // encore utilisé plus bas pour le repli client (baseSets) si aucun plan IA ne couvre le jour
@@ -3226,26 +3237,9 @@ function renderHomeTab(){
   if(planProfile){
     renderPlanTab();
     const titleEl=document.getElementById('planTodayTitle');
-    // BUGFIX : ne dépendait auparavant que des jours choisis par l'utilisateur,
-    // sans jamais regarder si le coach avait imposé un repos aujourd'hui (voir
-    // la même vérification dans renderPlanTab ci-dessus, via getAIPlanForDate).
-    // Résultat : sur un jour de repos imposé par l'IA mais qui restait un jour
-    // d'entraînement choisi par l'utilisateur, l'accueil affichait quand même
-    // "0 pompes" avec un bouton "Commencer" actif — qui ne faisait alors
-    // silencieusement rien au clic (preparePlanSession() refuse de démarrer).
-    const todayAiDay=getAIPlanForDate(toLocalDateStr(new Date()));
-    // Même principe déjà validé dans renderPlanTab() ci-dessus : le plan
-    // Coach V2 (todayAiDay) est la source de vérité pour savoir si
-    // aujourd'hui est un jour d'entraînement ou de repos -- jamais
-    // planProfile.days seul. planProfile.days ne sert plus que de repli
-    // si le plan ne couvre pas encore la date du jour.
-    let coachForcedRestOnHome=false;
-    if(todayAiDay && Array.isArray(todayAiDay.sets)){
-      isRestDay=todayAiDay.sets.length===0;
-      coachForcedRestOnHome=isRestDay;
-    } else {
-      isRestDay=!planProfile.days.includes(new Date().getDay());
-    }
+    // Source de vérité unique, partagée avec renderPlanTab() -- voir
+    // getTodayPlanStatus().
+    isRestDay=!getTodayPlanStatus().isTrainingDay;
     if(detailsRowEl) detailsRowEl.classList.toggle('hidden', isRestDay);
     if(ringWrapEl) ringWrapEl.classList.toggle('hidden', isRestDay);
     if(restMessageEl){
