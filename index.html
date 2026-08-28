@@ -625,6 +625,22 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
     </div>
   </div>
 <div id="tab-profile" class="tab-content hidden">
+    <section class="panel hidden" id="profileIdentitySummary" style="margin-top:.6rem;">
+      <div style="display:flex;justify-content:space-around;text-align:center;">
+        <div style="flex:1;">
+          <strong id="profileSummaryLevel" style="font-size:1rem;display:block;color:var(--primary);">—</strong>
+          <div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;" data-i18n="home_level">Niveau</div>
+        </div>
+        <div style="flex:1;border-left:1px solid var(--border);border-right:1px solid var(--border);">
+          <strong id="profileSummarySessions" style="font-size:1.3rem;display:block;color:var(--primary);">0</strong>
+          <div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;" data-i18n="home_sessions_completed">Séances complétées</div>
+        </div>
+        <div style="flex:1;">
+          <strong id="profileSummaryTotal" style="font-size:1.3rem;display:block;color:var(--primary);">0</strong>
+          <div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;" data-i18n="home_total_pushups">Pompes au total</div>
+        </div>
+      </div>
+    </section>
     <section class="panel accordion-panel" style="margin-top:.6rem;">
       <button class="accordion-toggle" type="button" aria-expanded="false">
         <h2 data-i18n="profile_title">Profil</h2>
@@ -2064,13 +2080,30 @@ document.querySelectorAll('#tab-profile .accordion-toggle').forEach(btn=>{
 function renderProfileTab(){
   const emptyState=document.getElementById('profileEmptyState');
   const formWrap=document.getElementById('profileFormWrap');
+  const identitySummary=document.getElementById('profileIdentitySummary');
   if(!planProfile){
     emptyState.classList.remove('hidden');
     formWrap.classList.add('hidden');
+    if(identitySummary) identitySummary.classList.add('hidden');
     return;
   }
   emptyState.classList.add('hidden');
   formWrap.classList.remove('hidden');
+  // Résumé d'identité/progression (ETAPE UX #6) -- lecture seule des données
+  // déjà calculées ailleurs (computeStats(), même classification de niveau
+  // que renderHomeTab()/renderPlanTab()) : aucun nouveau calcul métier.
+  if(identitySummary){
+    identitySummary.classList.remove('hidden');
+    const mx=planProfile.maxReps||0;
+    const levelText = mx<12?t('level_beginner'):(mx<25?t('level_novice'):(mx<45?t('level_intermediate'):(mx<70?t('level_advanced'):(mx<110?t('level_confirmed'):t('level_elite')))));
+    const profileStats=computeStats();
+    const levelEl=document.getElementById('profileSummaryLevel');
+    const sessionsEl=document.getElementById('profileSummarySessions');
+    const totalEl=document.getElementById('profileSummaryTotal');
+    if(levelEl) levelEl.textContent=levelText;
+    if(sessionsEl) sessionsEl.textContent=profileStats.sessionCount;
+    if(totalEl) totalEl.textContent=profileStats.totalCumulative;
+  }
   document.querySelectorAll('#planDaysChipsEdit .chip').forEach(ch=>{
     ch.classList.toggle('active', planProfile.days.includes(Number(ch.dataset.day)));
   });
