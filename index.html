@@ -281,13 +281,10 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
       <span id="homeTodayDate" style="color:var(--muted);font-size:.85rem;white-space:nowrap;padding-top:.2rem;"></span>
     </div>
 
-    <!-- Citation de motivation masquée temporairement pour gagner de la place :
-<section class="panel" style="display:flex;align-items:center;gap:.8rem;">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--primary)" stroke-width="2" style="flex-shrink:0;"><path d="M7 8c-2 0-3 1.5-3 4s1.5 4 3 4 3-1.5 3-4c0-2.5-1.2-4-3-4zm10 0c-2 0-3 1.5-3 4s1.5 4 3 4 3-1.5 3-4c0-2.5-1.2-4-3-4z"/></svg>
-      <div id="homeMotivationQuote" style="font-size:.9rem;color:var(--text);flex:1;">Les petites victoires répétées deviennent de grands résultats.</div>
-      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--primary)" stroke-width="1.6" style="flex-shrink:0;"><path d="M6 10h2v4H6zm10 0h2v4h-2zM8 10l3-3 2 2 3-3M8 14l3 3 2-2 3 3"/></svg>
-    </section>
--->
+    <div id="homeMotivationCard" style="display:flex;align-items:flex-start;gap:.5rem;margin-top:.7rem;padding:.55rem .75rem;border-left:3px solid var(--primary);background:color-mix(in srgb, var(--primary) 5%, var(--surface));border-radius:.7rem;">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="var(--primary)" stroke-width="2" style="flex-shrink:0;margin-top:.15rem;"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>
+      <div id="homeMotivationQuote" style="font-size:.85rem;color:var(--text);font-style:italic;line-height:1.4;"></div>
+    </div>
 
     <section class="panel panel-featured" style="margin-top:.8rem;">
       <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
