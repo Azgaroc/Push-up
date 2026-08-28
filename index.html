@@ -1056,6 +1056,7 @@ fr: {
  plan_no_session_today:"Aucune séance planifiée aujourd'hui. profitez du repos, ou faites une séance libre si vous en avez envie.",
  plan_coach_forced_rest:"Ton coach IA a décidé d'imposer un repos aujourd'hui, même si c'est un jour d'entraînement prévu — récupération nécessaire d'après tes dernières séances.", plan_coach_forced_rest_short:"Repos imposé par le coach",
  plan_session_done_label:"Séance effectuée", plan_rest_time:"Temps de repos", plan_recent_history:"Historique récent",
+ plan_view_full_history:"Voir l'historique complet",
  level_beginner:"Débutant", level_novice:"Novice", level_intermediate:"Intermédiaire", level_advanced:"Avancé", level_confirmed:"Confirmé", level_elite:"Élite",
  day_full_sun:"Dimanche", day_full_mon:"Lundi", day_full_tue:"Mardi", day_full_wed:"Mercredi", day_full_thu:"Jeudi", day_full_fri:"Vendredi", day_full_sat:"Samedi",
  month_short_0:"Jan", month_short_1:"Fév", month_short_2:"Mar", month_short_3:"Avr", month_short_4:"Mai", month_short_5:"Juin",
@@ -1179,6 +1180,7 @@ en: {
  plan_no_session_today:"No session planned today. enjoy the rest, or do a free session if you feel like it.",
  plan_coach_forced_rest:"Your AI coach decided to enforce a rest day today, even though it's a scheduled training day — recovery needed based on your recent sessions.", plan_coach_forced_rest_short:"Rest enforced by coach",
  plan_session_done_label:"Session done", plan_rest_time:"Rest time", plan_recent_history:"Recent history",
+ plan_view_full_history:"See full history",
  level_beginner:"Beginner", level_novice:"Novice", level_intermediate:"Intermediate", level_advanced:"Advanced", level_confirmed:"Proficient", level_elite:"Elite",
  day_full_sun:"Sunday", day_full_mon:"Monday", day_full_tue:"Tuesday", day_full_wed:"Wednesday", day_full_thu:"Thursday", day_full_fri:"Friday", day_full_sat:"Saturday",
  month_short_0:"Jan", month_short_1:"Feb", month_short_2:"Mar", month_short_3:"Apr", month_short_4:"May", month_short_5:"Jun",
@@ -1302,6 +1304,7 @@ es: {
  plan_no_session_today:"No hay ninguna sesión planificada hoy. disfruta del descanso, o haz una sesión libre si te apetece.",
  plan_coach_forced_rest:"Tu coach IA ha decidido imponer un descanso hoy, aunque sea un día de entrenamiento previsto — recuperación necesaria según tus últimas sesiones.", plan_coach_forced_rest_short:"Descanso impuesto por el coach",
  plan_session_done_label:"Sesión completada", plan_rest_time:"Tiempo de descanso", plan_recent_history:"Historial reciente",
+ plan_view_full_history:"Ver historial completo",
  level_beginner:"Principiante", level_novice:"Novato", level_intermediate:"Intermedio", level_advanced:"Avanzado", level_confirmed:"Competente", level_elite:"Élite",
  day_full_sun:"Domingo", day_full_mon:"Lunes", day_full_tue:"Martes", day_full_wed:"Miércoles", day_full_thu:"Jueves", day_full_fri:"Viernes", day_full_sat:"Sábado",
  month_short_0:"Ene", month_short_1:"Feb", month_short_2:"Mar", month_short_3:"Abr", month_short_4:"May", month_short_5:"Jun",
@@ -2336,32 +2339,19 @@ function renderPlanTab(){
     }
   }
   if(planTabVisible){
+    // Lien compact vers Stats (ETAPE UX #9) -- remplace l'ancien mini-graphique
+    // 7 jours (doublon avec les graphiques déjà présents dans Stats :
+    // "Progression" et "Évolution 30 derniers jours"), sans toucher à workouts[]
+    // ni à aucun calcul : seul l'affichage change, la donnée reste dans Stats.
     const histCard=document.createElement('section');
     histCard.className='panel plan-dynamic-card';
-    histCard.style.marginTop='.6rem';
-    const days=[];
-    for(let d=6;d>=0;d--){
-      const dt=new Date(); dt.setDate(dt.getDate()-d);
-      const iso=toLocalDateStr(dt);
-      const dayTotal=workouts.filter(w=>w.isoDate===iso).reduce((a,w)=>a+(w.total||0),0);
-      days.push({iso,label:`${String(dt.getDate()).padStart(2,'0')}/${String(dt.getMonth()+1).padStart(2,'0')}`,total:dayTotal});
-    }
-    const maxVal=Math.max(1,...days.map(d=>d.total));
-    const barsHtml=days.map(d=>{
-      const h=d.total>0?Math.max(8,Math.round((d.total/maxVal)*64)):4;
-      return `<div style="display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:.2rem;flex:1;min-height:112px;">
-        <div style="font-size:.72rem;font-weight:700;color:${d.total>0?'var(--text)':'var(--muted)'};min-height:1em;line-height:1;">${d.total>0?d.total:''}</div>
-        <div style="width:70%;max-width:22px;height:64px;display:flex;align-items:flex-end;">
-          <div style="width:100%;height:${h}px;border-radius:.4rem;background:var(--primary);"></div>
-        </div>
-        <div style="font-size:.68rem;color:var(--muted);min-height:1em;line-height:1;">${d.label}</div>
-      </div>`;
-    }).join('');
+    histCard.style.cssText='margin-top:.6rem;cursor:pointer;';
     histCard.innerHTML=`
-      <div style="display:flex;justify-content:space-between;align-items:center;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
-        <span>${t('plan_recent_history')}</span><span style="color:var(--muted);font-weight:600;text-transform:none;letter-spacing:0;">${t('training_pushups')}</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;gap:.3rem;margin-top:.8rem;">${barsHtml}</div>`;
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="color:var(--primary);font-weight:700;font-size:.85rem;">${t('plan_view_full_history')}</span>
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--muted)" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+      </div>`;
+    histCard.addEventListener('click', ()=>{ goToTab('stats'); });
     setsEl.parentElement.insertBefore(histCard, restCardRef ? restCardRef.nextSibling : setsEl.nextSibling);
   }
   if(planTabVisible){
