@@ -2294,6 +2294,28 @@ function renderPlanTab(){
     setsEl.parentElement.insertBefore(restCard, setsEl.nextSibling);
     restCardRef=restCard;
     if(aiToday && aiToday.note){
+      // Icone de tendance (ETAPE UX #7) -- réutilise computeTodayPaceInfo(),
+      // déjà utilisée pour les badges de rythme de l'Accueil, sans créer de
+      // nouveau calcul. Ce n'est PAS l'état réel du Coach V2 (jamais exposé
+      // au frontend, voir aiToday : uniquement {sets, restSeconds, note}) --
+      // seulement un proxy de tendance basé sur le volume, déjà fiable et
+      // déjà utilisé ailleurs dans l'app pour un usage équivalent.
+      // Si les préconditions de computeTodayPaceInfo() ne sont pas réunies
+      // (mêmes conditions que ses propres retours anticipés : pas de séries
+      // prévues aujourd'hui, ou aucune séance réelle récente comparable),
+      // aucune icône n'est affichée plutôt que d'en montrer une par défaut
+      // potentiellement trompeuse.
+      const hasReliablePaceData = Array.isArray(aiToday.sets) && aiToday.sets.length>0
+        && getRecentPlanWorkouts(30).some(w=>w && w.total>0 && w.difficulty!=='hard');
+      const notePaceInfo = hasReliablePaceData ? computeTodayPaceInfo(aiToday) : null;
+      let paceIconPath=null, paceIconColor=null;
+      if(notePaceInfo){
+        if(notePaceInfo.easingIn){ paceIconPath='M5 20c0-8 6-14 14-14 0 8-6 14-14 14zM5 20c2-4 5-7 9-9'; paceIconColor='var(--primary)'; }
+        else if(notePaceInfo.pace==='up'){ paceIconPath='M13 2L4 14h6l-1 8 9-12h-6z'; paceIconColor='var(--success)'; }
+        else if(notePaceInfo.pace==='down'){ paceIconPath='M4 12h4l2-3 3 6 2-3h5'; paceIconColor='var(--warning)'; }
+        else { paceIconPath='M4 12h16'; paceIconColor='var(--primary)'; }
+      }
+      const paceIconSvg = paceIconPath ? `<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="${paceIconColor}" stroke-width="2" style="flex-shrink:0;margin-top:.2rem;"><path d="${paceIconPath}"/></svg>` : '';
       const noteCard=document.createElement('section');
       noteCard.className='panel plan-dynamic-card coach-note-card';
       noteCard.style.marginTop='.6rem';
@@ -2301,7 +2323,10 @@ function renderPlanTab(){
         <div style="display:flex;align-items:center;gap:.4rem;color:var(--primary);font-weight:700;font-size:.8rem;letter-spacing:.03em;text-transform:uppercase;">
           <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a7 7 0 00-4 12.7V17a2 2 0 002 2h4a2 2 0 002-2v-2.3A7 7 0 0012 2z"/><path d="M9 21h6"/></svg><span>${t('plan_ai_active')}</span>
         </div>
-        <div style="color:var(--text);font-size:.88rem;margin-top:.5rem;line-height:1.4;">${escapeHtml(aiToday.note)}</div>
+        <div style="display:flex;align-items:flex-start;gap:.4rem;margin-top:.5rem;">
+          ${paceIconSvg}
+          <div style="color:var(--text);font-size:.88rem;line-height:1.4;flex:1;">${escapeHtml(aiToday.note)}</div>
+        </div>
       `;
       restCard.parentElement.insertBefore(noteCard, restCard.nextSibling);
     }
