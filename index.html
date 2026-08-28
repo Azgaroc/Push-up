@@ -1013,6 +1013,7 @@ fr: {
  badge_3_days:"3 Jours de suite", badge_1_week:"1 Semaine de suite", badge_2_weeks:"2 Semaines de suite",
  badge_1_month:"1 Mois de suite", badge_2_months:"2 Mois de suite", badge_100_days:"100 Jours de suite",
  day_singular:"Jour", day_plural:"Jours", calendar_week_unit_plural:"Semaines",
+ badge_session_singular:"Séance", badge_sessions_plural:"Séances",
  confirm_cycle_done:"Vous avez terminé {weeks} semaines de plan ! faites un maximum de pompes en une série pour recalibrer votre niveau et générer un nouveau plan adapté.",
  confirm_reset_plan:"Réinitialiser votre plan et recommencer le questionnaire ?",
  confirm_delete_session:"Supprimer définitivement cette séance ?",
@@ -1134,6 +1135,7 @@ en: {
  badge_3_days:"3-Day streak", badge_1_week:"1-Week streak", badge_2_weeks:"2-Week streak",
  badge_1_month:"1-Month streak", badge_2_months:"2-Month streak", badge_100_days:"100-Day streak",
  day_singular:"Day", day_plural:"Days", calendar_week_unit_plural:"Weeks",
+ badge_session_singular:"Session", badge_sessions_plural:"Sessions",
  confirm_cycle_done:"You've completed {weeks} weeks of your plan! do as many push-ups as you can in one set to recalibrate your level and generate a new tailored plan.",
  confirm_reset_plan:"Reset your plan and start the questionnaire again?",
  confirm_delete_session:"Permanently delete this session?",
@@ -1255,6 +1257,7 @@ es: {
  badge_3_days:"Racha de 3 días", badge_1_week:"Racha de 1 semana", badge_2_weeks:"Racha de 2 semanas",
  badge_1_month:"Racha de 1 mes", badge_2_months:"Racha de 2 meses", badge_100_days:"Racha de 100 días",
  day_singular:"Día", day_plural:"Días", calendar_week_unit_plural:"Semanas",
+ badge_session_singular:"Sesión", badge_sessions_plural:"Sesiones",
  confirm_cycle_done:"¡Has completado {weeks} semanas de tu plan! haz el máximo de flexiones posible en una serie para recalibrar tu nivel y generar un nuevo plan adaptado.",
  confirm_reset_plan:"¿Reiniciar tu plan y volver a empezar el cuestionario?",
  confirm_delete_session:"¿Eliminar esta sesión de forma permanente?",
@@ -3853,9 +3856,14 @@ function renderStats(){
     const badgeKey='total:'+level;
     const justUnlocked=unlocked && statsBadgesSeenInit && !statsBadgesSeen.has(badgeKey);
     if(unlocked) statsBadgesSeen.add(badgeKey);
+    // Distance restante affichée uniquement pour les badges verrouillés --
+    // ne touche ni au seuil, ni au calcul `unlocked`, seulement au texte
+    // affiché sous l'icône (remplace le seuil brut par ce qu'il reste à faire).
+    const remainingTotal=Math.max(0, level-stats.totalCumulative);
+    const badgeLabel=unlocked ? level : `${remainingTotal} ${t('training_pushups')}`;
     const badge=document.createElement('div');
     badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.3};`;
-    badge.innerHTML=`<div class="${justUnlocked?'badge-unlock':''}" style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?'🏆':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${level}</div>`;
+    badge.innerHTML=`<div class="${justUnlocked?'badge-unlock':''}" style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?'🏆':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${badgeLabel}</div>`;
     badgesGrid.appendChild(badge);
   });
 
@@ -3867,9 +3875,11 @@ function renderStats(){
       const badgeKey='streak:'+level.days;
       const justUnlocked=unlocked && statsBadgesSeenInit && !statsBadgesSeen.has(badgeKey);
       if(unlocked) statsBadgesSeen.add(badgeKey);
+      const remainingDays=Math.max(0, level.days-streak.best);
+      const badgeLabel=unlocked ? level.days : `${remainingDays} ${t(remainingDays>1?'day_plural':'day_singular')}`;
       const badge=document.createElement('div');
       badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.3};`;
-      badge.innerHTML=`<div class="${justUnlocked?'badge-unlock':''}" style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?level.icon:'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${level.days}</div>`;
+      badge.innerHTML=`<div class="${justUnlocked?'badge-unlock':''}" style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?level.icon:'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${badgeLabel}</div>`;
       streakBadgesGrid.appendChild(badge);
     });
   }
@@ -3882,9 +3892,11 @@ function renderStats(){
       const badgeKey='session:'+level;
       const justUnlocked=unlocked && statsBadgesSeenInit && !statsBadgesSeen.has(badgeKey);
       if(unlocked) statsBadgesSeen.add(badgeKey);
+      const remainingSessions=Math.max(0, level-stats.sessionCount);
+      const badgeLabel=unlocked ? level : `${remainingSessions} ${t(remainingSessions>1?'badge_sessions_plural':'badge_session_singular')}`;
       const badge=document.createElement('div');
       badge.style.cssText=`flex:0 0 auto;width:64px;text-align:center;opacity:${unlocked?1:0.3};`;
-      badge.innerHTML=`<div class="${justUnlocked?'badge-unlock':''}" style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?'🥇':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${level}</div>`;
+      badge.innerHTML=`<div class="${justUnlocked?'badge-unlock':''}" style="width:${unlocked?'50px':'42px'};height:${unlocked?'50px':'42px'};border-radius:50%;background:${unlocked?'var(--primary)':'var(--surface2)'};box-shadow:${unlocked?'var(--shadow-sm)':'none'};display:flex;align-items:center;justify-content:center;font-size:${unlocked?'1.4rem':'1.1rem'};margin:0 auto;">${unlocked?'🥇':'🔒'}</div><div style="font-size:.6rem;margin-top:.3rem;color:var(--muted);font-weight:${unlocked?700:400};">${badgeLabel}</div>`;
       sessionBadgesGrid.appendChild(badge);
     });
   }
