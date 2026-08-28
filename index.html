@@ -2848,18 +2848,37 @@ function initUserNicknameField(){
     renderHomeTab();
     initUserNicknameField();
     document.getElementById('welcomeDoneTitle').textContent = tmpNickname ? t('onboarding_hi_name').replace('{name}',tmpNickname) : t('onboarding_hi');
-    // Aperçu du premier objectif (ETAPE UX #10) -- relit uniquement
-    // window.lastTodayPlanSnapshot, déjà calculé par le renderPlanTab() qui
-    // précède (lui-même basé sur generateDailyTarget(), non modifié). Rien
-    // n'est affiché si aujourd'hui est un jour de repos (snapshot null) ou si
-    // le snapshot est incomplet -- mieux vaut ne rien montrer qu'un objectif
+    // Aperçu du premier objectif (ETAPE UX #10) -- le gate (jour de repos vs
+    // jour d'entraînement) reste basé sur window.lastTodayPlanSnapshot, déjà
+    // calculé par le renderPlanTab() qui précède (non modifié). Rien n'est
+    // affiché si aujourd'hui est un jour de repos (snapshot null) ou si le
+    // snapshot est incomplet -- mieux vaut ne rien montrer qu'un objectif
     // partiel/incorrect.
+    // BUGFIX (audit post-Top-10) : le total ci-dessous n'est PAS lu depuis
+    // snap.total, qui vient de generateDailyTarget(...) sans 4e argument
+    // (reason='regular' par défaut, plafond maxReps*3.2) -- ce nombre ne
+    // correspond jamais à ce que produit ensuite renderPlanTab() en
+    // déclenchant automatiquement regeneratePlanFromAI('initial') (aiPlan
+    // absent juste après l'onboarding), qui utilise reason='initial'
+    // (plafond maxReps*2.0). Résultat avant ce correctif : l'utilisateur
+    // voyait un premier objectif qui changeait de lui-même quelques
+    // secondes après la fermeture de l'onboarding. On recalcule donc ici
+    // avec reason='initial', en réutilisant telles quelles les mêmes
+    // fonctions Coach V2 existantes (computeDailyPlanAdjustment,
+    // generateDailyTarget), pour refléter fidèlement le calcul qui va
+    // réellement s'appliquer -- aucun seuil, aucune de ces deux fonctions
+    // n'est modifiée.
     const goalPreview=document.getElementById('welcomeFirstGoalPreview');
     const snap=window.lastTodayPlanSnapshot;
     if(goalPreview){
       if(snap && Array.isArray(snap.sets) && snap.sets.length>0 && snap.total>0){
-        document.getElementById('welcomeFirstGoalTotal').textContent=snap.total;
-        document.getElementById('welcomeFirstGoalSets').textContent=snap.sets.length;
+        const todayDow=new Date().getDay();
+        const intensity=tmpDays.indexOf(todayDow)+1;
+        const initialRatio=computeDailyPlanAdjustment('initial').ratio;
+        const initialSets=generateDailyTarget(tmpMaxReps, intensity, initialRatio, 'initial');
+        const initialTotal=initialSets.reduce((a,b)=>a+b,0);
+        document.getElementById('welcomeFirstGoalTotal').textContent=initialTotal;
+        document.getElementById('welcomeFirstGoalSets').textContent=initialSets.length;
         goalPreview.classList.remove('hidden');
       } else {
         goalPreview.classList.add('hidden');
