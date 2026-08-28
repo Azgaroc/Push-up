@@ -484,6 +484,13 @@ else if(/iPhone|iPad|iPod/i.test(navigator.userAgent)) document.body.classList.a
         <div style="font-size:2.2rem;">👋</div>
         <h2 id="welcomeDoneTitle" style="margin-top:.4rem;" data-i18n="onboarding_hi">Enchanté !</h2>
         <p style="color:var(--muted);font-size:.9rem;margin-top:.4rem;" data-i18n="onboarding_done_sub">Toutes ces informations peuvent être modifiées à tout moment dans la page Profil.</p>
+        <div id="welcomeFirstGoalPreview" class="hidden" style="margin-top:.8rem;padding-top:.8rem;border-top:1px solid var(--border);">
+          <div style="color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.03em;" data-i18n="onboarding_first_goal">Ton premier objectif</div>
+          <div style="display:flex;justify-content:space-around;gap:1rem;margin-top:.5rem;">
+            <div><strong id="welcomeFirstGoalTotal" style="font-size:1.6rem;font-weight:700;color:var(--primary);display:block;">0</strong><span style="color:var(--muted);font-size:.72rem;" data-i18n="plan_session_pushups">Pompes séance</span></div>
+            <div><strong id="welcomeFirstGoalSets" style="font-size:1.6rem;font-weight:700;display:block;">0</strong><span style="color:var(--muted);font-size:.72rem;" data-i18n="training_series_unit">Séries</span></div>
+          </div>
+        </div>
         <button id="welcomeStep5Close" class="btn btn-primary" style="width:100%;margin-top:1.2rem;" data-i18n="onboarding_lets_go">C'est parti !</button>
       </div>
     </div>
@@ -986,6 +993,7 @@ fr: {
  onboarding_q4:"Question 4 sur 4", onboarding_days_q:"Quels jours voulez-vous vous entraîner ?",
  onboarding_done_sub:"Toutes ces informations peuvent être modifiées à tout moment dans la page profil.",
  onboarding_lets_go:"C'est parti !", onboarding_hi:"Enchanté !", onboarding_hi_name:"Enchanté {name} !",
+ onboarding_first_goal:"Ton premier objectif",
  onboarding_name_placeholder:"Ex : alex", onboarding_maxreps_error:"Indiquez votre nombre maximum de pompes.", onboarding_days_error:"Sélectionnez au moins un jour d'entraînement.",
  onboarding_maxreps_unknown:"Vous ne savez pas ?", onboarding_maxreps_freetest:"Faire une séance libre pour le découvrir",
  onboarding_maxreps_freetest_hint:"Faites votre meilleure série de pompes, puis appuyez sur \"fin entraînement\". le résultat remplira automatiquement votre réponse.",
@@ -1110,6 +1118,7 @@ en: {
  onboarding_q4:"Question 4 of 4", onboarding_days_q:"Which days do you want to train?",
  onboarding_done_sub:"All of this can be changed anytime in the profile tab.",
  onboarding_lets_go:"Let's go!", onboarding_hi:"Nice to meet you!", onboarding_hi_name:"Nice to meet you, {name}!",
+ onboarding_first_goal:"Your first goal",
  onboarding_name_placeholder:"E.g. alex", onboarding_maxreps_error:"Enter your maximum number of push-ups.", onboarding_days_error:"Select at least one training day.",
  onboarding_maxreps_unknown:"Not sure?", onboarding_maxreps_freetest:"Do a free session to find out",
  onboarding_maxreps_freetest_hint:"Do your best set of push-ups, then tap \"end workout\". the result will automatically fill in your answer.",
@@ -1234,6 +1243,7 @@ es: {
  onboarding_q4:"Pregunta 4 de 4", onboarding_days_q:"¿Qué días quieres entrenar?",
  onboarding_done_sub:"Todo esto se puede cambiar en cualquier momento en la pestaña perfil.",
  onboarding_lets_go:"¡Vamos!", onboarding_hi:"¡Encantado de conocerte!", onboarding_hi_name:"¡Encantado de conocerte, {name}!",
+ onboarding_first_goal:"Tu primer objetivo",
  onboarding_name_placeholder:"Ej: alex", onboarding_maxreps_error:"Indica tu número máximo de flexiones.", onboarding_days_error:"Selecciona al menos un día de entrenamiento.",
  onboarding_maxreps_unknown:"¿No lo sabes?", onboarding_maxreps_freetest:"Haz una sesión libre para descubrirlo",
  onboarding_maxreps_freetest_hint:"Haz tu mejor serie de flexiones y luego pulsa \"terminar entrenamiento\". el resultado rellenará tu respuesta automáticamente.",
@@ -2838,6 +2848,23 @@ function initUserNicknameField(){
     renderHomeTab();
     initUserNicknameField();
     document.getElementById('welcomeDoneTitle').textContent = tmpNickname ? t('onboarding_hi_name').replace('{name}',tmpNickname) : t('onboarding_hi');
+    // Aperçu du premier objectif (ETAPE UX #10) -- relit uniquement
+    // window.lastTodayPlanSnapshot, déjà calculé par le renderPlanTab() qui
+    // précède (lui-même basé sur generateDailyTarget(), non modifié). Rien
+    // n'est affiché si aujourd'hui est un jour de repos (snapshot null) ou si
+    // le snapshot est incomplet -- mieux vaut ne rien montrer qu'un objectif
+    // partiel/incorrect.
+    const goalPreview=document.getElementById('welcomeFirstGoalPreview');
+    const snap=window.lastTodayPlanSnapshot;
+    if(goalPreview){
+      if(snap && Array.isArray(snap.sets) && snap.sets.length>0 && snap.total>0){
+        document.getElementById('welcomeFirstGoalTotal').textContent=snap.total;
+        document.getElementById('welcomeFirstGoalSets').textContent=snap.sets.length;
+        goalPreview.classList.remove('hidden');
+      } else {
+        goalPreview.classList.add('hidden');
+      }
+    }
     step4.classList.add('hidden');step5.classList.remove('hidden');
   });
   document.getElementById('welcomeStep4FreeSession').addEventListener('click',()=>{
