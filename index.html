@@ -166,7 +166,6 @@
     #restSeconds{font-size:.85rem;padding:.4rem;}
     .chips{gap:.3rem;margin-top:.4rem;}
     .chip{font-size:.68rem;padding:.35rem .55rem;}
-    #historyList{max-height:70px;overflow-y:auto;}
     .history-item{font-size:.72rem;padding:.4rem .6rem;}
     #calendarList{max-height:none;}
     .calendar-item{font-size:.78rem;padding:.6rem .7rem;}
@@ -1361,7 +1360,6 @@ function refreshDynamicUI(){
   try{ if(typeof renderPlanTab==='function') renderPlanTab(); }catch(e){}
   try{ if(typeof renderCalendar==='function') renderCalendar(); }catch(e){}
   try{ if(typeof renderStats==='function') renderStats(); }catch(e){}
-  try{ if(typeof renderHistory==='function') renderHistory(); }catch(e){}
 }
 function setAppLanguage(lang){
   if(lang!=='fr' && lang!=='en' && lang!=='es') return;
@@ -1556,7 +1554,7 @@ function showToast(msg,duration=2600,variant=null){
 }
 const countEl=$('count'),totalCountEl=$('totalCount'),setInfoEl=$('setInfo'),phaseEl=$('phase'),cameraStatus=$('cameraStatus'),cameraDot=$('cameraDot'),movementLabel=$('movementLabel');
 const toggleSessionBtn=$('toggleSession'),nextSetBtn=$('nextSet'),finishWorkoutBtn=$('finishWorkout');
-const targetRepsInput=$('targetReps'),restSecondsInput=$('restSeconds'),restPanel=$('restPanel'),restDisplay=$('restDisplay'),restText=$('restText'),skipRestBtn=$('skipRest'),resumeAfterRestBtn=$('resumeAfterRest'),historyList=$('historyList');
+const targetRepsInput=$('targetReps'),restSecondsInput=$('restSeconds'),restPanel=$('restPanel'),restDisplay=$('restDisplay'),restText=$('restText'),skipRestBtn=$('skipRest'),resumeAfterRestBtn=$('resumeAfterRest');
 let detector=null,lastKeypoints=null,cameraReady=false,manualMode=false,sessionActive=false,restActive=false,calibrated=false,processing=false,rafId=null,stream=null,lastDetectAt=0;
 // Distingue un refus explicite de permission caméra (message actionnable
 // possible : où réactiver) d'un autre échec (matériel absent/occupé, où
@@ -4167,7 +4165,7 @@ document.getElementById('importFileInput').addEventListener('change',(e)=>{
       data.workouts.forEach(w=>workouts.push(w));
       saveHistory();
       renderCalendar();
-      renderHistory();renderStats();
+      renderStats();
       if(typeof renderPlanTab==='function') renderPlanTab();
       if(typeof renderHomeTab==='function') renderHomeTab();
       showToast(t('toast_data_imported'));
@@ -4181,7 +4179,6 @@ document.getElementById('importFileInput').addEventListener('change',(e)=>{
 
 
 
-function renderHistory(){historyList.innerHTML='';const realWorkouts=workouts.filter(w=>!isSkipMarker(w));if(!realWorkouts.length){historyList.innerHTML=`<div class="history-item"><span>${t('no_session_recorded')}</span><span>—</span></div>`;return;}realWorkouts.slice().reverse().forEach(w=>{const item=document.createElement('div');item.className='history-item';item.innerHTML=`<span>${w.date}</span><strong>${w.total} ${t('training_pushups')} · ${w.sets.length} ${t('training_series_unit')}</strong>`;historyList.appendChild(item);});}
 function refreshHeader(){setInfoEl.textContent=currentSet;countEl.textContent=setCount;totalCountEl.textContent=totalCount;const ssc=document.getElementById('sessionSetsCount');if(ssc)ssc.textContent=completedSets.length;updateProgressRing();}
 function updateProgressRing(){
   const ring=document.getElementById('setProgressRing');
@@ -4705,7 +4702,6 @@ async function finishPlanTraining(completed){
     const statsBeforeThisSession=computeStats();
     workouts.push(workout);
     try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
-    try{renderHistory();}catch(e){console.error('renderHistory error', e && e.message ? e.message : String(e));}
     try{renderCalendar();}catch(e){console.error('renderCalendar error', e && e.message ? e.message : String(e));}
     try{renderStats();}catch(e){console.error('renderStats error', e && e.message ? e.message : String(e));}
     const difficulty=await askSessionFeedback();
@@ -5174,7 +5170,6 @@ function finalizeWorkout(finalSetReps){
     regeneratePlanFromAI('extra_reps').catch(()=>{});
   }
   try{saveHistory();}catch(e){console.error('saveHistory error', e && e.message ? e.message : String(e));}
-  try{renderHistory();}catch(e){console.error('renderHistory error', e && e.message ? e.message : String(e));}
   try{renderCalendar();}catch(e){console.error('renderCalendar error', e && e.message ? e.message : String(e));}
   try{renderStats();}catch(e){console.error('renderStats error', e && e.message ? e.message : String(e));}
   try{setTimeout(()=>{downloadCalendarEvent(workout);},300);}catch(e){console.error('downloadCalendarEvent error', e && e.message ? e.message : String(e));}
